@@ -1,0 +1,21 @@
+namespace: datapio
+secret: github-credentials
+rules:
+  - apiGroups:
+      - ""
+      - apps
+      - extensions
+    resources:
+      - configmaps
+      - secrets
+      - services
+      - deployments
+      - ingresses
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
