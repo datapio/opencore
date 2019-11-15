@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-artifact-bucket
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: {{ include "tekton.chart" . }}
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-config-artifact-bucket
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+data: {}

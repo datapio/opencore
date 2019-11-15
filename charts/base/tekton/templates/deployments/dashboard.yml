@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tekton.fullname" . }}-dashboard
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: {{ include "tekton.chart" . }}
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-dashboard
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+spec:
+  replicas: {{ .Values.replicas.dashboard }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "tekton.chart" . }}-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "tekton.chart" . }}-dashboard
+    spec:
+      containers:
+        - name: tekton-dashboard
+          image: {{ .Values.image.dashboard.name }}:{{ .Values.image.dashboard.tag }}
+          imagePullPolicy: {{ .Values.image.dashboard.pullPolicy }}
+          env:
+            - name: PORT
+              value: "9097"
+            - name: WEB_RESOURCES_DIR
+              value: /var/run/ko/web
+            - name: PIPELINE_RUN_SERVICE_ACCOUNT
+              value: ""
+            - name: INSTALLED_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9097
+          ports:
+            - containerPort: 9097
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9097
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+      serviceAccountName: {{ include "tekton.fullname" . }}-dashboard

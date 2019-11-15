@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tekton.fullname" . }}-pipelines-controller
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: {{ include "tekton.chart" . }}
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-pipelines-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+spec:
+  replicas: {{ .Values.replicas.pipelines_controller }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "tekton.chart" . }}-pipelines-controller
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+      labels:
+        app.kubernetes.io/name: {{ include "tekton.chart" . }}-pipelines-controller
+    spec:
+      containers:
+        - name: tekton-pipelines-controller
+          image: {{ .Values.image.pipelines_controller.name }}:{{ .Values.image.pipelines_controller.tag }}
+          imagePullPolicy: {{ .Values.image.pipelines_controller.pullPolicy }}
+          args:
+            - -logtostderr
+            - -stderrthreshold
+            - INFO
+            - -kubeconfig-writer-image
+            - {{ .Values.image.kubeconfig_writer.name }}:{{ .Values.image.kubeconfig_writer.tag }}
+            - -creds-image
+            - {{ .Values.image.creds.name }}:{{ .Values.image.creds.tag }}
+            - -git-image
+            - {{ .Values.image.git.name }}:{{ .Values.image.git.tag }}
+            - -nop-image
+            - {{ .Values.image.nop.name }}:{{ .Values.image.nop.tag }}
+            - -bash-noop-image
+            - {{ .Values.image.bash.name }}:{{ .Values.image.bash.tag }}
+            - -gsutil-image
+            - {{ .Values.image.gsutil.name }}:{{ .Values.image.gsutil.tag }}
+            - -entrypoint-image
+            - {{ .Values.image.entrypoint.name }}:{{ .Values.image.entrypoint.tag }}
+            - -imagedigest-exporter-image
+            - {{ .Values.image.imagedigest_exporter.name }}:{{ .Values.image.imagedigest_exporter.tag }}
+            - -pr-image
+            - {{ .Values.image.pr.name }}:{{ .Values.image.pr.tag }}
+            - -build-gcs-fetcher-image
+            - {{ .Values.image.build_gcs_fetcher.name }}:{{ .Values.image.build_gcs_fetcher.tag }}
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: tekton.dev/pipeline
+          volumeMounts:
+            - mountPath: /etc/config-logging
+              name: config-logging
+          resources:
+      serviceAccountName: {{ include "tekton.fullname" . }}-pipelines-controller
+      volumes:
+        - name: config-logging
+          configMap:
+            name: config-logging

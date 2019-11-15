@@ -1,0 +1,20 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "tekton.fullname" . }}-pipelines-controller-admin
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: {{ include "tekton.chart" . }}
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-pipelines-controller-admin
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "tekton.fullname" . }}-pipelines-admin
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "tekton.fullname" . }}-pipelines-controller
+    namespace: {{ .Values.namespace }}
