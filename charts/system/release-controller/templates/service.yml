@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "release-controller.fullname" . }}
+  labels:
+    helm.sh/chart: {{ include "release-controller.chart" . }}
+    app.kubernetes.io/name: {{ include "release-controller.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "release-controller.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
