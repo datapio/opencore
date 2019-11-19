@@ -1,0 +1,22 @@
+{
+  "name": "release-controller",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "repository": "https://github.com/datapio/opencore",
+  "author": "Link Society",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src/",
+    "test": "nyc -n src -r html -r text mocha tests/",
+    "server": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1"
+  }
+}
