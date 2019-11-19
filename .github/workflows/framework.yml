@@ -1,0 +1,35 @@
+---
+name: Framework Build Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: project-github-webhook@docker
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: datapio/opencore/project-github-webhook
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: docker.pkg.github.com
+          workdir: sources/project-github-webhook
+          dockerfile: docker/Dockerfile
+          cache: true
+
+      - name: notify@slack
+        uses: Ilshidur/action-slack@master
+        env:
+          SLACK_USERNAME: CIBot
+          SLACK_OVERRIDE_MESSAGE: true
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          args: "[<https://github.com/datapio/opencore|opencore>] [<https://github.com/datapio/tree/${{ github.ref }}|${{ github.ref }}>] Framework Build: ${{ job.status }}"
+        if: always()
