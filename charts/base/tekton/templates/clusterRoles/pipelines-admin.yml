@@ -3,7 +3,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ include "tekton.fullname" . }}-pipelines-admin
-  namespace: {{ .Values.namespace }}
   labels:
     helm.sh/chart: {{ include "tekton.chart" . }}
     app.kubernetes.io/name: {{ include "tekton.name" . }}-pipelines-admin

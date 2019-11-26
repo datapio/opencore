@@ -4,13 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   name: images.caching.internal.knative.dev
   labels:
-    helm.sh/chart: {{ include "tekton.chart" . }}
-    app.kubernetes.io/name: images.caching.internal.knative.dev
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: datapio
     knative.dev/crd-install: "true"
-
 spec:
   group: caching.internal.knative.dev
   names:
