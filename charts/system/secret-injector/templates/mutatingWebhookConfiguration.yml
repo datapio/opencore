@@ -9,10 +9,14 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: datapio
+  annotations:
+    cert-manager.io/inject-ca-from-secret: "{{ .Release.Namespace }}/{{ include "secret-injector.servingCertificate" . }}"
 webhooks:
   - name: {{ .Chart.name }}
     clientConfig:
-      url: "https://{{ include "secret-injector.fullname" . }}"
+      service:
+        name: {{ include "secret-injector.fullname" . }}
+        namespace: {{ .Release.Namespace }}
     rules:
       - operations:
           - CREATE

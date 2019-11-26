@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "secret-injector.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "secret-injector.chart" . }}
     app.kubernetes.io/name: {{ include "secret-injector.name" . }}
