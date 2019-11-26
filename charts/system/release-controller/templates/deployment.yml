@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "release-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "release-controller.chart" . }}
     app.kubernetes.io/name: {{ include "release-controller.name" . }}
