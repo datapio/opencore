@@ -12,7 +12,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ include "metacontroller.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "metacontroller.fullname" . }}
