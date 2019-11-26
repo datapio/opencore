@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "nexus.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "nexus.chart" . }}
     app.kubernetes.io/name: {{ include "nexus.name" . }}
