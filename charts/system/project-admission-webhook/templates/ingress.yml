@@ -5,6 +5,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ include "project-admission-webhook.chart" . }}
     app.kubernetes.io/name: {{ include "project-admission-webhook.name" . }}
