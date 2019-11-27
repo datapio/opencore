@@ -2,11 +2,12 @@
 
 ## What is it ?
 
-Datapio is a platform for generating micro-services from:
+Datapio Open Core is a continuous integration and deployment platform featuring:
 
- - a definition of the datamodel it uses (using the *GraphQL Schema Definition Language*)
- - a defifnition of the API it exposes to the consumer (also using the *GraphQL SDL*)
- - business code without any boilerplate
+ - artifact management with Nexus
+ - secret management with Vault
+ - certificate management with cert-manager
+ - pipeline execution with TektonCD
 
 ## Documentation
 
