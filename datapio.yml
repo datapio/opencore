@@ -1,10 +1,10 @@
 environments:
   production:
     branch: master
-  
+
   preproduction:
     branch: staging
-  
+
   integration:
     branch: dev
 
@@ -29,9 +29,9 @@ artifacts:
     type: docker
     path: sources/secret-injector
 
-  - name: framework/project-github-webhook
+  - name: framework/scan-repository
     type: docker
-    path: sources/project-github-webhook
+    path: sources/scan-repository
 
   - name: base/tekton
     type: helm
@@ -40,11 +40,11 @@ artifacts:
   - name: base/build-bot
     type: helm
     path: charts/base/build-bot
-  
+
   - name: base/metacontroller
     type: helm
     path: charts/base/metacontroller
-  
+
   - name: base/nexus
     type: helm
     path: charts/base/nexus
@@ -88,5 +88,5 @@ artifacts:
     type: helm
     path: charts/framework/project-github-webhook
     requires:
-      - name: framework/project-github-webhook
+      - name: framework/scan-repository
         type: docker

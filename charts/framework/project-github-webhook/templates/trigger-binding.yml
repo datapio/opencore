@@ -1,0 +1,18 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: {{ include "project-github-webhook.fullname" . }}-trigger-binding
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: {{ include "project-github-webhook.chart" . }}
+    app.kubernetes.io/name: {{ include "project-github-webhook.name" . }}-trigger-binding
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
+spec:
+  params:
+    - name: revision
+      value: $(body.head_commit.id)
+    - name: remote
+      value: $(body.repository.url)
