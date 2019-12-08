@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "tekton.fullname" . }}-triggers-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    helm.sh/chart: {{ include "tekton.chart" . }}
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-triggers-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: datapio
