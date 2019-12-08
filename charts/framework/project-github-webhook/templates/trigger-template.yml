@@ -19,6 +19,17 @@ spec:
       description: The git repository url
   resourcetemplates:
     - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineResource
+      metadata:
+        name: git-source-$(uid)
+      spec:
+        type: git
+        params:
+          - name: revision
+            value: $(params.revision)
+          - name: url
+            value: $(params.remote)
+    - apiVersion: tekton.dev/v1alpha1
       kind: TaskRun
       metadata:
         generateName: scan-repository
@@ -31,13 +42,8 @@ spec:
       spec:
         resources:
           - name: workspace
-            resourceSpec:
-              type: git
-              params:
-                - name: revision
-                  value: $(params.revision)
-                - name: url
-                  value: $(params.remote)
+            resourceRef:
+              resource: git-source-$(uid)
         taskSpec:
           inputs:
             resources:
@@ -46,3 +52,6 @@ spec:
           steps:
             - name: read-datapio-yml
               image: "{{ .Values.scanRepository.image.name }}:{{ .Values.scanRepository.image.tag }}"
+              env:
+                - name: RESOURCE_NAME
+                  value: git-source-$(uid)
