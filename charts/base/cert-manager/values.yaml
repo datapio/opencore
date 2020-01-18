@@ -22,7 +22,7 @@ global:
 
   leaderElection:
     # Override the namespace used to store the ConfigMap for leader election
-    namespace: "kube-system"
+    namespace: "datapio"
 
 replicaCount: 1
 
