@@ -2,6 +2,8 @@ replicas:
   dashboard: 1
   pipelines_controller: 1
   pipelines_webhook: 1
+  triggers_controller: 1
+  triggers_webhook: 1
 
 resources:
   pipelines_controller:
@@ -13,6 +15,22 @@ resources:
       memory: 256Mi
 
   pipelines_webhook:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+
+  triggers_controller:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+
+  triggers_webhook:
     limits:
       cpu: 500m
       memory: 256Mi
@@ -34,6 +52,16 @@ image:
   pipelines_webhook:
     name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook@sha256
     tag: 1d6336f2748cb8e5c19b17191a54c6adbbc77e2d1c60818f93282ec482bb2957
+    pullPolicy: IfNotPresent
+
+  triggers_controller:
+    name: gcr.io/tekton-releases/github.com/tektoncd/triggers/cmd/controller@sha256
+    tag: c04694411632b05b0bc2116c641432b8d596c5814394adbc659f16505fed9db4
+    pullPolicy: IfNotPresent
+
+  triggers_webhook:
+    name: gcr.io/tekton-releases/github.com/tektoncd/triggers/cmd/webhook@sha256
+    tag: c0f6cd59922c472bb3ad386513b681b8bf5aaf48e6811bd6de24bdf09062af8a
     pullPolicy: IfNotPresent
 
   kubeconfig_writer:
@@ -75,3 +103,7 @@ image:
   build_gcs_fetcher:
     name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/vendor/github.com/googlecloudplatform/cloud-builders/gcs-fetcher/cmd/gcs-fetcher@sha256
     tag: 5be2e14ed6b986198beca21a93af34e807586dcf9155babeca7f5971a2fa0311
+
+  event_listener:
+    name: gcr.io/tekton-releases/github.com/tektoncd/triggers/cmd/eventlistenersink@sha256
+    tag: 34dc184a59d0c8e357b6208388cbbc9095a92508f522d18a3a371c22e0d4c930

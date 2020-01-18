@@ -1,7 +1,6 @@
 {
   "name": "project-github-webhook",
   "version": "0.0.1",
-  "main": "index.js",
   "license": "MIT",
   "private": false,
   "dependencies": {
@@ -13,7 +12,7 @@
   "scripts": {
     "lint": "yarn run eslint src tests",
     "test": "node tests",
-    "server": "node index.js"
+    "server": "node -r esm src/server.js"
   },
   "devDependencies": {
     "eslint": "^6.7.1",

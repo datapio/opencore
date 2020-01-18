@@ -2,10 +2,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "tekton.fullname" . }}-pipelines-aggregate-edit
+  name: {{ include "tekton.fullname" . }}-triggers-aggregate-edit
   labels:
     helm.sh/chart: {{ include "tekton.chart" . }}
-    app.kubernetes.io/name: {{ include "tekton.name" . }}-pipelines-aggregate-edit
+    app.kubernetes.io/name: {{ include "tekton.name" . }}-triggers-aggregate-edit
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: datapio
@@ -15,12 +15,9 @@ rules:
   - apiGroups:
       - tekton.dev
     resources:
-      - tasks
-      - taskruns
-      - pipelines
-      - pipelineruns
-      - pipelineresources
-      - conditions
+      - eventlisteners
+      - triggerbindings
+      - triggertemplates
     verbs:
       - create
       - delete

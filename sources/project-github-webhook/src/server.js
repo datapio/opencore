@@ -1,8 +1,6 @@
 import http from 'http'
 import handlers from './handlers'
 
-const serve = () => {
-  http.createServer(handlers).listen(8000)
-}
+import { port } from './config'
 
-export default serve
+http.createServer(handlers).listen(port || 8000)
