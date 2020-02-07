@@ -35,9 +35,7 @@ strategy: {}
 
 image:
   repository: quay.io/jetstack/cert-manager-controller
-  # Override the image tag to deploy by setting this variable.
-  # If no value is set, the chart's appVersion will be used.
-  # tag: canary
+  tag: canary
   pullPolicy: IfNotPresent
 
 # Override the namespace used to store DNS provider credentials etc. for ClusterIssuer
@@ -164,9 +162,7 @@ webhook:
 
   image:
     repository: quay.io/jetstack/cert-manager-webhook
-    # Override the image tag to deploy by setting this variable.
-    # If no value is set, the chart's appVersion will be used.
-    # tag: canary
+    tag: canary
     pullPolicy: IfNotPresent
 
   # If true, the apiserver's cabundle will be automatically injected into the
@@ -210,7 +206,5 @@ cainjector:
 
   image:
     repository: quay.io/jetstack/cert-manager-cainjector
-    # Override the image tag to deploy by setting this variable.
-    # If no value is set, the chart's appVersion will be used.
-    # tag: canary
+    tag: canary
     pullPolicy: IfNotPresent
