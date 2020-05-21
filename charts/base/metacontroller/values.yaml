@@ -1,9 +1,0 @@
-replicaCount: 1
-
-image:
-  name: metacontroller/metacontroller
-  tag: v0.4.0
-  pullPolicy: IfNotPresent
-
-nameOverride: ""
-fullnameOverride: ""
