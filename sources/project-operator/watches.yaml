@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: datap.io
+  kind: Project
+  role: project

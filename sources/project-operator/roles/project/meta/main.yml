@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Datapio
+  description: Datapio Project Controller
+  company: Link Society
+  license: Apache
+  min_ansible_version: 2.9
+
+  galaxy_tags:
+    - datapio
+
+dependencies: []
+collections:
+- operator_sdk.util
+- community.kubernetes

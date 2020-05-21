@@ -1,0 +1,62 @@
+---
+
+- name: create namespace
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "datapio-{{ meta.name }}"
+
+- name: create tasks
+  include_tasks: tasks.yml
+
+- name: create pipeline
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: tekton.dev/v1alpha1
+      kind: Pipeline
+      metadata:
+        name: pipeline-executor
+        namespace: "datapio-{{ meta.name }}"
+      spec:
+        params:
+          - name: git_url
+            type: string
+          - name: git_revision
+            type: string
+          - name: workspace_pvc
+            type: string
+        workspaces:
+          - name: repository
+        tasks:
+          - name: checkout-scm
+            taskRef:
+              name: git-clone
+            workspaces:
+              - name: output
+                workspace: repository
+            params:
+              - name: url
+                value: $(params.git_url)
+              - name: revision
+                value: $(params.git_revision)
+          - name: run-pipeline-executor
+            taskRef:
+              name: pipeline-exec
+            params:
+              - name: workspace_pvc
+                value: $(params.workspace_pvc)
+            workspaces:
+              - name: sources
+                workspace: repository
+
+- name: create bindings
+  include_tasks: bindings.yml
+
+- name: create webhooks
+  include_tasks: webhook.yml
+  loop: {{ webhooks }}
+  loop_control:
+    loop_var: webhook
+    index_var: webhook_index

@@ -1,0 +1,85 @@
+---
+
+- name: create PipelineRunServer
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: datap.io/v1alpha1
+      kind: PipelineRunServer
+      metadata:
+        name: "{{ webhook.name }}"
+        namespace: "datapio-{{ meta.name }}"
+      spec:
+        max_concurrent_jobs: "{{ webhook.max_concurrent_jobs }}"
+        history: "{{ webhook.history }}"
+
+- name: create TriggerTemplate
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: triggers.tekton.dev/v1alpha1
+      kind: TriggerTemplate
+      metadata:
+        name: "{{ webhook.name }}"
+        namespace: "datapio-{{ meta.name }}"
+      spec:
+        params:
+          - name: revision
+            default: master
+          - name: url
+          - name: repository
+        resourcetemplates:
+          - apiVersion: datap.io/v1
+            kind: PipelineRunRequest
+            spec:
+              pipeline: pipeline-executor
+              server: "{{ webhook.name }}"
+
+              extraResources:
+                - apiVersion: v1
+                  kind: PersistentVolumeClaim
+                  metadata:
+                    name: "{{ webhook.name }}-workspace-$(params.repository)-$(params.revision)"
+                  spec:
+                    accessModes:
+                      - ReadWriteMany
+                    volumeMode: Filesystem
+                    resources:
+                      requests:
+                        storage: "{{ webhook.workspace.storage_size }}"
+                    storageClassName: "{{ webhook.workspace.storage_class }}"
+
+              workspaces:
+                - name: repository
+                  persistentVolumeClaim:
+                    claimName: "{{ webhook.name }}-workspace-$(params.repository)-$(params.revision)"
+
+              params:
+                - name: git_url
+                  value: $(params.url)
+                - name: git_revision
+                  value: $(params.revision)
+                - name: workspace_pvc
+                  value: "{{ webhook.name }}-workspace-$(params.repository)-$(params.revision)"
+
+- name: create EventListener
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: triggers.tekton.dev/v1alpha1
+      kind: EventListener
+      metadata:
+        name: "{{ webhook.name }}"
+        namespace: "datapio-{{ meta.name }}"
+      spec:
+        triggers:
+          - name: on-commit
+            interceptors:
+              - github:
+                  secretRef: {{ webhook.github_secret.name }}
+                  secretKey: {{ webhook.github.secret_key }}
+                eventTypes:
+                  - push
+                  - pull_request
+            bindings:
+              - ref: github
+            template:
+              - ref: "{{ webhook.name }}"
+        serviceAccountName: default

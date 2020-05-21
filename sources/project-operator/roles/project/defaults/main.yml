@@ -1,0 +1,16 @@
+---
+serviceaccount: default
+manifest_path: ./datapio.js
+
+pipeline_executor:
+  image:
+    name: datapio/pipeline-executor
+    tag: latest
+
+webhooks:
+  - name: default
+    max_concurrent_jobs: 10
+    history: 10
+    workspace:
+      storage_size: 1G
+      storage_class: default

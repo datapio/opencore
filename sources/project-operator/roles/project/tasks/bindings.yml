@@ -1,0 +1,18 @@
+---
+
+- name: create binding github
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: triggers.tekton.dev/v1alpha1
+      kind: TriggerBinding
+      metadata:
+        name: github
+        namespace: "datapio-{{ meta.name }}"
+      spec:
+        params:
+          - name: revision
+            value: $(body.head_commit.id)
+          - name: url
+            value: $(body.repository.url)
+          - name: repository
+            value: $(body.repository.owner.login)-$(body.repository.name)
