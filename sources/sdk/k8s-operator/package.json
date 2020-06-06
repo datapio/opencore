@@ -1,0 +1,19 @@
+{
+  "name": "@datapio/sdk-k8s-operator",
+  "version": "0.1.0",
+  "description": "Kubernetes Operator factory",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datapio/opencore.git",
+    "directory": "sources/sdk/k8s-operator"
+  },
+  "author": "Link Society <contact@link-society.com>",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
+  },
+  "dependencies": {
+    "kubernetes-client": "^9.0.0"
+  }
+}
