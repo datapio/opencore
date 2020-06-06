@@ -1,8 +1,0 @@
----
-
-replicaCount: 1
-
-image:
-  name: datapio/project-operator
-  tag: latest
-  pullPolicy: Always

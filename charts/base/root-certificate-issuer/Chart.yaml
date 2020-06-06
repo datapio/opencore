@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: "1.0"
-description: Certificate issuer with Root CA
-name: root-certificate-issuer
-version: 0.1.0
