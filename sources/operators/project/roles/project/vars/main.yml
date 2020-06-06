@@ -1,0 +1,21 @@
+---
+
+datapio_project_images:
+  tasks:
+    git:
+      name: DATAPIO_PROJECT_IMAGE_GIT
+      default: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.12.1
+    pipelineExecutor:
+      name: DATAPIO_PROJECT_IMAGE_PIPELINE_EXEC
+      default: datapio/pipeline-executor:latest
+    yarn:
+      name: DATAPIO_PROJECT_IMAGE_YARN
+      default: node:alpine
+  sidecars:
+    docker:
+      name: DATAPIO_PROJECT_IMAGE_DOCKER
+      default: docker:dind
+
+datapio_project_vault_secret:
+  name: DATAPIO_PROJECT_VAULT_SECRET
+  default: vault-config

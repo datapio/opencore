@@ -1,0 +1,7 @@
+---
+
+- name: create tekton tasks
+  include_tasks: "{{ item }}.yml"
+  with_items:
+    - git_clone
+    - pipeline_exec

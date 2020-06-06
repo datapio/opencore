@@ -1,0 +1,56 @@
+---
+
+- name: read environment
+  set_facts:
+    namespace: "datapio-{{ meta.namespace }}-{{ meta.name }}"
+    images:
+      tasks:
+        git: "{{ lookup('env', datapio_project_images.tasks.git.name) | default(datapio_project_images.tasks.git.default) }}"
+        pipelineExecutor: "{{ lookup('env', datapio_project_images.tasks.pipelineExecutor.name) | default(datapio_project_images.tasks.pipelineExecutor.default) }}"
+        yarn: "{{ lookup('env', datapio_project_images.tasks.yarn.name) | default(datapio_project_images.tasks.yarn.default) }}"
+        docker: "{{ lookup('env', datapio_project_images.sidecars.docker.name) | default(datapio_project_images.sidecars.docker.default) }}"
+    vault_secret: "{{ lookup('env', datapio_project_vault_secret.name) | default(datapio_project_vault_secret.default) }}"
+
+- name: create namespace
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+
+- name: copy vault configuration
+  block:
+    - name: get vault configuration
+      k8s_info:
+        api_version: v1
+        kind: Secret
+        name: "{{ vault_secret }}"
+        namespace: "{{ meta.namespace }}"
+      register: vault_secret_data
+
+    - name: create secret in project namespace
+      k8s:
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: "{{ vault_secret }}"
+            namespace: "{{ namespace }}"
+          data: {{ vault_secret_data.resources.data }}
+
+- name: create tasks
+  include_tasks: tekton/tasks/main.yml
+
+- name: create pipelines
+  include_tasks: tekton/pipelines/main.yml
+
+- name: create bindings
+  include_tasks: bindings.yml
+
+- name: create webhooks
+  include_tasks: webhook.yml
+  loop: {{ webhooks }}
+  loop_control:
+    loop_var: webhook
+    index_var: webhook_index

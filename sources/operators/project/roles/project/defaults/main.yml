@@ -1,11 +1,5 @@
 ---
-serviceaccount: default
-manifest_path: ./datapio.js
-
-pipeline_executor:
-  image:
-    name: datapio/pipeline-executor
-    tag: latest
+manifest_path: ./.datapio/index.js
 
 webhooks:
   - name: default

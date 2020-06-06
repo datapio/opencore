@@ -1,0 +1,49 @@
+---
+
+- name: create task yarn-build
+  k8s:
+    definition:
+      apiVersion: tekton.dev/v1alpha1
+      kind: Task
+      metadata:
+        name: yarn-build
+        namespace: "{{ namespace }}"
+      spec:
+        workspaces:
+          - name: sources
+        params:
+          - name: workspace_pvc
+            type: string
+        steps:
+          - name: install-deps
+            image: "{{ images.tasks.yarn }}"
+            workingDir: "$(workspaces.sources.path)"
+            command:
+              - yarn
+            args:
+              - install
+              - '--dev'
+          - name: static-analysis
+            image: "{{ images.tasks.yarn }}"
+            workingDir: "$(workspaces.sources.path)"
+            command:
+              - yarn
+            args:
+              - run
+              - lint
+          - name: test-suite
+            image: "{{ images.tasks.yarn }}"
+            workingDir: "$(workspaces.sources.path)"
+            command:
+              - yarn
+            args:
+              - run
+              - tests
+          - name: build-bundle
+            image: "{{ images.tasks.yarn }}"
+            workingDir: "$(workspaces.sources.path)"
+            command:
+              - yarn
+            args:
+              - run
+              - build

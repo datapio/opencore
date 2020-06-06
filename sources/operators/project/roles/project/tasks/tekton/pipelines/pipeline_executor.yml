@@ -1,24 +1,13 @@
 ---
 
-- name: create namespace
-  community.kubernetes.k8s:
-    definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "datapio-{{ meta.name }}"
-
-- name: create tasks
-  include_tasks: tasks.yml
-
-- name: create pipeline
-  community.kubernetes.k8s:
+- name: create pipeline pipeline-executor
+  k8s:
     definition:
       apiVersion: tekton.dev/v1alpha1
       kind: Pipeline
       metadata:
         name: pipeline-executor
-        namespace: "datapio-{{ meta.name }}"
+        namespace: "{{ namespace }}"
       spec:
         params:
           - name: git_url
@@ -50,13 +39,3 @@
             workspaces:
               - name: sources
                 workspace: repository
-
-- name: create bindings
-  include_tasks: bindings.yml
-
-- name: create webhooks
-  include_tasks: webhook.yml
-  loop: {{ webhooks }}
-  loop_control:
-    loop_var: webhook
-    index_var: webhook_index

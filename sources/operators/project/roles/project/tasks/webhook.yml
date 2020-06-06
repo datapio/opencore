@@ -1,25 +1,25 @@
 ---
 
 - name: create PipelineRunServer
-  community.kubernetes.k8s:
+  k8s:
     definition:
       apiVersion: datap.io/v1alpha1
       kind: PipelineRunServer
       metadata:
         name: "{{ webhook.name }}"
-        namespace: "datapio-{{ meta.name }}"
+        namespace: "{{ namespace }}"
       spec:
         max_concurrent_jobs: "{{ webhook.max_concurrent_jobs }}"
         history: "{{ webhook.history }}"
 
 - name: create TriggerTemplate
-  community.kubernetes.k8s:
+  k8s:
     definition:
       apiVersion: triggers.tekton.dev/v1alpha1
       kind: TriggerTemplate
       metadata:
         name: "{{ webhook.name }}"
-        namespace: "datapio-{{ meta.name }}"
+        namespace: "{{ namespace }}"
       spec:
         params:
           - name: revision
@@ -61,20 +61,20 @@
                   value: "{{ webhook.name }}-workspace-$(params.repository)-$(params.revision)"
 
 - name: create EventListener
-  community.kubernetes.k8s:
+  k8s:
     definition:
       apiVersion: triggers.tekton.dev/v1alpha1
       kind: EventListener
       metadata:
         name: "{{ webhook.name }}"
-        namespace: "datapio-{{ meta.name }}"
+        namespace: "{{ namespace }}"
       spec:
         triggers:
           - name: on-commit
             interceptors:
               - github:
                   secretRef: {{ webhook.github_secret.name }}
-                  secretKey: {{ webhook.github.secret_key }}
+                  secretKey: {{ webhook.github_secret.key }}
                 eventTypes:
                   - push
                   - pull_request

@@ -1,0 +1,6 @@
+---
+
+- name: create tekton pipelines
+  include_tasks: "{{ item }}.yml"
+  with_items:
+    - pipeline_executor

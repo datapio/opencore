@@ -1,0 +1,48 @@
+---
+
+- name: create task pipeline-exec
+  k8s:
+    definition:
+      apiVersion: tekton.dev/v1alpha1
+      kind: Task
+      metadata:
+        name: pipeline-exec
+        namespace: "{{ namespace }}"
+      spec:
+        workspaces:
+          - name: sources
+        params:
+          - name: workspace_pvc
+            type: string
+        steps:
+          - name: run-manifest
+            image: "{{ images.tasks.pipelineExecutor }}"
+            workingDir: "$(workspaces.sources.path)"
+            command:
+              - datapio-pacman
+            args:
+              - {{ manifestPath }}
+            env:
+              - name: PACMAN_WORKSPACE_PVC
+                value: $(params.workspace_pvc)
+            envFrom:
+              - secretRef:
+                  name: "{{ vault_secret }}"
+            volumeMounts:
+              - name: docker-socket
+                mountPath: /var/run
+        sidecars:
+          - name: docker
+            image: "{{ images.tasks.docker }}"
+            securityContext:
+              privileged: true
+            volumeMounts:
+              - name: docker-storage
+                mountPath: /var/lib/docker
+              - name: docker-socket
+                mountPath: /var/run
+        volumes:
+          - name: docker-storage
+            emptyDir: {}
+          - name: docker-socket
+            emptyDir: {}

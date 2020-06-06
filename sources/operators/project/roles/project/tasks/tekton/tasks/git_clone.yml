@@ -1,13 +1,13 @@
 ---
 
 - name: create task git-clone
-  community.kubernetes.k8s:
+  k8s:
     definition:
       apiVersion: tekton.dev/v1alpha1
       kind: Task
       metadata:
         name: git-clone
-        namespace: "datapio-{{ meta.name }}"
+        namespace: "{{ namespace }}"
       spec:
         workspaces:
           - name: output
@@ -60,7 +60,7 @@
             description: The precise commit SHA that was fetched by this Task
         steps:
           - name: clone
-            image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.12.1
+            image: "{{ images.tasks.git }}"
             script: |
               CHECKOUT_DIR="$(workspaces.output.path)/$(params.subdirectory)"
 
@@ -104,29 +104,3 @@
               fi
               # Make sure we don't add a trailing newline to the result!
               echo -n "$RESULT_SHA" > $(results.commit.path)
-
-- name: create task pipeline-exec
-  community.kubernetes.k8s:
-    definition:
-      apiVersion: tekton.dev/v1alpha1
-      kind: Task
-      metadata:
-        name: pipeline-exec
-        namespace: "datapio-{{ meta.name }}"
-      spec:
-        workspaces:
-          - name: sources
-        params:
-          - name: workspace_pvc
-            type: string
-        steps:
-          - name: run-manifest
-            image: "{{ pipelineExecutor.image.name }}:{{ pipelineExecutor.image.tag }}"
-            workingDir: "$(workspaces.sources.path)"
-            command:
-              - datapio-pacman
-            args:
-              - {{ manifestPath }}
-            env:
-              - name: DATAPIO_WORKSPACE_PVC
-                value: $(params.workspace_pvc)
