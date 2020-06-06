@@ -1,0 +1,10 @@
+---
+- version: v1alpha1
+  group: datap.io
+  kind: PipelineRunRequest
+  role: request
+
+- version: v1alpha1
+  group: datap.io
+  kind: PipelineRunServer
+  role: server

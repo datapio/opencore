@@ -1,0 +1,9 @@
+---
+
+datapio_request_rabbitmq:
+  url_secret:
+    name: DATAPIO_RABBITMQ_URL_SECRET
+    default: rabbitmq-url
+  admin_secret:
+    name: DATAPIO_RABBITMQ_ADMIN_SECRET
+    default: rabbitmq-admin

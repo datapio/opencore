@@ -1,0 +1,42 @@
+---
+
+- name: read environment
+  set_facts:
+    rabbitmq:
+      url_secret: "{{ lookup('env', datapio_request_rabbitmq.url_secret.name) | default(datapio_request_rabbitmq.url_secret.default) }}"
+      admin_secret: "{{ lookup('env', datapio_request_rabbitmq.admin_secret.name) | default(datapio_request_rabbitmq.admin_secret.default) }}"
+
+- name: get PipelineRunRequest
+  k8s_info:
+    api_version: datap.io/v1alpha1
+    kind: PipelineRunRequest
+    name: "{{ meta.name }}"
+    namespace: "{{ meta.namespace }}"
+  register: pipeline_run_request
+
+- name: schedule pipeline
+  when: not pipeline_run_request.resources.status.scheduled
+  block:
+    - name: get RabbitMQ credentials
+      k8s_info:
+        api_version: v1
+        kind: Secret
+        name: "{{ rabbitmq.url_secret }}"
+        namespace: "{{ meta.namespace }}"
+      register: rabbitmq_secret
+
+    - name: publish PipelineRunRequest
+      rabbitmq_publish:
+        url: "{{ rabbitmq_secret.resources.data.url }}"
+        queue: "{{ meta.namespace }}-{{ server }}-worker"
+        body: "{{ pipeline_run_request.resources }}"
+        content_type: "application/json"
+
+    - name: update PipelineRunRequest status
+      k8s_status:
+        api_version: datap.io/v1alpha1
+        kind: PipelineRunRequest
+        name: "{{ meta.name }}"
+        namespace: "{{ meta.namespace }}"
+        status:
+          scheduled: yes

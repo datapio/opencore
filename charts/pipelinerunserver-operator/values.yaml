@@ -1,0 +1,25 @@
+---
+
+replicaCount: 1
+
+operator:
+  image:
+    name: datapio/pipelinerunserver-operator
+    tag: latest
+    pullPolicy: Always
+
+archiver:
+  image:
+    name: datapio/pipelinerunserver-archiver
+    tag: latest
+    pullPolicy: Always
+
+worker:
+  image:
+    name: datapio/pipelinerunserver-worker
+    tag: latest
+    pullPolicy: Always
+
+rabbitmq:
+  url_secret: rabbitmq-url
+  admin_secret: rabbitmq-admin

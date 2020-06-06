@@ -1,0 +1,96 @@
+---
+
+- name: read environment
+  set_facts:
+    images:
+      archiver: "{{ lookup('env', datapio_server_images.tasks.archiver.name) | default(datapio_server_images.tasks.archiver.default) }}"
+      worker: "{{ lookup('env', datapio_server_images.tasks.worker.name) | default(datapio_server_images.tasks.worker.default) }}"
+    pullPolicies:
+      archiver: "{{ lookup('env', datapio_server_pullPolicies.tasks.archiver.name) | default(datapio_server_pullPolicies.tasks.archiver.default) }}"
+      worker: "{{ lookup('env', datapio_server_pullPolicies.tasks.worker.name) | default(datapio_server_pullPolicies.tasks.worker.default) }}"
+    rabbitmq:
+      url_secret: "{{ lookup('env', datapio_server_rabbitmq.url_secret.name) | default(datapio_server_rabbitmq.url_secret.default) }}"
+      admin_secret: "{{ lookup('env', datapio_server_rabbitmq.admin_secret.name) | default(datapio_server_rabbitmq.admin_secret.default) }}"
+
+- name: get RabbitMQ credentials
+  k8s_info:
+    api_version: v1
+    kind: Secret
+    name: "{{ rabbitmq.admin_secret }}"
+    namespace: "{{ meta.namespace }}"
+  register: rabbitmq_admin_secret
+
+- name: create RabbitMQ queues
+  rabbitmq_queue:
+    login_protocol: "{{ rabbitmq_admin_secret.resources.data.protocol }}"
+    login_host: "{{ rabbitmq_admin_secret.resources.data.host }}"
+    login_port: {{ rabbitmq_admin_secret.resources.data.port }}
+    login_user: "{{ rabbitmq_admin_secret.resources.data.username }}"
+    login_password: "{{ rabbitmq_admin_secret.resources.data.password }}"
+    vhost: "{{ rabbitmq_admin_secret.resources.data.vhost }}"
+    name: "{{ item }}"
+  with_items:
+    - "{{ meta.namespace }}-{{ meta.name }}-worker"
+    - "{{ meta.namespace }}-{{ meta.name }}-history"
+
+- name: create archiver
+  k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ meta.name }}-archiver"
+        namespace: "{{ meta.namespace }}"
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: pipelinerunserver-archiver
+          spec:
+            containers:
+              - name: archiver
+                image: "{{ images.archiver }}"
+                imagePullPolicy: "{{ pullPolicies.archiver }}"
+                env:
+                  - name: RABBITMQ_URL
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ rabbitmq.url_secret }}"
+                        key: "url"
+                  - name: RABBITMQ_HISTORY_QUEUE
+                    value: "{{ meta.namespace }}-{{ meta.name }}-history"
+                  - name: ARCHIVER_HISTORY_SIZE
+                    value: "{{ history }}"
+
+- name: create worker
+  k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "{{ meta.name }}-worker"
+        namespace: "{{ meta.namespace }}"
+      spec:
+        replicas: {{ max_concurrent_jobs }}
+        selector:
+          matchLabels:
+            app: pipelinerunserver-worker
+        template:
+          metadata:
+            labels:
+              app: pipelinerunserver-worker
+          spec:
+            containers:
+              - name: worker
+                image: "{{ images.worker }}"
+                imagePullPolicy: "{{ pullPolicies.worker }}"
+                env:
+                  - name: RABBITMQ_URL
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ rabbitmq.url_secret }}"
+                        key: "url"
+                  - name: RABBITMQ_WORKER_QUEUE
+                    value: "{{ meta.namespace }}-{{ meta.name }}-worker"
+                  - name: RABBITMQ_HISTORY_QUEUE
+                    value: "{{ meta.namespace }}-{{ meta.name }}-history"

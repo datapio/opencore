@@ -1,0 +1,13 @@
+ ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "pipelinerunserver-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  DATAPIO_SERVER_IMAGE_ARCHIVER: "{{ .Values.archiver.image.name }}:{{ .Values.archiver.image.tag }}"
+  DATAPIO_SERVER_IMAGE_WORKER: "{{ .Values.worker.image.name }}:{{ .Values.worker.image.tag }}"
+  DATAPIO_SERVER_PULLPOLICY_ARCHIVER: "{{ .Values.archiver.image.pullPolicy }}"
+  DATAPIO_SERVER_PULLPOLICY_WORKER: "{{ .Values.worker.image.pullPolicy }}"
+  DATAPIO_RABBITMQ_URL_SECRET: "{{ .Values.rabbitmq.url_secret }}"
+  DATAPIO_RABBITMQ_ADMIN_SECRET: "{{ .Values.rabbitmq.admin_secret }}"

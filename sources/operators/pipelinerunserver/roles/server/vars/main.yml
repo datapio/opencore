@@ -1,0 +1,25 @@
+---
+
+datapio_server_images:
+  archiver:
+    name: DATAPIO_SERVER_IMAGE_ARCHIVER
+    default: datapio/pipelinerunserver-archiver:latest
+  worker:
+    name: DATAPIO_SERVER_IMAGE_WORKER
+    default: datapio/pipelinerunserver-worker:latest
+
+datapio_server_pullPolicies:
+  archiver:
+    name: DATAPIO_SERVER_PULLPOLICY_ARCHIVER
+    default: Always
+  worker:
+    name: DATAPIO_SERVER_PULLPOLICY_WORKER
+    default: Always
+
+datapio_server_rabbitmq:
+  url_secret:
+    name: DATAPIO_RABBITMQ_URL_SECRET
+    default: rabbitmq-url
+  admin_secret:
+    name: DATAPIO_RABBITMQ_ADMIN_SECRET
+    default: rabbitmq-admin
