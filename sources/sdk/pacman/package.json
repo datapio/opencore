@@ -1,0 +1,23 @@
+{
+  "name": "datapio-pacman",
+  "version": "0.1.0",
+  "description": "Pipeline As Code",
+  "main": "src/index.js",
+  "repository": "https://github.com/datapio/pacman",
+  "author": "Link Society <contact@link-society.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "start": "node dist/app.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@rollup/plugin-babel": "^5.0.0",
+    "rollup": "^2.9.1"
+  },
+  "dependencies": {
+    "git-repo-info": "^2.1.1",
+    "@datapio/sdk-k8s-operator": "^0.1.0",
+    "node-vault": "^0.9.15"
+  }
+}
