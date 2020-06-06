@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "project-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  DATAPIO_PROJECT_IMAGE_GIT: "{{ .Values.tasks.git.image.name }}:{{ .Values.tasks.git.image.tag }}"
+  DATAPIO_PROJECT_IMAGE_PIPELINE_EXEC: "{{ .Values.tasks.pipelineExec.image.name }}:{{ .Values.tasks.pipelineExec.image.tag }}"
+  DATAPIO_PROJECT_IMAGE_YARN: "{{ .Values.tasks.yarn.image.name }}:{{ .Values.tasks.yarn.image.tag }}"
+  DATAPIO_PROJECT_IMAGE_DOCKER: "{{ .Values.sidecars.docker.image.name }}:{{ .Values.sidecars.docker.image.tag }}"
+  DATAPIO_PROJECT_VAULT_SECRET: "{{ .Values.vault_secret }}"

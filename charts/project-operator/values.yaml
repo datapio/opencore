@@ -1,0 +1,31 @@
+---
+
+replicaCount: 1
+
+operator:
+  image:
+    name: datapio/project-operator
+    tag: latest
+    pullPolicy: Always
+
+tasks:
+  git:
+    image:
+      name: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init
+      tag: v0.12.1
+  pipelineExec:
+    image:
+      name: datapio/pipeline-executor
+      tag: latest
+  yarn:
+    image:
+      name: node
+      alpine: alpine
+
+sidecars:
+  docker:
+    image:
+      name: docker
+      tag: dind
+
+vault_secret: vault-config
