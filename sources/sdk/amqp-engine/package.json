@@ -1,0 +1,19 @@
+{
+  "name": "@datapio/sdk-amqp-engine",
+  "version": "0.1.0",
+  "description": "AMQP Engine factory",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datapio/opencore.git",
+    "directory": "sources/sdk/amqp-engine"
+  },
+  "author": "Link Society <contact@link-society.com>",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.6"
+  }
+}
