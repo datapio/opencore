@@ -1,26 +1,26 @@
 exports.images = sha => [
   {
-    dockerfile: 'docker/pipelinerunserver-archiver.dockerfile',
+    dockerfile: 'containers/pipelinerunserver-archiver.dockerfile',
     snapshot_tag: `datapio/pipelinerunserver-archiver:${sha}`,
     latest_tag: 'datapio/pipelinerunserver-archiver:latest',
   },
   {
-    dockerfile: 'docker/pipelinerunserver-worker.dockerfile',
+    dockerfile: 'containers/pipelinerunserver-worker.dockerfile',
     snapshot_tag: `datapio/pipelinerunserver-worker:${sha}`,
     latest_tag: 'datapio/pipelinerunserver-worker:latest'
   },
   {
-    dockerfile: 'docker/pipelinerunserver-operator.dockerfile',
+    dockerfile: 'containers/pipelinerunserver-operator.dockerfile',
     snapshot_tag: `datapio/pipelinerunserver-operator:${sha}`,
     latest_tag: 'datapio/pipelinerunserver-operator:latest'
   },
   {
-    dockerfile: 'docker/pipeline-executor.dockerfile',
+    dockerfile: 'containers/pipeline-executor.dockerfile',
     snapshot_tag: `datapio/pipeline-executor:${sha}`,
     latest_tag: 'datapio/pipeline-executor:latest'
   },
   {
-    dockerfile: 'docker/project-operator.dockerfile',
+    dockerfile: 'containers/project-operator.dockerfile',
     snapshot_tag: `datapio/project-operator:${sha}`,
     latest_tag: 'datapio/project-operator:latest'
   }
