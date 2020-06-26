@@ -22,12 +22,12 @@
 
 - name: create RabbitMQ queues
   rabbitmq_queue:
-    login_protocol: "{{ rabbitmq_admin_secret.resources.data.protocol }}"
-    login_host: "{{ rabbitmq_admin_secret.resources.data.host }}"
+    login_protocol: "{{ rabbitmq_admin_secret.resources.data.protocol | b64decode }}"
+    login_host: "{{ rabbitmq_admin_secret.resources.data.host | b64decode }}"
     login_port: {{ rabbitmq_admin_secret.resources.data.port }}
-    login_user: "{{ rabbitmq_admin_secret.resources.data.username }}"
-    login_password: "{{ rabbitmq_admin_secret.resources.data.password }}"
-    vhost: "{{ rabbitmq_admin_secret.resources.data.vhost }}"
+    login_user: "{{ rabbitmq_admin_secret.resources.data.username | b64decode }}"
+    login_password: "{{ rabbitmq_admin_secret.resources.data.password | b64decode }}"
+    vhost: "{{ rabbitmq_admin_secret.resources.data.vhost | b64decode }}"
     name: "{{ item }}"
   with_items:
     - "{{ meta.namespace }}-{{ meta.name }}-worker"
