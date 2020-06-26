@@ -22,11 +22,11 @@ const validate_spec = spec => ({
 
 const parse_manifest = filename => {
   console.log(`level=info timestamp=${Date.now()} manifest=${filename} event=requested`)
+  const pipelines = new Set()
+  const exports = {}
 
   try {
     const code = fs.readFileSync(filename, { encoding: 'utf-8', flag: 'r' })
-    const pipelines = new Set()
-    const exports = {}
 
     const context = {
       pipeline: spec => { pipelines.add(validate_spec(spec)) },
@@ -65,7 +65,7 @@ const parse_manifest = filename => {
     return null
   }
 
-  return { pipelines, exports }
+  return { pipelines: [...pipelines], exports }
 }
 
 
@@ -98,7 +98,7 @@ const run_in_context = (exports, callback) =>
     })
 
 
-export const run_pipeline = async (workspace_pvc, exports, spec) => {
+const run_pipeline = async (workspace_pvc, exports, spec) => {
   console.log(`level=info timestamp=${Date.now()} pipeline=${spec.name} event=started`)
 
   const tools = {}
@@ -134,7 +134,7 @@ export const run_pipeline = async (workspace_pvc, exports, spec) => {
     }
   }
 
-  console.log(`level=info timestamp=${Date.now()} pipeline=${spec.name} stage=${stage.name} event=succeed`)
+  console.log(`level=info timestamp=${Date.now()} pipeline=${spec.name} event=succeeded`)
 
   return true
 }
@@ -147,9 +147,9 @@ export const execute_manifest = async (workspace_pvc, filename) => {
     throw new Error(`Failed to parse manifest: ${filename}`)
   }
 
-  await Promise.all(
-    module.pipelines.map(async spec => {
-      await run_pipeline(workspace_pvc, module.exports, spec)
-    })
+  return await Promise.all(
+    module.pipelines.map(
+      async spec => await run_pipeline(workspace_pvc, module.exports, spec)
+    )
   )
 }

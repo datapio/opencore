@@ -1,4 +1,4 @@
-import { make_kubectl } from '@datapio/sdk-k8s-operator/kube'
+import { kube } from '@datapio/sdk-k8s-operator'
 import { promises as fsPromises } from 'fs'
 
 
@@ -7,7 +7,7 @@ const get_namespace = async () => {
 
   if (!namespace) {
     try {
-      const fileHandle = fsPromises.open('/var/run/secrets/kubernetes.io/serviceaccount/namespace', 'r')
+      const fileHandle = await fsPromises.open('/var/run/secrets/kubernetes.io/serviceaccount/namespace', 'r')
       namespace = await fileHandle.readFile({ endoding: 'utf-8' })
     }
     catch (err) {
@@ -20,7 +20,7 @@ const get_namespace = async () => {
 
 export default async () => {
   const namespace = await get_namespace()
-  const kubectl = await make_kubectl()
+  const kubectl = await kube.make_kubectl()
 
   return {
     requires: [],
