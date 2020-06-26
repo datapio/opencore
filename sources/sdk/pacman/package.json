@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Pipeline As Code",
   "main": "src/index.js",
-  "repository": "https://github.com/datapio/pacman",
+  "repository": "https://github.com/datapio/opencore",
   "author": "Link Society <contact@link-society.com>",
   "license": "Apache-2.0",
   "scripts": {
