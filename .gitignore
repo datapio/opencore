@@ -1,1 +1,4 @@
 node_modules
+yarn-error.log
+sources/sdk/pacman/dist
+.nyc_output
