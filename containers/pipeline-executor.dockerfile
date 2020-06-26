@@ -58,7 +58,7 @@ FROM node:alpine AS test
 
 COPY --from=context /workspace /workspace
 COPY --from=dev-dependencies /workspace/node_modules /workspace/node_modules
-COPY --from=sources /workspace/src /workspace/src
+COPY --from=builder /workspace/dist /workspace/dist
 COPY --from=tests /workspace/tests /workspace/tests
 WORKDIR /workspace
 

@@ -7,13 +7,19 @@
   "author": "Link Society <contact@link-society.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
-    "start": "node dist/app.js"
+    "build": "rollup -c rollup.app.js",
+    "start": "node -r source-map-support/register dist/app.js",
+    "test": "rollup -c rollup.tests.js && nyc mocha -r source-map-support/register -r tests/mocks.js dist/tests.js"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@rollup/plugin-babel": "^5.0.0",
-    "rollup": "^2.9.1"
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "mock-require": "^3.0.3",
+    "nyc": "^15.1.0",
+    "rollup": "^2.9.1",
+    "sinon": "^9.0.2"
   },
   "dependencies": {
     "git-repo-info": "^2.1.1",

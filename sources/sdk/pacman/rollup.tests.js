@@ -2,10 +2,11 @@ import babel from '@rollup/plugin-babel'
 
 
 export default {
-  input: 'src/index.js',
+  input: `tests/index.js`,
   output: {
-    file: 'dist/app.js',
-    format: 'cjs'
+    file: 'dist/tests.js',
+    format: 'cjs',
+    sourcemap: true
   },
   plugins: [babel()]
 }
