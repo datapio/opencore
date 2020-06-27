@@ -3,7 +3,7 @@ FROM scratch AS context
 
 ADD sources/operators/pipelinerunserver/apps/worker/package.json \
     sources/operators/pipelinerunserver/apps/worker/yarn.lock \
-    sources/operators/pipelinerunserver/apps/worker/.eslintrc
+    sources/operators/pipelinerunserver/apps/worker/.eslintrc \
     /workspace/
 
 # Source code

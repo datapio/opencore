@@ -4,7 +4,7 @@ COPY sources/operators/pipelinerunserver/requirements.yml ${HOME}/requirements.y
 COPY sources/operators/pipelinerunserver/python-deps.txt ${HOME}/python-deps.txt
 
 RUN ansible-galaxy collection install -r ${HOME}/requirements.yml && \
-    pip3 install -r ${HOME}/python-deps.txt && \
+    pip3 install --user -r ${HOME}/python-deps.txt && \
     chmod -R ug+rwx ${HOME}/.ansible
 
 COPY sources/operators/pipelinerunserver/watches.yaml ${HOME}/watches.yaml
