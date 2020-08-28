@@ -20,17 +20,17 @@ jobs:
       - name: install@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: --cwd sources/sdk/k8s-operator install
 
       - name: lint@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run lint
+          cmd: --cwd sources/sdk/k8s-operator run lint
 
       - name: test@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run test
+          cmd: --cwd sources/sdk/k8s-operator run test
 
       - name: publish@ci
         uses: peter-evans/repository-dispatch@v1
@@ -64,17 +64,17 @@ jobs:
       - name: install@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: --cwd sources/sdk/amqp-engine install
 
       - name: lint@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run lint
+          cmd: --cwd sources/sdk/amqp-engine run lint
 
       - name: test@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run test
+          cmd: --cwd sources/sdk/amqp-engine run test
 
       - name: publish@ci
         uses: peter-evans/repository-dispatch@v1
@@ -108,17 +108,17 @@ jobs:
       - name: install@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: --cwd sources/sdk/pacman install
 
       - name: lint@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run lint
+          cmd: --cwd sources/sdk/pacman run lint
 
       - name: test@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run test
+          cmd: --cwd sources/sdk/pacman run test
 
       - name: publish@ci
         uses: peter-evans/repository-dispatch@v1
@@ -152,22 +152,22 @@ jobs:
       - name: install@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver install
 
       - name: lint@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run lint
+          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run lint
 
       - name: test@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run test
+          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run test
 
       - name: build@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run build
+          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run build
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -193,22 +193,22 @@ jobs:
       - name: install@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: --cwd sources/operators/pipelinerunserver/apps/worker install
 
       - name: lint@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run lint
+          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run lint
 
       - name: test@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run test
+          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run test
 
       - name: build@yarn
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run build
+          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run build
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
