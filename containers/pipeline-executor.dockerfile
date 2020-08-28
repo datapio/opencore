@@ -43,22 +43,12 @@ WORKDIR /workspace
 
 RUN yarn run lint
 
-# Build application
-FROM node:alpine AS builder
-
-COPY --from=context /workspace /workspace
-COPY --from=dev-dependencies /workspace/node_modules /workspace/node_modules
-COPY --from=sources /workspace/src /workspace/src
-WORKDIR /workspace
-
-RUN yarn run build
-
 # Run test suite
 FROM node:alpine AS test
 
 COPY --from=context /workspace /workspace
 COPY --from=dev-dependencies /workspace/node_modules /workspace/node_modules
-COPY --from=builder /workspace/dist /workspace/dist
+COPY --from=sources /workspace/src /workspace/dist
 COPY --from=tests /workspace/tests /workspace/tests
 WORKDIR /workspace
 
@@ -69,7 +59,7 @@ FROM node:alpine AS runner
 
 COPY --from=context /workspace/package.json /workspace/package.json
 COPY --from=dependencies /workspace/node_modules /workspace/node_modules
-COPY --from=builder /workspace/dist /workspace/dist
+COPY --from=sources /workspace/src /workspace/src
 WORKDIR /workspace
 
 ENV PACMAN_MANIFEST_PATH ".datapio/index.js"
