@@ -30,6 +30,8 @@ jobs:
 
       - name: install@yarn
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -40,6 +42,8 @@ jobs:
       - name: publish@yarn
         if: github.ref == 'master'
         run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -75,6 +79,8 @@ jobs:
 
       - name: install@yarn
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -85,6 +91,8 @@ jobs:
       - name: publish@yarn
         if: github.ref == 'master'
         run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -120,6 +128,8 @@ jobs:
 
       - name: install@yarn
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -130,6 +140,8 @@ jobs:
       - name: publish@yarn
         if: github.ref == 'master'
         run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -165,6 +177,8 @@ jobs:
 
       - name: install@yarn
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -209,6 +223,8 @@ jobs:
 
       - name: install@yarn
         run: yarn install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
