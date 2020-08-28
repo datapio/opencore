@@ -9,10 +9,5 @@
   "dependencies": {
     "@datapio/sdk-k8s-operator": "^0.1.0",
     "@datapio/sdk-amqp-engine": "^0.1.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@rollup/plugin-babel": "^5.0.2",
-    "rollup": "^2.10.5"
   }
 }
