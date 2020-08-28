@@ -1,0 +1,222 @@
+---
+name: Run test suites
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  sdk-k8s-operator:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources/sdk/k8s-operator
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: install@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+
+      - name: lint@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run lint
+
+      - name: test@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test
+
+      - name: publish@ci
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: datapio/opencore
+          event-type: publish-npm
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/k8s-operator"}'
+
+      - name: notify@slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          username: CIBot
+          fields: repo,message,commit,author,ref,took,job
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+  sdk-amqp-engine:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources/sdk/amqp-engine
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: install@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+
+      - name: lint@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run lint
+
+      - name: test@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test
+
+      - name: publish@ci
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: datapio/opencore
+          event-type: publish-npm
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/amqp-engine"}'
+
+      - name: notify@slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          username: CIBot
+          fields: repo,message,commit,author,ref,took,job
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+  sdk-pacman:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources/sdk/pacman
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: install@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+
+      - name: lint@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run lint
+
+      - name: test@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test
+
+      - name: publish@ci
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: datapio/opencore
+          event-type: publish-npm
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/pacman"}'
+
+      - name: notify@slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          username: CIBot
+          fields: repo,message,commit,author,ref,took,job
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+  pipelinerunserver-archiver:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources/operators/pipelinerunserver/apps/archiver
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: install@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+
+      - name: lint@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run lint
+
+      - name: test@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test
+
+      - name: build@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run build
+
+      - name: notify@slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          username: CIBot
+          fields: repo,message,commit,author,ref,took,job
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+  pipelinerunserver-worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources/operators/pipelinerunserver/apps/worker
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@master
+
+      - name: install@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+
+      - name: lint@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run lint
+
+      - name: test@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test
+
+      - name: build@yarn
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run build
+
+      - name: notify@slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          username: CIBot
+          fields: repo,message,commit,author,ref,took,job
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()

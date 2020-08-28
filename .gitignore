@@ -1,4 +1,7 @@
 node_modules
 yarn-error.log
+sources/sdk/k8s-operator/coverage
+sources/sdk/amqp-engine/coverage
 sources/sdk/pacman/dist
+sources/sdk/pacman/coverage
 .nyc_output

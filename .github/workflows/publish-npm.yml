@@ -1,0 +1,32 @@
+---
+name: Publish NPM package
+on:
+  repository_dispatch:
+    types:
+      - publish-npm
+
+jobs:
+  publish:
+    if: github.event.client_payload.ref == 'master'
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.event.client_payload.path }}
+
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.client_payload.ref }}
+
+      - name: setup@node
+        uses: actions/setup-node@master
+        with:
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: publish@npm
+        run: npm publish
