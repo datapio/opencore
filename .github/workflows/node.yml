@@ -180,15 +180,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
-      - name: lint@yarn
-        run: yarn run lint
-
-      - name: test@yarn
-        run: yarn run test
-
-      - name: build@yarn
-        run: yarn run build
-
       - name: notify@slack
         uses: 8398a7/action-slack@v3
         with:
@@ -225,15 +216,6 @@ jobs:
         run: yarn install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: lint@yarn
-        run: yarn run lint
-
-      - name: test@yarn
-        run: yarn run test
-
-      - name: build@yarn
-        run: yarn run build
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
