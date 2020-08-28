@@ -1,5 +1,5 @@
 ---
-name: Run test suites
+name: Test build and publish Node packages
 
 on:
   push:
@@ -17,28 +17,29 @@ jobs:
       - name: checkout@scm
         uses: actions/checkout@master
 
-      - name: install@yarn
-        uses: borales/actions-yarn@v2.0.0
+      - name: setup@node
+        uses: actions/setup-node@master
         with:
-          cmd: --cwd sources/sdk/k8s-operator install
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: setup@yarn
+        run: npm install -g yarn
+
+      - name: install@yarn
+        run: yarn install
 
       - name: lint@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/k8s-operator run lint
+        run: yarn run lint
 
       - name: test@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/k8s-operator run test
+        run: yarn run test
 
-      - name: publish@ci
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: datapio/opencore
-          event-type: publish-npm
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/k8s-operator"}'
+      - name: publish@yarn
+        if: github.ref == 'master'
+        run: yarn publish
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -61,28 +62,29 @@ jobs:
       - name: checkout@scm
         uses: actions/checkout@master
 
-      - name: install@yarn
-        uses: borales/actions-yarn@v2.0.0
+      - name: setup@node
+        uses: actions/setup-node@master
         with:
-          cmd: --cwd sources/sdk/amqp-engine install
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: setup@yarn
+        run: npm install -g yarn
+
+      - name: install@yarn
+        run: yarn install
 
       - name: lint@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/amqp-engine run lint
+        run: yarn run lint
 
       - name: test@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/amqp-engine run test
+        run: yarn run test
 
-      - name: publish@ci
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: datapio/opencore
-          event-type: publish-npm
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/amqp-engine"}'
+      - name: publish@yarn
+        if: github.ref == 'master'
+        run: yarn publish
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -105,28 +107,29 @@ jobs:
       - name: checkout@scm
         uses: actions/checkout@master
 
-      - name: install@yarn
-        uses: borales/actions-yarn@v2.0.0
+      - name: setup@node
+        uses: actions/setup-node@master
         with:
-          cmd: --cwd sources/sdk/pacman install
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: setup@yarn
+        run: npm install -g yarn
+
+      - name: install@yarn
+        run: yarn install
 
       - name: lint@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/pacman run lint
+        run: yarn run lint
 
       - name: test@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/sdk/pacman run test
+        run: yarn run test
 
-      - name: publish@ci
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: datapio/opencore
-          event-type: publish-npm
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "path": "sources/sdk/pacman"}'
+      - name: publish@yarn
+        if: github.ref == 'master'
+        run: yarn publish
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -149,25 +152,28 @@ jobs:
       - name: checkout@scm
         uses: actions/checkout@master
 
-      - name: install@yarn
-        uses: borales/actions-yarn@v2.0.0
+      - name: setup@node
+        uses: actions/setup-node@master
         with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver install
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: setup@yarn
+        run: npm install -g yarn
+
+      - name: install@yarn
+        run: yarn install
 
       - name: lint@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run lint
+        run: yarn run lint
 
       - name: test@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run test
+        run: yarn run test
 
       - name: build@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/archiver run build
+        run: yarn run build
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
@@ -190,25 +196,28 @@ jobs:
       - name: checkout@scm
         uses: actions/checkout@master
 
-      - name: install@yarn
-        uses: borales/actions-yarn@v2.0.0
+      - name: setup@node
+        uses: actions/setup-node@master
         with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/worker install
+          node-version: '12.x'
+          always-auth: true
+          registry-url: https://npm.pkg.github.com
+          scope: '@datapio'
+
+      - name: setup@yarn
+        run: npm install -g yarn
+
+      - name: install@yarn
+        run: yarn install
 
       - name: lint@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run lint
+        run: yarn run lint
 
       - name: test@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run test
+        run: yarn run test
 
       - name: build@yarn
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: --cwd sources/operators/pipelinerunserver/apps/worker run build
+        run: yarn run build
 
       - name: notify@slack
         uses: 8398a7/action-slack@v3
