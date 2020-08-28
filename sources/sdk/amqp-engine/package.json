@@ -1,6 +1,6 @@
 {
   "name": "@datapio/sdk-amqp-engine",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AMQP Engine factory",
   "main": "src/index.js",
   "repository": {
