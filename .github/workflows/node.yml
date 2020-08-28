@@ -40,7 +40,7 @@ jobs:
         run: yarn run test
 
       - name: publish@yarn
-        if: github.ref == 'master'
+        if: github.ref == 'refs/heads/master'
         run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
         run: yarn run test
 
       - name: publish@yarn
-        if: github.ref == 'master'
+        if: github.ref == 'refs/heads/master'
         run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
@@ -138,7 +138,7 @@ jobs:
         run: yarn run test
 
       - name: publish@yarn
-        if: github.ref == 'master'
+        if: github.ref == 'refs/heads/master'
         run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
