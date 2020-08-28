@@ -29,7 +29,7 @@ function reset_spies() {
   spies.dockerode.resetHistory()
 }
 
-export default {
+module.exports = {
   before: function() {
     stub_console_log.apply(this)
   },
