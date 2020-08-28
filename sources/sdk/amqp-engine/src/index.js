@@ -1,6 +1,5 @@
 const amqp = require('amqplib')
 
-
 const make_publisher = (channel, { queue }) => ({
   send: async message => {
     await channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)))
@@ -27,7 +26,7 @@ const make_consumer = async (channel, publishers, { queue, handler }) => {
   }
 }
 
-const make_engine = async ({ url, publishers, consumers }) => {
+const make_engine = async ({ url, publishers = {}, consumers = {} }) => {
   const conn = await amqp.connect(url)
   const channel = await conn.createChannel()
 
@@ -57,7 +56,9 @@ const make_engine = async ({ url, publishers, consumers }) => {
     publishers: publisherObjects,
     cancel: async () => {
       await Promise.all(
-        Object.values(consumerObjects).map(async consumer => await consumer.cancel())
+        Object.values(consumerObjects).map(
+          async consumer => await consumer.cancel()
+        )
       )
       await channel.close()
     }

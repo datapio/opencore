@@ -8,10 +8,22 @@
     "url": "https://github.com/datapio/opencore.git",
     "directory": "sources/sdk/amqp-engine"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "author": "Link Society <contact@link-society.com>",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "registry":"https://npm.pkg.github.com/"
+  "scripts": {
+    "lint": "eslint src/",
+    "test": "nyc -n src/ -r html -r text mocha -r tests/mocks.js tests/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "mock-require": "^3.0.3",
+    "nyc": "^15.1.0",
+    "sinon": "^9.0.2"
   },
   "dependencies": {
     "amqplib": "^0.5.6"
