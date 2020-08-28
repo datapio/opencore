@@ -1,9 +1,9 @@
 const kubernetes = require('kubernetes-client')
 
-const dummy = async () => true
+const dummy = async () => ({ condition: true, res: null })
 
 const parse_api_version = api_version =>
-  (/^((?<apiGroup>[a-zA-Z][a-zA-Z0-9\-_\.]*)\/)?(?<resourceVersion>.*)$/.exec(api_version) || {}).groups
+  ((/^(?:(?<apiGroup>[a-zA-Z][a-zA-Z0-9\-_.]*)\/)?(?<resourceVersion>.*)$/u).exec(api_version) || {}).groups
 
 const get_endpoint = (client, { apiGroup, resourceVersion, kind, namespace, name }, watch = false) => {
   let ep = null
@@ -39,7 +39,7 @@ const unwrap_resp = (resp, many = false) => {
     )
   }
   else {
-    return (many ? resp.body.items : resp.body)
+    return many ? resp.body.items : resp.body
   }
 }
 
@@ -48,49 +48,52 @@ const make_kubectl = async () => {
   await client.loadSpec()
 
   const kubectl = {
+    client,
     create: async (...resources) => {
       return await Promise.all(resources
         .map(resource => ({
           kind: resource.kind,
           namespace: resource.metadata.namespace,
           body: resource,
-          ...parse_api_version(resource.apiVersion),
+          ...parse_api_version(resource.apiVersion)
         }))
         .map(({ apiGroup, resourceVersion, kind, namespace, body }) => ({
-          endpoint: get_endpoint({ apiGroup, resourceVersion, kind, namespace }),
+          endpoint: get_endpoint(client, { apiGroup, resourceVersion, kind, namespace }),
           body
         }))
         .map(async ({ endpoint, body }) => {
-          await endpoint.post({ body })
+          return await endpoint.post({ body })
         })
         .map(async resp => unwrap_resp(await resp))
       )
     },
-    list: async ({ apiVersion, kind, namespace, labels = [] }) => {
+    list: async ({ apiVersion, kind, namespace, labels }) => {
       const { apiGroup, resourceVersion } = parse_api_version(apiVersion)
-      const endpoint = get_endpoint({ apiGroup, resourceVersion, kind, namespace })
-      return unwrap_resp(await endpoint.get(), true)
-
+      const endpoint = get_endpoint(client, { apiGroup, resourceVersion, kind, namespace })
+      return unwrap_resp(
+        await endpoint.get({ qs: `l=${encodeURIComponent(labels)}` }),
+        true
+      )
     },
     get: async ({ apiVersion, kind, namespace, name }) => {
       const { apiGroup, resourceVersion } = parse_api_version(apiVersion)
-      const endpoint = get_endpoint({ apiGroup, resourceVersion, kind, namespace, name })
+      const endpoint = get_endpoint(client, { apiGroup, resourceVersion, kind, namespace, name })
       return unwrap_resp(await endpoint.get())
 
     },
     watch: async ({ apiVersion, kind, namespace, name }) => {
       const { apiGroup, resourceVersion } = parse_api_version(apiVersion)
-      const endpoint = get_endpoint({ apiGroup, resourceVersion, kind, namespace, name }, true)
+      const endpoint = get_endpoint(client, { apiGroup, resourceVersion, kind, namespace, name }, true)
       return endpoint.getObjectStream()
     },
     wait_condition: async ({ apiVersion, kind, namespace, name, callback = dummy }) => {
       const rsrc_stream = await kubectl.watch({ apiVersion, kind, namespace, name })
-      const result = await Promise((resolve, reject) => {
+      const result = await new Promise((resolve, reject) => {
         rsrc_stream.on('data', async ({ object }) => {
           try {
-            const { condition, result } = await callback(object)
+            const { condition, res } = await callback(object)
             if (condition) {
-              resolve(result)
+              resolve(res)
             }
           }
           catch (err) {
@@ -104,9 +107,9 @@ const make_kubectl = async () => {
     },
     patch: async ({ apiVersion, kind, namespace, name, patch }) => {
       const { apiGroup, resourceVersion } = parse_api_version(apiVersion)
-      const endpoint = get_endpoint({ apiGroup, resourceVersion, kind, namespace, name })
+      const endpoint = get_endpoint(client, { apiGroup, resourceVersion, kind, namespace, name })
       return unwrap_resp(await endpoint.patch({
-        body,
+        body: patch,
         headers: {
           content_type: 'application/merge-patch+json'
         }
@@ -114,7 +117,7 @@ const make_kubectl = async () => {
     },
     delete: async ({ apiVersion, kind, namespace, name }) => {
       const { apiGroup, resourceVersion } = parse_api_version(apiVersion)
-      const endpoint = get_endpoint({ apiGroup, resourceVersion, kind, namespace, name })
+      const endpoint = get_endpoint(client, { apiGroup, resourceVersion, kind, namespace, name })
       return unwrap_resp(await endpoint.delete())
     }
   }
