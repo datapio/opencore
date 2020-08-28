@@ -3,22 +3,27 @@
   "version": "0.1.0",
   "description": "Pipeline As Code",
   "main": "src/index.js",
-  "repository": "https://github.com/datapio/opencore",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datapio/opencore.git",
+    "directory": "sources/sdk/pacman"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "author": "Link Society <contact@link-society.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rollup -c rollup.app.js",
-    "start": "node -r source-map-support/register dist/app.js",
-    "test": "rollup -c rollup.tests.js && nyc mocha -r source-map-support/register -r tests/mocks.js dist/tests.js"
+    "lint": "eslint src/",
+    "test": "nyc -r html -r text mocha -r tests/mocks.js tests/index.js",
+    "start": "node src/index.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@rollup/plugin-babel": "^5.0.0",
     "chai": "^4.2.0",
+    "eslint": "^7.3.1",
     "mocha": "^8.0.1",
     "mock-require": "^3.0.3",
     "nyc": "^15.1.0",
-    "rollup": "^2.9.1",
     "sinon": "^9.0.2"
   },
   "dependencies": {

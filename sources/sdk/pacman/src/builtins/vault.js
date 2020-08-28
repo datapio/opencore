@@ -1,8 +1,8 @@
-import { promises as fsPromises } from 'fs'
-import make_vault_client from 'node-vault'
+const { promises: fsPromises } = require('fs')
+const make_vault_client = require('node-vault')
 
 
-export default async () => {
+module.exports = async () => {
   const endpoint = process.env.VAULT_ADDR || 'http://127.0.0.1:8200'
   const role = process.env.VAULT_ROLE || 'default'
   const mount_point = process.env.VAULT_K8S_MOUNT_POINT || ''

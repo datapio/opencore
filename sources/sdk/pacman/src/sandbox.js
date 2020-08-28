@@ -1,12 +1,12 @@
-import fs from 'fs'
-import vm from 'vm'
-import builtins from './builtins/index.js'
+const fs = require('fs')
+const vm = require('vm')
+const builtins = require('./builtins/index.js')
 
 
 const no_interface = () => ({})
 const no_environment = async () => ({})
 const always = async () => true
-const nothing = async () => {}
+const nothing = async () => null
 
 const validate_spec = spec => ({
   name: spec.name || 'no-name',
@@ -26,15 +26,18 @@ const parse_manifest = filename => {
   const exports = {}
 
   try {
+    // eslint-disable-next-line no-sync
     const code = fs.readFileSync(filename, { encoding: 'utf-8', flag: 'r' })
 
     const context = {
-      pipeline: spec => { pipelines.add(validate_spec(spec)) },
-      include: filename => {
-        const mod = parse_manifest(filename)
+      pipeline: spec => {
+        pipelines.add(validate_spec(spec))
+      },
+      include: inc_filename => {
+        const mod = parse_manifest(inc_filename)
 
         if (mod === null) {
-          throw new Error(`Failed to include manifest: ${filename}`)
+          throw new Error(`Failed to include manifest: ${inc_filename}`)
         }
 
         mod.pipelines.forEach(spec => pipelines.add(spec))
@@ -48,7 +51,7 @@ const parse_manifest = filename => {
       sequentialMap: async (arr, callback) => {
         const result = []
 
-        for (let item of arr) {
+        for (const item of arr) {
           result.push(await callback(item))
         }
 
@@ -78,7 +81,7 @@ const import_tool = async (cache, name) => {
     const deps = tool.requires || []
     const tools = {}
 
-    for (let dep of deps) {
+    for (const dep of deps) {
       tools[dep] = await import_tool(cache, dep)
     }
 
@@ -91,7 +94,7 @@ const import_tool = async (cache, name) => {
 
 const run_in_context = (exports, callback) =>
   async (...args) =>
-    await vm.runInNewContext("self(...arguments)", {
+    await vm.runInNewContext('self(...arguments)', {
       self: callback,
       arguments: args,
       ...exports
@@ -103,7 +106,7 @@ const run_pipeline = async (workspace_pvc, exports, spec) => {
 
   const tools = {}
 
-  for (let name of spec.tools) {
+  for (const name of spec.tools) {
     await import_tool(tools, name)
     console.log(`level=info timestamp=${Date.now()} pipeline=${spec.name} tool=${name} event=imported`)
   }
@@ -112,7 +115,7 @@ const run_pipeline = async (workspace_pvc, exports, spec) => {
   const env = await get_env(workspace_pvc, tools)
   console.log(`level=info timestamp=${Date.now()} pipeline=${spec.name} event=environment-loaded`)
 
-  for (let stage of spec.stages) {
+  for (const stage of spec.stages) {
     const when = run_in_context(exports, stage.when)
 
     if (await when(env, tools)) {
@@ -140,7 +143,7 @@ const run_pipeline = async (workspace_pvc, exports, spec) => {
 }
 
 
-export const execute_manifest = async (workspace_pvc, filename) => {
+const execute_manifest = async (workspace_pvc, filename) => {
   const module = parse_manifest(filename)
 
   if (module === null) {
@@ -153,3 +156,5 @@ export const execute_manifest = async (workspace_pvc, filename) => {
     )
   )
 }
+
+module.exports = { execute_manifest }

@@ -1,4 +1,4 @@
-export default async () => ({
+module.exports = async () => ({
   requires: ['kubectl'],
   interface: ({ kubectl }) => ({
     tasks: {
@@ -20,7 +20,7 @@ export default async () => ({
           namespace: kubectl.namespace
         })
       },
-      get: async (name) => {
+      get: async name => {
         return await kubectl.api.get({
           apiVersion: 'tekton.dev/v1alpha1',
           kind: 'Task',
@@ -52,7 +52,7 @@ export default async () => ({
             kind: 'TaskRun',
             metadata: {
               generateName: `run-${name}-`,
-              namespace: kubectl.namespace,
+              namespace: kubectl.namespace
             },
             spec: {
               workspaces,
@@ -72,12 +72,12 @@ export default async () => ({
               name: scope.trun.metadata.name,
               patch: {
                 spec: {
-                  status: "TaskRunCancelled"
+                  status: 'TaskRunCancelled'
                 }
               }
             })
           },
-          watch: async() => {
+          watch: async () => {
             scope.trun = await kubectl.api.wait_condition({
               apiVersion: scope.trun.apiVersion,
               kind: scope.trun.kind,
@@ -115,7 +115,7 @@ export default async () => ({
           namespace: kubectl.namespace
         })
       },
-      get: async (name) => {
+      get: async name => {
         return await kubectl.api.get({
           apiVersion: 'tekton.dev/v1alpha1',
           kind: 'Pipeline',
@@ -147,7 +147,7 @@ export default async () => ({
             kind: 'PipelineRun',
             metadata: {
               generateName: `run-${name}-`,
-              namespace: kubectl.namespace,
+              namespace: kubectl.namespace
             },
             spec: {
               workspaces,
@@ -167,12 +167,12 @@ export default async () => ({
               name: scope.prun.metadata.name,
               patch: {
                 spec: {
-                  status: "PipelineRunCancelled"
+                  status: 'PipelineRunCancelled'
                 }
               }
             })
           },
-          watch: async() => {
+          watch: async () => {
             scope.prun = await kubectl.api.wait_condition({
               apiVersion: scope.prun.apiVersion,
               kind: scope.prun.kind,

@@ -1,4 +1,4 @@
-import { execute_manifest } from './sandbox.js'
+const { execute_manifest } = require('./sandbox.js')
 
 
 execute_manifest(

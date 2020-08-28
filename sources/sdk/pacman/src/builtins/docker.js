@@ -1,24 +1,25 @@
-import { promises as fsPromises } from 'fs'
-import Docker from 'dockerode'
-import ignore from 'ignore'
-import tar from 'tar-fs'
+const { promises: fsPromises } = require('fs')
+const Docker = require('dockerode')
+const ignore = require('ignore')
+const tar = require('tar-fs')
 
 const build_context = async path => {
-  let ignore_body
+  let ignore_body = ''
 
   try {
     const fileHandle = await fsPromises.open(`${path}/.dockerignore`, 'r')
     ignore_body = await fileHandle.readFile({ endoding: 'utf-8' })
   }
   catch (err) {
-    ignore_body = ''
+    console.error('No .dockerignore found in context')
+    console.debug(err)
   }
 
   const patterns = ignore_body
     .split('\n')
-    .map(p => p.split('#')[0])
-    .map(p => p.trim())
-    .filter(p => !!p)
+    .map(pattern => pattern.split('#')[0])
+    .map(pattern => pattern.trim())
+    .filter(pattern => Boolean(pattern))
 
   const ig = ignore().add(patterns)
 
@@ -27,7 +28,7 @@ const build_context = async path => {
   })
 }
 
-export default async () => {
+module.exports = async () => {
   const client = new Docker({ socketPath: '/var/run/docker.sock' })
 
   return {
@@ -38,12 +39,12 @@ export default async () => {
         return await client.buildImage(
           {
             context,
-            src: await build_context(context),
+            src: await build_context(context)
           },
           {
             dockerfile,
             buildargs,
-            t: tags
+            t: tags // eslint-disable-line id-length
           }
         )
       },

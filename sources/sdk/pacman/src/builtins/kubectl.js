@@ -1,5 +1,5 @@
-import { kube } from '@datapio/sdk-k8s-operator'
-import { promises as fsPromises } from 'fs'
+const { kube } = require('@datapio/sdk-k8s-operator')
+const { promises: fsPromises } = require('fs')
 
 
 const get_namespace = async () => {
@@ -18,7 +18,7 @@ const get_namespace = async () => {
   return namespace
 }
 
-export default async () => {
+module.exports = async () => {
   const namespace = await get_namespace()
   const kubectl = await kube.make_kubectl()
 

@@ -1,4 +1,4 @@
-import sinon from 'sinon'
+const sinon = require('sinon')
 const spies = require(`${process.cwd()}/tests/mocks.js`)
 
 function stub_console_log() {

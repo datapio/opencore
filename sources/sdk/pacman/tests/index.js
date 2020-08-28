@@ -1,8 +1,8 @@
-import stubs from './stubs.js'
+const stubs = require('./stubs.js')
 
-import { execute_manifest } from '../src/sandbox.js'
-import { expect } from 'chai'
-import sinon from 'sinon'
+const { execute_manifest } = require('../src/sandbox.js')
+const { expect } = require('chai')
+const sinon = require('sinon')
 
 describe('sandbox', () => {
   beforeEach(stubs.before)

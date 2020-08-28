@@ -11,7 +11,7 @@ spies.dockerode.prototype.getImage = sinon.stub().callsFake(async () => spies.do
 spies.docker_image.tag = sinon.stub().callsFake(async () => {})
 spies.docker_image.push = sinon.stub().callsFake(async () => {})
 
-for (let key of Object.keys(spies)) {
+for (const key of Object.keys(spies)) {
   mock(key, spies[key])
 }
 

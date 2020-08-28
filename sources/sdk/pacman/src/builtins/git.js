@@ -1,6 +1,6 @@
-import get_repo_info from 'git-repo-info'
+const get_repo_info = require('git-repo-info')
 
-export default async () => {
+module.exports = async () => {
   const path = process.cwd()
   const repo = get_repo_info(`${path}/.git`)
 
