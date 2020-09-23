@@ -27,6 +27,7 @@ class Operator {
   }
 
   async initialize() {}
+
   async terminate() {}
 }
 

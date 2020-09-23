@@ -16,7 +16,7 @@ class APIService {
       onSignal: this.shutdownRequested.bind(this),
       onShutdown: this.shutdownDone.bind(this),
       onSendFailureDuringShutdown: this.shutdownFailed.bind(this),
-      logger: this.logger.bind(this),
+      logger: this.logger.bind(this)
     }))
   }
 

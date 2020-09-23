@@ -14,9 +14,9 @@ class ResourceWatcher {
   async watch() {
     const stream = await this.kubectl.watch(this.meta)
     const handlers = {
-        added: this.added.bind(this),
-        modified: this.modified.bind(this),
-        removed: this.removed.bind(this)
+      added: this.added.bind(this),
+      modified: this.modified.bind(this),
+      removed: this.removed.bind(this)
     }
 
     stream.on('data', async ({ type, object }) => {
@@ -27,9 +27,11 @@ class ResourceWatcher {
     return new CancelScope(() => stream.end())
   }
 
-  async added(object) {}
-  async modified(object) {}
-  async removed(object) {}
+  async added(object) {} // eslint-disable-line no-unused-vars
+
+  async modified(object) {} // eslint-disable-line no-unused-vars
+
+  async removed(object) {} // eslint-disable-line no-unused-vars
 }
 
 module.exports = ResourceWatcher

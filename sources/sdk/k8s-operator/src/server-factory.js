@@ -1,4 +1,4 @@
-const mergeOptions = require('merge-options').bind({ignoreUndefined: true});
+const mergeOptions = require('merge-options').bind({ ignoreUndefined: true })
 const https = require('https')
 const http = require('http')
 const fs = require('fs')

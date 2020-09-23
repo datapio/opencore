@@ -5,9 +5,9 @@ const APIService = require('./api-service')
 const Operator = require('./operator')
 
 module.exports = {
-    ResourceWatcher,
-    KubeInterface,
-    ServerFactory,
-    APIService,
-    Operator
+  ResourceWatcher,
+  KubeInterface,
+  ServerFactory,
+  APIService,
+  Operator
 }
