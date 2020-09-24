@@ -1,6 +1,6 @@
 {
   "name": "@datapio/sdk-amqp-engine",
-  "version": "0.1.1",
+  "version": "1.0.0-rc1",
   "description": "AMQP Engine factory",
   "main": "src/index.js",
   "repository": {
@@ -15,17 +15,22 @@
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint src/",
-    "test": "nyc -n src/ -r html -r text mocha -r tests/mocks.js tests/index.js"
+    "test": "c8 -n src/ -r html -r text mocha -r tests/mocks/index.js tests/"
   },
   "devDependencies": {
-    "eslint": "^6.5.1",
+    "@babel/core": "^7.11.6",
+    "@babel/eslint-parser": "^7.11.5",
+    "@babel/eslint-plugin": "^7.11.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "c8": "^7.1.2",
     "chai": "^4.2.0",
+    "eslint": "^6.5.1",
     "mocha": "^8.0.1",
     "mock-require": "^3.0.3",
-    "nyc": "^15.1.0",
     "sinon": "^9.0.2"
   },
   "dependencies": {
-    "amqplib": "^0.5.6"
+    "amqplib": "^0.5.6",
+    "merge-options": "^3.0.3"
   }
 }

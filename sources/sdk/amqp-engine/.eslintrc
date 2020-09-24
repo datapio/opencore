@@ -1,4 +1,7 @@
 {
+    "plugins": [
+        "@babel"
+    ],
     "env": {
         "commonjs": true,
         "es6": true,
@@ -10,9 +13,15 @@
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
+        "requireConfigFile": false,
         "ecmaVersion": 2018,
-        "sourceType": "module"
+        "babelOptions": {
+            "plugins": [
+                "@babel/plugin-proposal-class-properties"
+            ]
+        }
     },
+    "parser": "@babel/eslint-parser",
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",
@@ -34,7 +43,7 @@
         "callback-return": "off",
         "camelcase": "off",
         "capitalized-comments": "off",
-        "class-methods-use-this": "error",
+        "class-methods-use-this": "off",
         "comma-dangle": "error",
         "comma-spacing": [
             "error",
@@ -108,7 +117,7 @@
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "error",
-        "no-empty-function": "error",
+        "no-empty-function": "off",
         "no-eq-null": "error",
         "no-eval": "error",
         "no-extend-native": "error",
@@ -164,11 +173,11 @@
         "no-sequences": "error",
         "no-shadow": "error",
         "no-spaced-func": "error",
-        "no-sync": "error",
+        "no-sync": "warn",
         "no-tabs": "error",
         "no-template-curly-in-string": "off",
         "no-ternary": "off",
-        "no-throw-literal": "error",
+        "no-throw-literal": "warn",
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
         "no-undefined": "error",
@@ -219,7 +228,7 @@
             "single"
         ],
         "radix": "error",
-        "require-await": "warn",
+        "require-await": "off",
         "require-jsdoc": "error",
         "require-unicode-regexp": "error",
         "rest-spread-spacing": "error",
@@ -230,7 +239,7 @@
         "sort-keys": "off",
         "sort-vars": "off",
         "space-before-blocks": "error",
-        "space-before-function-paren": "error",
+        "space-before-function-paren": "off",
         "space-in-parens": [
             "error",
             "never"
