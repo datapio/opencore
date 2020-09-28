@@ -25,7 +25,7 @@ class APIService {
     await this.operator.initialize()
 
     this.cancelScopes = await Promise.all(
-      this.operator.watchers.map(watcher => watcher.watch())
+      this.operator.watchers.map(watcher => watcher.watch(this.operator))
     )
   }
 
