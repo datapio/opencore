@@ -11,7 +11,7 @@ class Operator {
     api = defaultHttpApi,
     watchers = [],
     serverOptions = {},
-    kubeOptions = {}
+    kubeOptions = {},
     ...options
   }) {
     this.kubectl = new KubeInterface(kubeOptions)
