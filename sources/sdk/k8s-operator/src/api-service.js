@@ -8,8 +8,8 @@ class APIService {
 
     this.servers.map(server => createTerminus(server, {
       healthChecks: {
-        '/health': this.operator.healthcheck,
-        '/metrics': this.operator.metrics,
+        '/health': this.operator.healthCheck.bind(this.operator),
+        '/metrics': this.operator.metrics.bind(this.operator),
         verbatim: true
       },
       beforeShutdown: this.beforeShutdown.bind(this),
