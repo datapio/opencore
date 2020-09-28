@@ -1,6 +1,6 @@
 {
   "name": "@datapio/sdk-k8s-operator",
-  "version": "1.0.0-rc1",
+  "version": "1.0.0-rc2",
   "description": "Kubernetes Operator factory",
   "main": "src/index.js",
   "repository": {
