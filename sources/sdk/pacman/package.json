@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint src/",
-    "test": "nyc -r html -r text mocha -r tests/mocks.js tests/index.js",
+    "test": "c8 -r html -r text mocha -r tests/mocks.js tests/index.js",
     "start": "node src/index.js"
   },
   "devDependencies": {
@@ -23,7 +23,7 @@
     "eslint": "^7.3.1",
     "mocha": "^8.0.1",
     "mock-require": "^3.0.3",
-    "nyc": "^15.1.0",
+    "c8": "^7.1.2",
     "sinon": "^9.0.2"
   },
   "dependencies": {
