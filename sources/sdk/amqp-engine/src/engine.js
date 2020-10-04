@@ -2,6 +2,8 @@ const mergeOptions = require('merge-options').bind({ ignoreUndefined: true });
 const amqp = require('amqplib')
 
 const CancelScope = require('./cancel-scope')
+const Exchange = require('./exchange')
+const Queue = require('./queue')
 
 const encode = msg => Buffer.from(JSON.stringify(msg))
 
@@ -39,6 +41,10 @@ class Engine {
     this.conn = null
     this.channel = null
 
+    this.exchanges = {}
+    this.queues = {}
+    this.publishers = {}
+
     this.cancelScopes = []
   }
 
@@ -47,31 +53,39 @@ class Engine {
     this.channel = await this.conn.createChannel()
 
     // create exchanges
-    await Promise.all(
-      Object.entries(this.options.exchanges).map(async ([name, config]) => {
-        const { type, options } = mergeOptions(this.defaultExchange, config)
-        await this.channel.assertExchange(name, type, options)
-      })
+    this.exchanges = Object.fromEntries(
+      await Promise.all(
+        Object.entries(this.options.exchanges).map(async ([name, config]) => {
+          const { type, options } = mergeOptions(this.defaultExchange, config)
+          await this.channel.assertExchange(name, type, options)
+
+          return [name, new Exchange(this.channel, name)]
+        })
+      )
     )
 
     // create queues
-    await Promise.all(
-      Object.entries(this.options.queues).map(async ([name, config]) => {
-        const { bindings, options } = mergeOptions(this.defaultQueue, config)
-        await this.channel.assertQueue(name, options)
+    this.queues = Object.fromEntries(
+      await Promise.all(
+        Object.entries(this.options.queues).map(async ([name, config]) => {
+          const { bindings, options } = mergeOptions(this.defaultQueue, config)
+          await this.channel.assertQueue(name, options)
 
-        // bind queues
-        await Promise.all(
-          bindings.map(async binding => {
-            const { exchange, routingKey } = mergeOptions(
-              this.defaultQueueBinding,
-              binding
-            )
+          // bind queues
+          await Promise.all(
+            bindings.map(async binding => {
+              const { exchange, routingKey } = mergeOptions(
+                this.defaultQueueBinding,
+                binding
+              )
 
-            await this.channel.bindQueue(name, exchange, routingKey)
-          })
-        )
-      })
+              await this.channel.bindQueue(name, exchange, routingKey)
+            })
+          )
+
+          return [name, new Queue(this.channel, name)]
+        })
+      )
     )
 
     // create publishers
