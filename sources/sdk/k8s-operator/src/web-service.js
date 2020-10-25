@@ -1,9 +1,9 @@
 const { createTerminus } = require('@godaddy/terminus')
 
-class APIService {
+class WebService {
   constructor(operator, serverFactory) {
     this.operator = operator
-    this.servers = serverFactory.make(this.operator.api)
+    this.servers = serverFactory.make(this.operator.webapp)
     this.cancelScopes = []
 
     this.servers.map(server => createTerminus(server, {
@@ -64,4 +64,4 @@ class APIService {
   }
 }
 
-module.exports = APIService
+module.exports = WebService

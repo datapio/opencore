@@ -1,5 +1,6 @@
+
 const ServerFactory = require('./server-factory')
-const APIService = require('./api-service')
+const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
 
 const defaultHttpApi = (request, response) => {
@@ -20,7 +21,7 @@ class Operator {
     this.options = options
 
     const serverFactory = new ServerFactory(serverOptions)
-    this.service = new APIService(this, serverFactory)
+    this.service = new WebService(this, serverFactory)
   }
 
   async initialize() {}
