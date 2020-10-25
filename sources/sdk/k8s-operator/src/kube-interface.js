@@ -1,3 +1,4 @@
+const Request = require('kubernetes-client/backends/request')
 const kubernetes = require('kubernetes-client')
 
 const defaultCallback = async () => ({ condition: true, res: null })
@@ -67,8 +68,18 @@ const response = {
 }
 
 class KubeInterface {
-  constructor({ crds = [] }) {
-    this.client = new kubernetes.Client()
+  constructor({ crds = [], config = null }) {
+    this.config = new kubernetes.KubeConfig()
+
+    if (config !== null) {
+      this.config.loadFromOptions(config)
+    }
+    else {
+      this.config.loadFromDefault()
+    }
+
+    this.backend = new Request({ kubeconfig: this.config })
+    this.client = new kubernetes.Client({ backend: this.backend })
     this.crds = crds
   }
 
@@ -76,7 +87,7 @@ class KubeInterface {
     await this.client.loadSpec()
 
     await Promise.all(this.crds.map(async crd => {
-      const api = client.apis['apiextensions.k8s.io'].v1beta1.customresourcedefinitions // eslint-disable-line max-len
+      const api = this.client.apis['apiextensions.k8s.io'].v1beta1.customresourcedefinitions // eslint-disable-line max-len
 
       try {
         await api(crd.metadata.name).get()
@@ -85,7 +96,7 @@ class KubeInterface {
         await api.post({ body: crd })
       }
 
-      client.addCustomResourceDefinition(crd)
+      this.client.addCustomResourceDefinition(crd)
     }))
   }
 
