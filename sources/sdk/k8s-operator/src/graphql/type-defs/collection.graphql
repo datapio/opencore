@@ -1,0 +1,18 @@
+interface Collection {
+  total: Int!
+  items(paging: Pagination, sorting: Sorting): [CollectionItem!]!
+}
+
+interface CollectionItem {
+  index: Int!
+}
+
+input Pagination {
+  limit: Int
+  offset: Int
+}
+
+input Sorting {
+  key: String!
+  reversed: Boolean
+}

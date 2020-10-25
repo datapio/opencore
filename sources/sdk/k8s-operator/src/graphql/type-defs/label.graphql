@@ -1,0 +1,4 @@
+type Label {
+  name: String!
+  value: String!
+}

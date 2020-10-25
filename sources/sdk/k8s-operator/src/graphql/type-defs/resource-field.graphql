@@ -1,0 +1,12 @@
+input ResourceField {
+  apiVersion: String!
+  kind: String!
+  namespace: String
+  name: String
+  labels: [LabelField!]
+}
+
+input LabelField {
+  name: String!
+  value: String!
+}

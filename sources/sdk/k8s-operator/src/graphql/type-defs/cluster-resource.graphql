@@ -1,0 +1,7 @@
+interface ClusterResource {
+  apiVersion: String!
+  kind: String!
+  name: String!
+  labels: [Label!]!
+  annotations: [Annotation!]!
+}

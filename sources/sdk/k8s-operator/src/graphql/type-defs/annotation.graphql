@@ -1,0 +1,4 @@
+type Annotation {
+  name: String!
+  value: String!
+}
