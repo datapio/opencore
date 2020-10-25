@@ -1,5 +1,5 @@
 describe('KubeInterface', require('./kube-interface'))
-describe('APIService', require('./api-service'))
+describe('WebService', require('./web-service'))
 describe('CancelScope', require('./cancel-scope'))
 describe('Operator', require('./operator'))
 describe('ResourceWatcher', require('./resource-watcher'))

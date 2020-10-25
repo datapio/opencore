@@ -5,7 +5,7 @@ const { KubeInterface } = require('../../src/index')
 
 module.exports = () => {
   it('should list resources', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const resp = await kubectl.list({
@@ -19,7 +19,7 @@ module.exports = () => {
   })
 
   it('should throw an error if listing failed', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     try {

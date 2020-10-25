@@ -1,3 +1,4 @@
+const { KubeConfig } = require('@kubernetes/client-node')
 const { withWorld } = require('test!world')
 const sinon = require('sinon')
 
@@ -73,5 +74,6 @@ class Client {
 }
 
 module.exports = {
-  Client
+  Client,
+  KubeConfig
 }

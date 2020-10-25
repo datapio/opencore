@@ -5,7 +5,7 @@ const sinon = require('sinon')
 
 const {
   ServerFactory,
-  APIService
+  WebService
 } = require('../src/index')
 
 const operator = require('./fixtures/operator')
@@ -40,7 +40,7 @@ module.exports = () => {
 
   it('should initialize the servers', () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     expect(service.servers).to.be.an('array').of.length(1)
     sinon.assert.calledOnce(terminus.createTerminus)
@@ -48,7 +48,7 @@ module.exports = () => {
 
   it('should initialize the operator before starting', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.beforeListen()
 
@@ -59,7 +59,7 @@ module.exports = () => {
 
   it('should stop the watchers before shutdown', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.beforeListen()
     await service.beforeShutdown()
@@ -69,7 +69,7 @@ module.exports = () => {
 
   it('should log a message when a shutdown is requested', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.shutdownRequested()
 
@@ -78,7 +78,7 @@ module.exports = () => {
 
   it('should terminate the operator once it is shutdown', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.shutdownDone()
 
@@ -87,7 +87,7 @@ module.exports = () => {
 
   it('should log an error when an exception is thrown during shutdown', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
     const err = new Error('error')
 
     await service.shutdownFailed(err)
@@ -97,7 +97,7 @@ module.exports = () => {
 
   it('should log messages sent by terminus', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.logger('msg', 'payload')
 
@@ -106,7 +106,7 @@ module.exports = () => {
 
   it('should listen on each server port', async () => {
     const serverFactory = new ServerFactory()
-    const service = new APIService(operator, serverFactory)
+    const service = new WebService(operator, serverFactory)
 
     await service.listen()
   })
