@@ -13,7 +13,7 @@ class Queue {
   }
 
   async purge() {
-    return await this.channel.purgeQueue(name)
+    return await this.channel.purgeQueue(this.name)
   }
 
   async bind(source, pattern, args) {
