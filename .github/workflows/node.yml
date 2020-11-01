@@ -41,7 +41,7 @@ jobs:
 
       - name: publish@yarn
         if: github.ref == 'refs/heads/master'
-        run: /bin/sh ../../../.github/scripts/maybe-publish.sh "@datapio/sdk-k8s-operator"
+        run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
@@ -90,7 +90,7 @@ jobs:
 
       - name: publish@yarn
         if: github.ref == 'refs/heads/master'
-        run: /bin/sh ../../../.github/scripts/maybe-publish.sh "@datapio/sdk-amqp-engine"
+        run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
@@ -139,7 +139,7 @@ jobs:
 
       - name: publish@yarn
         if: github.ref == 'refs/heads/master'
-        run: /bin/sh ../../../.github/scripts/maybe-publish.sh "@datapio/sdk-pacman"
+        run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
