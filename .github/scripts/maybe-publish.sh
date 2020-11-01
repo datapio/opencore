@@ -7,5 +7,5 @@ not_upstream=$?
 
 if [ $not_upstream -eq 1 ]
 then
-  echo yarn publish
+  yarn publish
 fi
