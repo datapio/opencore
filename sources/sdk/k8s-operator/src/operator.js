@@ -45,7 +45,11 @@ class Operator {
     this.webapp = express()
     this.webapp.use('/api', this.api)
 
-    const apolloRealOptions = mergeOptions(this.defaultApolloOptions, apolloOptions)
+    const apolloRealOptions = mergeOptions(
+      this.defaultApolloOptions,
+      apolloOptions
+    )
+
     const userContext = apolloRealOptions.context
     apolloRealOptions.context = async ({ req, ...args }) => {
       const ctx = await userContext({ req, ...args })
