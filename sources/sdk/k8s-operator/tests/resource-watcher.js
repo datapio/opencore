@@ -1,4 +1,4 @@
-const { withWorld } = require('test!world')
+const { setUp, withWorld } = require('test!world')
 const { it } = require('mocha')
 
 const { KubeInterface } = require('../src/index')
@@ -6,52 +6,52 @@ const { ResourceWatcher } = require('../src/index')
 const { expect } = require('chai')
 
 class TestWatcher extends ResourceWatcher {
-  constructor(kubectl) {
-    super(kubectl, {
+  constructor() {
+    super({
       apiVersion: 'example.com/v1',
       kind: 'Example',
       namespace: 'default'
     })
   }
 
-  async added(object) {
-    await super.added(object)  // for code coverage
+  async added(operator, object) {
+    await super.added(operator, object)  // for code coverage
 
     withWorld(world => {
       world.watcher.added = true
     })
   }
 
-  async modified(object) {
-    await super.modified(object)  // for code coverage
+  async modified(operator, object) {
+    await super.modified(operator, object)  // for code coverage
 
     withWorld(world => {
       world.watcher.modified = true
     })
   }
 
-  async removed(object) {
-    await super.removed(object)  // for code coverage
+  async deleted(operator, object) {
+    await super.deleted(operator, object)  // for code coverage
 
     withWorld(world => {
-      world.watcher.removed = true
+      world.watcher.deleted = true
     })
   }
 }
 
 module.exports = () => {
-  it('should watch a resource', async () => {
-    const kubectl = new KubeInterface()
+  beforeEach(setUp)
+
+  it('should watch a resource being added', async () => {
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
-    const watcher = new TestWatcher(kubectl)
+    const watcher = new TestWatcher()
 
-    const cancelScope = await watcher.watch()
+    const cancelScope = await watcher.watch({ kubectl })
 
     withWorld(world => {
       world.stream.push({ type: 'added', object: {} })
-      world.stream.push({ type: 'modified', object: {} })
-      world.stream.push({ type: 'removed', object: {} })
     })
 
     await 0 // breakpoint to let the promise execute
@@ -59,8 +59,46 @@ module.exports = () => {
 
     withWorld(world => {
       expect(world.watcher.added).to.be.true
+    })
+  })
+
+  it('should watch a resource being modified', async () => {
+    const kubectl = new KubeInterface({})
+    await kubectl.load()
+
+    const watcher = new TestWatcher()
+
+    const cancelScope = await watcher.watch({ kubectl })
+
+    withWorld(world => {
+      world.stream.push({ type: 'modified', object: {} })
+    })
+
+    await 0 // breakpoint to let the promise execute
+    cancelScope.cancel()
+
+    withWorld(world => {
       expect(world.watcher.modified).to.be.true
-      expect(world.watcher.removed).to.be.true
+    })
+  })
+
+  it('should watch a resource being deleted', async () => {
+    const kubectl = new KubeInterface({})
+    await kubectl.load()
+
+    const watcher = new TestWatcher()
+
+    const cancelScope = await watcher.watch({ kubectl })
+
+    withWorld(world => {
+      world.stream.push({ type: 'deleted', object: {} })
+    })
+
+    await 0 // breakpoint to let the promise execute
+    cancelScope.cancel()
+
+    withWorld(world => {
+      expect(world.watcher.deleted).to.be.true
     })
   })
 }

@@ -1,6 +1,6 @@
 {
   "name": "@datapio/sdk-k8s-operator",
-  "version": "1.0.0-rc2",
+  "version": "1.0.0",
   "description": "Kubernetes Operator factory",
   "main": "src/index.js",
   "repository": {
@@ -31,6 +31,8 @@
   },
   "dependencies": {
     "@godaddy/terminus": "^4.4.1",
+    "@kubernetes/client-node": "^0.12.2",
+    "apollo-server-express": "^2.18.2",
     "kubernetes-client": "^9.0.0",
     "merge-options": "^3.0.3"
   }

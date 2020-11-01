@@ -5,7 +5,7 @@ const { KubeInterface } = require('../../src/index')
 
 module.exports = () => {
   it('should patch a resource', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const resp = await kubectl.patch({
@@ -22,7 +22,7 @@ module.exports = () => {
   })
 
   it('should throw an error if the patch failed', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     try {

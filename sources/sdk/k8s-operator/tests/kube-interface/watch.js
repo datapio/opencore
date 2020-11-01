@@ -7,7 +7,7 @@ const { KubeInterface } = require('../../src/index')
 
 module.exports = () => {
   it('should watch resources', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const stream = await kubectl.watch({
@@ -33,7 +33,7 @@ module.exports = () => {
   })
 
   it('should wait for a condition to be true', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const callback = sinon.stub().callsFake(async object => ({
@@ -64,7 +64,7 @@ module.exports = () => {
   })
 
   it('should wait until an event is received if no callback is set', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const p = kubectl.waitCondition({
@@ -86,7 +86,7 @@ module.exports = () => {
   })
 
   it('should throw an error if the callback failed while waiting for a condition to be true', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const callback = sinon.stub().callsFake(async object => {

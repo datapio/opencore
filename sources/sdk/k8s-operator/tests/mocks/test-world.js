@@ -11,7 +11,7 @@ module.exports = {
       watcher: {
         added: false,
         modified: false,
-        removed: false
+        deleted: false
       }
     }
   },

@@ -8,7 +8,7 @@ module.exports = () => {
   beforeEach(setUp)
 
   it('should create a client a load the server API specification', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     sinon.assert.calledOnce(kubectl.client.loadSpec)

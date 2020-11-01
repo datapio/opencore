@@ -5,7 +5,7 @@ const { KubeInterface } = require('../../src/index')
 
 module.exports = () => {
   it('should create resources', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const resp = await kubectl.create(
@@ -24,7 +24,7 @@ module.exports = () => {
   })
 
   it('should throw an error if creation failed', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     try {

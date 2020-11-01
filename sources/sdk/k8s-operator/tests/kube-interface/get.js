@@ -5,7 +5,7 @@ const { KubeInterface } = require('../../src/index')
 
 module.exports = () => {
   it('should get a single resource', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const resp = await kubectl.get({
@@ -19,7 +19,7 @@ module.exports = () => {
   })
 
   it('should get a core resource', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     const resp = await kubectl.get({
@@ -33,7 +33,7 @@ module.exports = () => {
   })
 
   it('should throw an error if fetching failed', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     try {
@@ -52,7 +52,7 @@ module.exports = () => {
   })
 
   it('should throw an error if the apiVersion is invalid', async () => {
-    const kubectl = new KubeInterface()
+    const kubectl = new KubeInterface({})
     await kubectl.load()
 
     try {
