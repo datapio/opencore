@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint src/",
-    "test": "c8 -n src/ -a -r html -r text mocha -r tests/mocks/index.js tests/index.js"
+    "test": "c8 -n src/ -a -r html -r text mocha -r tests/mocks/index.js tests/**/*.spec.js"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -23,7 +23,9 @@
     "@babel/eslint-plugin": "^7.11.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "c8": "^7.1.2",
+    "casual": "^1.6.2",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^6.5.1",
     "mocha": "^8.0.1",
     "mock-require": "^3.0.3",
