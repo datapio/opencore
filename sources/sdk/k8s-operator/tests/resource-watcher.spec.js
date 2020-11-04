@@ -1,5 +1,5 @@
 const { setUp, withWorld } = require('test!world')
-const { it } = require('mocha')
+const { describe, it } = require('mocha')
 
 const { KubeInterface } = require('../src/index')
 const { ResourceWatcher } = require('../src/index')
@@ -39,7 +39,7 @@ class TestWatcher extends ResourceWatcher {
   }
 }
 
-module.exports = () => {
+describe('ResourceWatcher', () => {
   beforeEach(setUp)
 
   it('should watch a resource being added', async () => {
@@ -101,4 +101,4 @@ module.exports = () => {
       expect(world.watcher.deleted).to.be.true
     })
   })
-}
+})

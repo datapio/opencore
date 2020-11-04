@@ -9,7 +9,7 @@ const https = require('https')
 const http = require('http')
 const fs = require('fs')
 
-module.exports = () => {
+describe('ServerFactory', () => {
   beforeEach(setUp)
 
   it('should use default options when none are provided', () => {
@@ -69,4 +69,4 @@ module.exports = () => {
     sinon.assert.calledWith(fs.readFileSync, '/path/to/cert.pem')
     sinon.assert.calledWith(fs.readFileSync, '/path/to/ca.pem')
   })
-}
+})

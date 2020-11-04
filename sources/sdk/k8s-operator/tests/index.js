@@ -1,6 +1,0 @@
-describe('KubeInterface', require('./kube-interface'))
-describe('WebService', require('./web-service'))
-describe('CancelScope', require('./cancel-scope'))
-describe('Operator', require('./operator'))
-describe('ResourceWatcher', require('./resource-watcher'))
-describe('ServerFactory', require('./server-factory'))

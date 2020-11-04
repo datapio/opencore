@@ -6,7 +6,7 @@ const sinon = require('sinon')
 
 const CancelScope = require('../src/cancel-scope')
 
-module.exports = () => {
+describe('CancelScope', () => {
   beforeEach(setUp)
 
   it('should execute the closure', () => {
@@ -32,4 +32,4 @@ module.exports = () => {
       sinon.assert.threw(closure)
     }
   })
-}
+})

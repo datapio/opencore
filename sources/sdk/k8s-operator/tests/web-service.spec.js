@@ -11,7 +11,7 @@ const {
 const operator = require('./fixtures/operator')
 const terminus = require('@godaddy/terminus')
 
-module.exports = () => {
+describe('WebService', () => {
   const consoleObject = {
     log: console.log,
     error: console.error,
@@ -30,6 +30,8 @@ module.exports = () => {
     console.log = mockedConsole.log
     console.error = mockedConsole.error
     console.warn = mockedConsole.warn
+
+    terminus.createTerminus.resetHistory()
   })
 
   afterEach(() => {
@@ -110,4 +112,4 @@ module.exports = () => {
 
     await service.listen()
   })
-}
+})

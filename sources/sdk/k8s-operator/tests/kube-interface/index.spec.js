@@ -1,10 +1,10 @@
+const { describe, it } = require('mocha')
 const { setUp } = require('test!world')
-const { it } = require('mocha')
 const sinon = require('sinon')
 
 const { KubeInterface } = require('../../src/index')
 
-module.exports = () => {
+describe('KubeInterface', () => {
   beforeEach(setUp)
 
   it('should create a client a load the server API specification', async () => {
@@ -20,4 +20,4 @@ module.exports = () => {
   require('./watch')()
   require('./patch')()
   require('./delete')()
-}
+})
