@@ -69,12 +69,11 @@ const response = {
 
 class KubeInterface {
   constructor({ crds = [], config = null }) {
-    this.config = new kubernetes.KubeConfig()
-
     if (config !== null) {
-      this.config.loadFromOptions(config)
+      this.config = config
     }
     else {
+      this.config = new kubernetes.KubeConfig()
       this.config.loadFromDefault()
     }
 
