@@ -1,4 +1,4 @@
-const gql = require('apollo-server-express')
+const { gql } = require('apollo-server-express')
 const path = require('path')
 const fs = require('fs')
 

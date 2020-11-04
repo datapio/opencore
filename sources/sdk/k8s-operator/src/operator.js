@@ -7,6 +7,13 @@ const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
 
+class OperatorError extends Error {
+  constructor(msg) {
+    super(msg)
+    this.name = this.constructor.name
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
 
 const defaultHttpApiFactory = () =>
   (request, response) => {
@@ -14,8 +21,8 @@ const defaultHttpApiFactory = () =>
   }
 
 const getAuthBearer = header => {
-  if (!header.startsWith('Bearer ')) {
-    throw new Error('Invalid token')
+  if (!(header && header.startsWith('Bearer '))) {
+    throw new OperatorError('Invalid token')
   }
 
   return header.substring(7, header.length);
@@ -27,6 +34,8 @@ class Operator {
     resolvers: {},
     context: () => ({})
   }
+
+  Error = OperatorError
 
   constructor({
     apiFactory = defaultHttpApiFactory,
@@ -61,10 +70,10 @@ class Operator {
         token: getAuthBearer(req.get('authorization'))
       })
       kubeConfig.addContext({
-        cluster: kubeConfig.getCurrentCluster().name,
+        cluster: this.kubectl.config.getCurrentCluster().name,
         name: 'graphql-request',
         user: 'graphql-client',
-        namespace: kubeConfig.getCurrentContextObject().namespace
+        namespace: this.kubectl.config.getCurrentContextObject().namespace
       })
       kubeConfig.setCurrentContext('graphql-request')
 
@@ -80,8 +89,9 @@ class Operator {
       }
     }
 
-    const apolloServer = new ApolloServer(apolloRealOptions)
-    apolloServer.applyMiddleware({
+    this.apollo = new ApolloServer(apolloRealOptions)
+    this.apollo.options = apolloRealOptions
+    this.apollo.applyMiddleware({
       app: this.webapp,
       path: '/graphql'
     })
