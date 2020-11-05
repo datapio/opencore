@@ -47,7 +47,9 @@ module.exports = () => {
       throw new Error('no error has been thrown')
     }
     catch (err) {
-      expect(err.message).to.equal('Unexpected response from Kubernetes API Server: 404 - "ERROR"')
+      expect(err.name).to.equal('KubeError')
+      expect(err.details.resp.statusCode).to.equal(404)
+      expect(err.details.resp.body).to.equal('ERROR')
     }
   })
 
@@ -66,7 +68,13 @@ module.exports = () => {
       throw new Error('no error has been thrown')
     }
     catch (err) {
-      expect(err.message).to.equal('Unknown API: example.com/v1 Unknown')
+      expect(err.name).to.equal('KubeError')
+      expect(err.details.meta.apiGroup).to.equal('example.com')
+      expect(err.details.meta.resourceVersion).to.equal('v1')
+      expect(err.details.meta.kind).to.equal('Unknown')
+      expect(err.details.meta.namespace).to.equal('default')
+      expect(err.details.meta.name).to.equal('example')
+      expect(err.details.err).to.be.an('error')
     }
   })
 }

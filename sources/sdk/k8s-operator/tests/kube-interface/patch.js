@@ -39,7 +39,9 @@ module.exports = () => {
       throw new Error('no error has been thrown')
     }
     catch (err) {
-      expect(err.message).to.equal('Unexpected response from Kubernetes API Server: 404 - "ERROR"')
+      expect(err.name).to.equal('KubeError')
+      expect(err.details.resp.statusCode).to.equal(404)
+      expect(err.details.resp.body).to.equal('ERROR')
     }
   })
 }

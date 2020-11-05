@@ -2,68 +2,64 @@ const { KubeConfig } = require('@kubernetes/client-node')
 const { withWorld } = require('test!world')
 const sinon = require('sinon')
 
-const mixinGenericEndpoint = (ep, data) => {
-  Object.entries(data).map(([verb, response]) => {
-    ep[verb] = sinon.stub().resolves(response)
+const makeNamed = (vtable, namedVtable) => {
+  const named = () => namedVtable || vtable
+
+  Object.entries(vtable).map(([name, method]) => {
+    named[name] = method
   })
-  ep.getObjectStream = sinon.stub().callsFake(() => withWorld(world => world.stream))
+
+  return named
 }
 
-const mixinWatchEndpoint = ep => {
-  ep.watch = ep
-}
+const example = makeNamed(
+  {
+    get: sinon.stub().resolves({ statusCode: 200, body: { items: ['DATA', 'DATA'] } }),
+    post: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+  },
+  {
+    get: sinon.stub().resolves({ statusCode: 200, body: 'DATA' }),
+    patch: sinon.stub().resolves({ statusCode: 200, body: 'DATA' }),
+    delete: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+  }
+)
 
-const namedEndpoints = {
-  'example': {},
-  'failure': {}
-}
-
-mixinGenericEndpoint(namedEndpoints.example, {
-  get: { statusCode: 200, body: 'DATA' },
-  patch: { statusCode: 200, body: 'DATA' },
-  delete: { statusCode: 200, body: 'DATA' }
+const watchExample = makeNamed({
+  getObjectStream: sinon.stub().callsFake(
+    () => withWorld(world => world.stream)
+  )
 })
 
-mixinGenericEndpoint(namedEndpoints.failure, {
-  get: { statusCode: 404, body: 'ERROR' },
-  patch: { statusCode: 404, body: 'ERROR' },
-  delete: { statusCode: 404, body: 'ERROR' }
-})
-
-const mixinNamespaceEndpoint = (ep, namedEndpoint, data) => {
-  const namespacedEndpoint = sinon.stub().returns(namedEndpoint)
-  mixinGenericEndpoint(namespacedEndpoint, data)
-
-  ep.namespaces = sinon.stub().returns(namespacedEndpoint)
-}
+const failure = makeNamed(
+  {
+    get: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
+    post: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' })
+  },
+  {
+    get: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
+    patch: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
+    delete: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' })
+  }
+)
 
 const apis = {
   'example.com': {
     'v1': {
-      'example': sinon.stub().returns(namedEndpoints.example),
-      'failure': sinon.stub().returns(namedEndpoints.failure)
+      watch: {
+        namespaces: sinon.stub().returns({
+          example: watchExample
+        }),
+        example: watchExample,
+      },
+      namespaces: sinon.stub().returns({
+        example,
+        failure
+      }),
+      example,
+      failure
     }
   }
 }
-
-mixinGenericEndpoint(apis['example.com'].v1.example, {
-  post: { statusCode: 200, body: 'DATA' },
-  get: { statusCode: 200, body: { items: ['DATA', 'DATA'] } }
-})
-mixinNamespaceEndpoint(apis['example.com'].v1.example, namedEndpoints.example, {
-  post: { statusCode: 200, body: 'DATA' },
-  get: { statusCode: 200, body: { items: ['DATA', 'DATA'] } }
-})
-mixinWatchEndpoint(apis['example.com'].v1.example)
-
-mixinGenericEndpoint(apis['example.com'].v1.failure, {
-  post: { statusCode: 404, body: 'ERROR' },
-  get: { statusCode: 404, body: 'ERROR' }
-})
-mixinNamespaceEndpoint(apis['example.com'].v1.failure, namedEndpoints.failure, {
-  post: { statusCode: 404, body: 'ERROR' },
-  get: { statusCode: 404, body: 'ERROR' }
-})
 
 class Client {
   constructor() {
