@@ -1,6 +1,16 @@
 const Request = require('kubernetes-client/backends/request')
 const kubernetes = require('kubernetes-client')
 
+
+class KubeError extends Error {
+  constructor(msg, details = null) {
+    super(msg)
+    this.name = this.constructor.name
+    this.details = details
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
 const defaultCallback = async () => ({ condition: true, res: null })
 
 const parseApiVersion = apiVersion =>
@@ -20,30 +30,34 @@ const getEndpoint = (client, meta, watch = false) => {
 
   try {
     if (apiGroup) {
-      ep = client.apis[apiGroup][resourceVersion][kind.toLowerCase()]
+      ep = client.apis[apiGroup][resourceVersion]
     }
     else {
-      ep = client.api[resourceVersion][kind.toLowerCase()]
+      ep = client.api[resourceVersion]
     }
 
-    if (!ep) {
-      throw new Error('unkown kind')
+    if (watch) {
+      ep = ep.watch
+    }
+
+    if (namespace) {
+      ep = ep.namespaces(namespace)
+    }
+
+    ep = ep[kind.toLowerCase()]
+
+    if (name) {
+      ep = ep(name)
     }
   }
   catch (err) {
-    throw new Error(`Unknown API: ${apiGroup}/${resourceVersion} ${kind}`)
-  }
-
-  if (watch) {
-    ep = ep.watch
-  }
-
-  if (namespace) {
-    ep = ep.namespaces(namespace)
-  }
-
-  if (name) {
-    ep = ep(name)
+    throw new KubeError(
+      'Unknown API',
+      {
+        meta,
+        err
+      }
+    )
   }
 
   return ep
@@ -52,12 +66,11 @@ const getEndpoint = (client, meta, watch = false) => {
 const response = {
   assertStatusCode: resp => {
     if (resp.statusCode < 200 || resp.statusCode >= 300) {
-      throw new Error(
-        `Unexpected response from Kubernetes API Server: ${
-          resp.statusCode
-        } - ${
-          JSON.stringify(resp.body)
-        }`
+      throw new KubeError(
+        'Unexpected response from Kubernetes API Server',
+        {
+          resp
+        }
       )
     }
   },
@@ -227,5 +240,7 @@ class KubeInterface {
     return response.unwrap(await endpoint.delete())
   }
 }
+
+KubeInterface.Error = KubeError
 
 module.exports = KubeInterface
