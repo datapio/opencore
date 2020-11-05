@@ -6,7 +6,7 @@ class WebService {
     this.servers = serverFactory.make(this.operator.webapp)
     this.cancelScopes = []
 
-    this.servers.map(server => createTerminus(server, {
+    this.servers.map(({ server }) => createTerminus(server, {
       healthChecks: {
         '/health': this.operator.healthCheck.bind(this.operator),
         '/metrics': this.operator.metrics.bind(this.operator),
