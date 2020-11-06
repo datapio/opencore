@@ -81,7 +81,7 @@ const response = {
 }
 
 class KubeInterface {
-  constructor({ crds = [], config = null }) {
+  constructor({ crds = [], createCRDs = true, config = null }) {
     if (config !== null) {
       this.config = config
     }
@@ -93,19 +93,22 @@ class KubeInterface {
     this.backend = new Request({ kubeconfig: this.config })
     this.client = new kubernetes.Client({ backend: this.backend })
     this.crds = crds
+    this.createCRDs = createCRDs
   }
 
   async load() {
     await this.client.loadSpec()
 
     await Promise.all(this.crds.map(async crd => {
-      const api = this.client.apis['apiextensions.k8s.io'].v1beta1.customresourcedefinitions // eslint-disable-line max-len
+      if (this.createCRDs) {
+        const api = this.client.apis['apiextensions.k8s.io'].v1beta1.customresourcedefinitions // eslint-disable-line max-len
 
-      try {
-        await api(crd.metadata.name).get()
-      }
-      catch (err) {
-        await api.post({ body: crd })
+        try {
+          await api(crd.metadata.name).get()
+        }
+        catch (err) {
+          await api.post({ body: crd })
+        }
       }
 
       this.client.addCustomResourceDefinition(crd)
