@@ -64,6 +64,18 @@ class Operator {
       const ctx = await userContext({ req, ...args })
 
       const kubeConfig = new kubernetes.KubeConfig()
+
+      kubeConfig.loadFromString(
+        JSON.stringify({
+          apiVersion: 'v1',
+          kind: 'Config',
+          clusters: [],
+          users: [],
+          contexts: [],
+          'current-context': '',
+        })
+      )
+
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
       kubeConfig.addUser({
         name: 'graphql-client',
