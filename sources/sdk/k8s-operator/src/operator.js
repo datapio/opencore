@@ -91,6 +91,7 @@ class Operator {
 
       const kubectl = new KubeInterface({
         crds: this.kubectl.crds,
+        createCRDs: false,
         config: kubeConfig
       })
       await kubectl.load()
