@@ -72,7 +72,7 @@ class Operator {
           clusters: [],
           users: [],
           contexts: [],
-          'current-context': '',
+          'current-context': ''
         })
       )
 
