@@ -19,7 +19,7 @@ class ResourceWatcher {
     }
 
     stream.on('data', async ({ type, object }) => {
-      const handler = handlers[type]
+      const handler = handlers[type.toLowerCase()]
       await handler(operator, object)
     })
 
