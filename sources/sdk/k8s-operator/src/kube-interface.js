@@ -225,7 +225,7 @@ class KubeInterface {
     return response.unwrap(await endpoint.patch({
       body: patch,
       headers: {
-        content_type: 'application/merge-patch+json'
+        'content-type': 'application/merge-patch+json'
       }
     }))
   }
