@@ -26,17 +26,15 @@ const defaultHttpApiFactory = () =>
 
 
 const getAuthToken = req => {
-  let result
-  if (AUTH_COOKIE_NAME in req.cookies) {
-    result = req.cookies[AUTH_COOKIE_NAME]
-  } else if (AUTH_COOKIE_NAME in req.signedCookies) {
-    result = req.signedCookies[AUTH_COOKIE_NAME]
-  } else {
+  let result = req.signedCookies[AUTH_COOKIE_NAME] ||
+    req.cookies[AUTH_COOKIE_NAME]
+
+  if (!result) {
     const authorization = req.get('authorization')
     if (!(authorization && authorization.startsWith('Bearer '))) {
       throw new OperatorError('Invalid token')
     }
-    result = authorization.substring(7, header.length)
+    result = authorization.substring(7, authorization.length)
   }
 
   return result
@@ -96,9 +94,9 @@ class Operator {
       )
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
-      
+
       const token = getAuthToken(req)
-            
+
       kubeConfig.addUser({
         name: 'graphql-client',
         token
