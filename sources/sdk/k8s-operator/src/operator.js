@@ -4,12 +4,11 @@ const kubernetes = require('kubernetes-client')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 
+const crypto = require('crypto')
+
 const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
-
-const { COOKIE_SECRET } = process.env
-const AUTH_COOKIE_NAME = 'authToken'
 
 class OperatorError extends Error {
   constructor(msg) {
@@ -24,27 +23,24 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
-const getCookieToken = req => req.signedCookies[AUTH_COOKIE_NAME] ||
-req.cookies[AUTH_COOKIE_NAME]
-
-const getAuthorizationToken = req => {
-  const authorization = req.get('authorization')
-  return authorization.startsWith('Bearer ') && authorization.substring(7)
-}
-
-const getAuthToken = req => {
-  const result = getCookieToken(req) || getAuthorizationToken(req)
-
-  if (!result) {
-    throw new OperatorError('Invalid token')
+const authToken = (name = 'X-Datapio-Auth-Token') => ({
+  rawCookie(req) {
+    return req.cookies[name]
+  },
+  signedCookie(req) {
+    return req.signedCookies[name]
+  },
+  authHeader(req) {
+    const authorization = req.get('authorization')
+    return authorization.substring(7, authorization.length)
+  },
+  get(req) {
+    return this.rawCookie(req) || this.signedCookie(req) || this.authHeader(req)
+  },
+  set(resp, token) {
+    resp.setHeader('Set-Cookie', `${name}=${token}; HttpOnly`)
   }
-
-  return result
-}
-
-const setAuthToken = (resp, token) => {
-  resp.setHeader('Set-Cookie', `${AUTH_COOKIE_NAME}=${token}; HttpOnly`)
-}
+})()
 
 class Operator {
   defaultApolloOptions = {
@@ -61,6 +57,7 @@ class Operator {
     serverOptions = {},
     kubeOptions = {},
     apolloOptions = {},
+    cookieSecret = crypto.randomBytes(48).toString('hex'),
     ...options
   }) {
     this.watchers = watchers
@@ -70,7 +67,7 @@ class Operator {
 
     this.api = apiFactory(this.kubectl)
     this.webapp = express()
-    this.webapp.use(cookieParser(COOKIE_SECRET))
+    this.webapp.use(cookieParser(cookieSecret))
     this.webapp.use('/api', this.api)
 
     const apolloRealOptions = mergeOptions(
@@ -97,7 +94,11 @@ class Operator {
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
 
-      const token = getAuthToken(req)
+      const token = authToken.get(req)
+      if (!token) {
+        throw new Error('Invalid token')
+      }
+      authToken.set(resp, token)
 
       kubeConfig.addUser({
         name: 'graphql-client',
@@ -117,8 +118,6 @@ class Operator {
         config: kubeConfig
       })
       await kubectl.load()
-
-      setAuthToken(resp, token)
 
       return {
         kubectl,
