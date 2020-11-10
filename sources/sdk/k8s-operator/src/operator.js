@@ -2,10 +2,14 @@ const mergeOptions = require('merge-options').bind({ ignoreUndefined: true })
 const { ApolloServer } = require('apollo-server-express')
 const kubernetes = require('kubernetes-client')
 const express = require('express')
+const cookieParser = require('cookie-parser')
 
 const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
+
+const { COOKIE_SECRET } = process.env
+const AUTH_COOKIE_NAME = 'authToken'
 
 class OperatorError extends Error {
   constructor(msg) {
@@ -20,12 +24,26 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
-const getAuthBearer = header => {
-  if (!(header && header.startsWith('Bearer '))) {
-    throw new OperatorError('Invalid token')
+
+const getAuthToken = req => {
+  let result
+  if (AUTH_COOKIE_NAME in req.cookies) {
+    result = req.cookies[AUTH_COOKIE_NAME]
+  } else if (AUTH_COOKIE_NAME in req.signedCookies) {
+    result = req.signedCookies[AUTH_COOKIE_NAME]
+  } else {
+    const authorization = req.get('authorization')
+    if (!(authorization && authorization.startsWith('Bearer '))) {
+      throw new OperatorError('Invalid token')
+    }
+    result = authorization.substring(7, header.length)
   }
 
-  return header.substring(7, header.length);
+  return result
+}
+
+const setAuthToken = (resp, token) => {
+  resp.setHeader('Set-Cookie', `${AUTH_COOKIE_NAME}=${token}; HttpOnly`)
 }
 
 class Operator {
@@ -52,6 +70,7 @@ class Operator {
 
     this.api = apiFactory(this.kubectl)
     this.webapp = express()
+    this.webapp.use(cookieParser(COOKIE_SECRET))
     this.webapp.use('/api', this.api)
 
     const apolloRealOptions = mergeOptions(
@@ -60,7 +79,7 @@ class Operator {
     )
 
     const userContext = apolloRealOptions.context
-    apolloRealOptions.context = async ({ req, ...args }) => {
+    apolloRealOptions.context = async ({ req, resp, ...args }) => {
       const ctx = await userContext({ req, ...args })
 
       const kubeConfig = new kubernetes.KubeConfig()
@@ -77,9 +96,12 @@ class Operator {
       )
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
+      
+      const token = getAuthToken(req)
+            
       kubeConfig.addUser({
         name: 'graphql-client',
-        token: getAuthBearer(req.get('authorization'))
+        token
       })
       kubeConfig.addContext({
         cluster: this.kubectl.config.getCurrentCluster().name,
@@ -95,6 +117,8 @@ class Operator {
         config: kubeConfig
       })
       await kubectl.load()
+
+      setAuthToken(resp, token)
 
       return {
         kubectl,
