@@ -24,17 +24,19 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
+const getCookieToken = req => req.signedCookies[AUTH_COOKIE_NAME] ||
+req.cookies[AUTH_COOKIE_NAME]
+
+const getAuthorizationToken = req => {
+  const authorization = req.get('authorization')
+  return authorization.startsWith('Bearer ') && authorization.substring(7)
+}
 
 const getAuthToken = req => {
-  let result = req.signedCookies[AUTH_COOKIE_NAME] ||
-    req.cookies[AUTH_COOKIE_NAME]
+  const result = getCookieToken(req) || getAuthorizationToken(req)
 
   if (!result) {
-    const authorization = req.get('authorization')
-    if (!(authorization && authorization.startsWith('Bearer '))) {
-      throw new OperatorError('Invalid token')
-    }
-    result = authorization.substring(7, authorization.length)
+    throw new OperatorError('Invalid token')
   }
 
   return result
