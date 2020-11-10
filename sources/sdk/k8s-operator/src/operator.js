@@ -29,7 +29,7 @@ const makeAuthToken = name => ({
   },
   authHeader(req) {
     const authorization = req.get('authorization')
-    return authorization.substring(7, authorization.length)
+    return authorization && res.startsWith('Bearer ') && authorization.substring(7)
   },
   get(req) {
     return this.authHeader(req) ||
