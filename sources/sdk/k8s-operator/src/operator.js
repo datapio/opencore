@@ -23,10 +23,7 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
-const authToken = (name = 'X-Datapio-Auth-Token') => ({
-  rawCookie(req) {
-    return req.cookies[name]
-  },
+const makeAuthToken = name => ({
   signedCookie(req) {
     return req.signedCookies[name]
   },
@@ -35,12 +32,14 @@ const authToken = (name = 'X-Datapio-Auth-Token') => ({
     return authorization.substring(7, authorization.length)
   },
   get(req) {
-    return this.rawCookie(req) || this.signedCookie(req) || this.authHeader(req)
+    return this.authHeader(req) ||
+      this.signedCookie(req) ||
+      null
   },
   set(resp, token) {
     resp.setHeader('Set-Cookie', `${name}=${token}; HttpOnly`)
   }
-})()
+})
 
 class Operator {
   defaultApolloOptions = {
@@ -58,6 +57,7 @@ class Operator {
     kubeOptions = {},
     apolloOptions = {},
     cookieSecret = crypto.randomBytes(48).toString('hex'),
+    authCookieName = 'X-Datapio-Auth-Token',
     ...options
   }) {
     this.watchers = watchers
@@ -93,6 +93,8 @@ class Operator {
       )
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
+
+      const authToken = makeAuthToken(authCookieName)
 
       const token = authToken.get(req)
       if (!token) {
