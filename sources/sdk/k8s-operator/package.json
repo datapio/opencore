@@ -34,7 +34,7 @@
   "dependencies": {
     "@godaddy/terminus": "^4.4.1",
     "@kubernetes/client-node": "^0.12.2",
-    "apollo-server-express": "^2.18.2",
+    "apollo-server-express": "^2.19.0",
     "kubernetes-client": "^9.0.0",
     "merge-options": "^3.0.3"
   }
