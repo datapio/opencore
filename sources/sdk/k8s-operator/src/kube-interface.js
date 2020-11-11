@@ -99,20 +99,28 @@ class KubeInterface {
   async load() {
     await this.client.loadSpec()
 
-    await Promise.all(this.crds.map(async crd => {
-      if (this.createCRDs) {
-        const api = this.client.apis['apiextensions.k8s.io'].v1beta1.customresourcedefinitions // eslint-disable-line max-len
+    const extension = this.client.apis['apiextensions.k8s.io'].v1beta1
+    const api = extension.customresourcedefinitions
 
-        try {
-          await api(crd.metadata.name).get()
-        }
-        catch (err) {
-          await api.post({ body: crd })
-        }
-      }
+    const remoteCRDs = await api.get()
+    const missingCRDs = this.crds.filter(
+      crd => remoteCRDs.filter(
+        remoteCRD => crd.metadata.name === remoteCRD.metadata.name
+      ).length === 0
+    )
 
-      this.client.addCustomResourceDefinition(crd)
-    }))
+    if (this.createCRDs) {
+      await Promise.all(missingCRDs.map(async crd => {
+        await api.post({ body: crd })
+      }))
+    }
+
+    this.crds = [
+      ...remoteCRDs,
+      ...missingCRDs
+    ]
+
+    this.crds.map(this.client.addCustomResourceDefinition)
   }
 
   async create(...resources) {
