@@ -102,7 +102,7 @@ class KubeInterface {
     const extension = this.client.apis['apiextensions.k8s.io'].v1beta1
     const api = extension.customresourcedefinitions
 
-    const remoteCRDs = await api.get()
+    const remoteCRDs = response.unwrap(await api.get(), true)
     const missingCRDs = this.crds.filter(
       crd => remoteCRDs.filter(
         remoteCRD => crd.metadata.name === remoteCRD.metadata.name
