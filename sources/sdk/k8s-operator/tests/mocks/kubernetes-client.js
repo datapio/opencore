@@ -42,7 +42,31 @@ const failure = makeNamed(
   }
 )
 
+const customresourcedefinitions = makeNamed(
+  {
+    get: sinon.stub().resolves({ statusCode: 200, body: { items: [
+      {
+        metadata: {
+          name: 'crd1'
+        }
+      },
+      {
+        metadata: {
+          name: 'crd2'
+        }
+      }
+    ] }}),
+    post: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+  },
+  {}
+)
+
 const apis = {
+  'apiextensions.k8s.io': {
+    'v1beta1': {
+      customresourcedefinitions
+    }
+  },
   'example.com': {
     'v1': {
       watch: {
@@ -66,6 +90,7 @@ class Client {
     this.loadSpec = sinon.stub().resolves()
     this.apis = apis
     this.api = apis['example.com']
+    this.addCustomResourceDefinition = sinon.stub()
   }
 }
 

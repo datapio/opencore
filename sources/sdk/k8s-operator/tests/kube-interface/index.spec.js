@@ -8,10 +8,29 @@ describe('KubeInterface', () => {
   beforeEach(setUp)
 
   it('should create a client a load the server API specification', async () => {
-    const kubectl = new KubeInterface({})
+    const kubectl = new KubeInterface({ crds: [
+      {
+        metadata: {
+          name: 'crd-foo'
+        }
+      }
+    ]})
     await kubectl.load()
 
     sinon.assert.calledOnce(kubectl.client.loadSpec)
+
+    sinon.assert.calledWith(
+      kubectl.client.addCustomResourceDefinition,
+      { metadata: { name: 'crd1' }}
+    )
+    sinon.assert.calledWith(
+      kubectl.client.addCustomResourceDefinition,
+      { metadata: { name: 'crd2' }}
+    )
+    sinon.assert.calledWith(
+      kubectl.client.addCustomResourceDefinition,
+      { metadata: { name: 'crd-foo' }}
+    )
   })
 
   require('./create')()
