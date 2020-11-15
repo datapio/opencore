@@ -23,23 +23,25 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
-const makeAuthToken = name => ({
-  signedCookie(req) {
-    return req.signedCookies[name]
-  },
-  authHeader(req) {
+const authTokenProcessorFactory = name => (req, res) => {
+  const signedCookie = () => req.signedCookies[name]
+  const authHeader = () => {
     const authorization = req.get('authorization')
-    return authorization && res.startsWith('Bearer ') && authorization.substring(7)
-  },
-  get(req) {
-    return this.authHeader(req) ||
-      this.signedCookie(req) ||
-      null
-  },
-  set(resp, token) {
-    resp.setHeader('Set-Cookie', `${name}=${token}; HttpOnly`)
+    return authorization &&
+      authorization.startsWith('Bearer ') &&
+      authorization.substring(7)
   }
-})
+  const getToken = () => authHeader() || signedCookie() || null
+  const setToken = token => res.setHeader(
+    'Set-Cookie', `${name}=${token}; HttpOnly`
+  )
+  const token = getToken()
+  if (!token) {
+    throw new OperatorError('Missing token')
+  }
+  setToken(token)
+  return token
+}
 
 class Operator {
   defaultApolloOptions = {
@@ -75,9 +77,11 @@ class Operator {
       apolloOptions
     )
 
+    const authTokenProcessor = authTokenProcessorFactory(authCookieName)
+
     const userContext = apolloRealOptions.context
-    apolloRealOptions.context = async ({ req, resp, ...args }) => {
-      const ctx = await userContext({ req, ...args })
+    apolloRealOptions.context = async ({ req, res, ...args }) => {
+      const ctx = await userContext({ req, res, ...args })
 
       const kubeConfig = new kubernetes.KubeConfig()
 
@@ -94,13 +98,7 @@ class Operator {
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
 
-      const authToken = makeAuthToken(authCookieName)
-
-      const token = authToken.get(req)
-      if (!token) {
-        throw new Error('Invalid token')
-      }
-      authToken.set(resp, token)
+      const token = authTokenProcessor(req, res)
 
       kubeConfig.addUser({
         name: 'graphql-client',
