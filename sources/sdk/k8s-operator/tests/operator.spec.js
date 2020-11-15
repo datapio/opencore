@@ -7,7 +7,7 @@ const sinon = require('sinon')
 const casual = require('casual')
 
 const { Operator } = require('../src/index')
-const kubeFixture =require('./fixtures/kubectl')
+const kubeFixture = require('./fixtures/kubectl')
 
 describe('Operator', () => {
   beforeEach(setUp)
