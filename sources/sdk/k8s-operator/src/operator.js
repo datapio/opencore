@@ -28,7 +28,9 @@ const authTokenProcessorFactory = name => (req, res) => {
   const authHeader = () => {
     const authorization = req.get('authorization')
     if (authorization && !authorization.startsWith('Bearer ')) {
-      throw new OperatorError('Invalid Authorization header. \'Bearer\' expected')
+      throw new OperatorError(
+        'Invalid Authorization header. \'Bearer\' expected'
+      )
     }
     return authorization?.substring(7)
   }
