@@ -2,6 +2,9 @@ const mergeOptions = require('merge-options').bind({ ignoreUndefined: true })
 const { ApolloServer } = require('apollo-server-express')
 const kubernetes = require('kubernetes-client')
 const express = require('express')
+const cookieParser = require('cookie-parser')
+
+const crypto = require('crypto')
 
 const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
@@ -20,12 +23,27 @@ const defaultHttpApiFactory = () =>
     response.end('default backend')
   }
 
-const getAuthBearer = header => {
-  if (!(header && header.startsWith('Bearer '))) {
-    throw new OperatorError('Invalid token')
+const authTokenProcessorFactory = name => (req, res) => {
+  const signedCookie = () => req.signedCookies[name]
+  const authHeader = () => {
+    const authorization = req.get('authorization')
+    if (authorization && !authorization.startsWith('Bearer ')) {
+      throw new OperatorError(
+        'Invalid Authorization header. \'Bearer\' expected'
+      )
+    }
+    return authorization?.substring(7)
   }
-
-  return header.substring(7, header.length);
+  const getToken = () => authHeader() || signedCookie() || null
+  const setToken = token => res.setHeader(
+    'Set-Cookie', `${name}=${token}; HttpOnly`
+  )
+  const token = getToken()
+  if (!token) {
+    throw new OperatorError('Missing token')
+  }
+  setToken(token)
+  return token
 }
 
 class Operator {
@@ -43,6 +61,8 @@ class Operator {
     serverOptions = {},
     kubeOptions = {},
     apolloOptions = {},
+    cookieSecret = crypto.randomBytes(48).toString('hex'),
+    authCookieName = 'X-Datapio-Auth-Token',
     ...options
   }) {
     this.watchers = watchers
@@ -52,6 +72,7 @@ class Operator {
 
     this.api = apiFactory(this.kubectl)
     this.webapp = express()
+    this.webapp.use(cookieParser(cookieSecret))
     this.webapp.use('/api', this.api)
 
     const apolloRealOptions = mergeOptions(
@@ -59,9 +80,11 @@ class Operator {
       apolloOptions
     )
 
+    const authTokenProcessor = authTokenProcessorFactory(authCookieName)
+
     const userContext = apolloRealOptions.context
-    apolloRealOptions.context = async ({ req, ...args }) => {
-      const ctx = await userContext({ req, ...args })
+    apolloRealOptions.context = async ({ req, res, ...args }) => {
+      const ctx = await userContext({ req, res, ...args })
 
       const kubeConfig = new kubernetes.KubeConfig()
 
@@ -77,9 +100,12 @@ class Operator {
       )
 
       kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
+
+      const token = authTokenProcessor(req, res)
+
       kubeConfig.addUser({
         name: 'graphql-client',
-        token: getAuthBearer(req.get('authorization'))
+        token
       })
       kubeConfig.addContext({
         cluster: this.kubectl.config.getCurrentCluster().name,

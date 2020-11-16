@@ -1,6 +1,6 @@
 {
   "name": "@datapio/sdk-k8s-operator",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Kubernetes Operator factory",
   "main": "src/index.js",
   "repository": {
@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint src/",
-    "test": "c8 -n src/ -a -r html -r text mocha -r tests/mocks/index.js tests/**/*.spec.js"
+    "test": "c8 -n src/ -a -r html -r text mocha -r tests/mocks/index.js tests/**/*.spec.js tests/*.spec.js"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -36,6 +36,7 @@
     "@godaddy/terminus": "^4.4.1",
     "@kubernetes/client-node": "^0.13.0",
     "apollo-server-express": "^2.19.0",
+    "cookie-parser": "^1.4.5",
     "kubernetes-client": "^9.0.0",
     "merge-options": "^3.0.3"
   }
