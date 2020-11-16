@@ -2,9 +2,7 @@
 name: Test build and publish Node packages
 
 on:
-  push:
-    branches:
-      - "*"
+  - push
 
 jobs:
   sdk-k8s-operator:
