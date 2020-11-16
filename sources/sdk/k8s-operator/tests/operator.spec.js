@@ -83,18 +83,22 @@ describe('Operator', () => {
     it('should have a new KubeInterface per authenticated request with auth cookie', async () => {
       const expectedFoo = casual.word
       const context = sinon.stub().resolves({foo: expectedFoo})
+
+      const authCookieName = 'X-Datapio-Auth-Token-Test'
+
       const operator = new Operator({
         apolloOptions: { context },
         kubeOptions: {
           config: kubeFixture.config
-        }
+        },
+        authCookieName
       })
 
       const expectedToken = casual.word
       const req = {
-        get: sinon.stub().returnsArg(0),
+        get: sinon.stub(),
         signedCookies: {
-          'X-Datapio-Auth-Token': expectedToken
+          [authCookieName]: expectedToken
         }
       }
       const res = {
@@ -118,8 +122,23 @@ describe('Operator', () => {
         }
       })
       const req = {
-        get: sinon.stub().returnsArg(0),
+        get: sinon.stub(),
         signedCookies: {}
+      }
+
+      const context = operator.apollo.options.context({ req })
+
+      expect(context).to.be.rejectedWith(Operator.OperatorError)
+    })
+
+    it('should fail if malformed Authorization header token is provided', () => {
+      const operator = new Operator({
+        kubeOptions: {
+          config: kubeFixture.config
+        }
+      })
+      const req = {
+        get: sinon.stub().returnsArg(0)
       }
 
       const context = operator.apollo.options.context({ req })

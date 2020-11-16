@@ -27,9 +27,10 @@ const authTokenProcessorFactory = name => (req, res) => {
   const signedCookie = () => req.signedCookies[name]
   const authHeader = () => {
     const authorization = req.get('authorization')
-    return authorization &&
-      authorization.startsWith('Bearer ') &&
-      authorization.substring(7)
+    if (authorization && !authorization.startsWith('Bearer ')) {
+      throw new OperatorError('Invalid Authorization header. \'Bearer\' expected')
+    }
+    return authorization?.substring(7)
   }
   const getToken = () => authHeader() || signedCookie() || null
   const setToken = token => res.setHeader(
