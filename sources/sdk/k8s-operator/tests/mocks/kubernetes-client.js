@@ -26,7 +26,7 @@ const example = makeNamed(
 
 const watchExample = makeNamed({
   getObjectStream: sinon.stub().callsFake(
-    () => withWorld(world => world.stream)
+    async () => withWorld(world => world.stream)
   )
 })
 
