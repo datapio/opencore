@@ -120,7 +120,7 @@ class KubeInterface {
       ...missingCRDs
     ]
 
-    this.crds.map(this.client.addCustomResourceDefinition)
+    this.crds.map(this.client.addCustomResourceDefinition.bind(this.client))
   }
 
   async create(...resources) {
