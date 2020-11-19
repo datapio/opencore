@@ -26,29 +26,31 @@ const getEndpoint = (client, meta, watch = false) => {
     name
   } = meta
 
-  let ep = null
+  const fns = [
+    () => {
+      return apiGroup
+        ? client.apis[apiGroup][resourceVersion]
+        : client.api[resourceVersion]
+    },
+    ep => {
+      return watch ? ep.watch : ep
+    },
+    ep => {
+      return namespace ? ep.namespaces(namespace) : ep
+    },
+    ep => {
+      return ep[kind.toLowerCase()]
+    },
+    ep => {
+      return name ? ep(name) : ep
+    }
+  ]
 
   try {
-    if (apiGroup) {
-      ep = client.apis[apiGroup][resourceVersion]
-    }
-    else {
-      ep = client.api[resourceVersion]
-    }
-
-    if (watch) {
-      ep = ep.watch
-    }
-
-    if (namespace) {
-      ep = ep.namespaces(namespace)
-    }
-
-    ep = ep[kind.toLowerCase()]
-
-    if (name) {
-      ep = ep(name)
-    }
+    return fns.reduce(
+      (ep, fn) => fn(ep),
+      null
+    )
   }
   catch (err) {
     throw new KubeError(
@@ -59,8 +61,6 @@ const getEndpoint = (client, meta, watch = false) => {
       }
     )
   }
-
-  return ep
 }
 
 const response = {
@@ -185,7 +185,7 @@ class KubeInterface {
       name
     }, true)
 
-    return endpoint.getObjectStream()
+    return await endpoint.getObjectStream()
   }
 
   async waitCondition({

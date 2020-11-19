@@ -5,6 +5,8 @@ const sinon = require('sinon')
 
 const { KubeInterface } = require('../../src/index')
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 module.exports = () => {
   it('should watch resources', async () => {
     const kubectl = new KubeInterface({})
@@ -49,7 +51,7 @@ module.exports = () => {
       callback
     })
 
-    await 0 // breakpoint to let the promise execute
+    await sleep(100) // breakpoint to let the promise execute
 
     withWorld(world => {
       world.stream.push({ object: null })
@@ -74,7 +76,7 @@ module.exports = () => {
       name: 'example'
     })
 
-    await 0 // breakpoint to let the promise execute
+    await sleep(100) // breakpoint to let the promise execute
 
     withWorld(world => {
       world.stream.push({ object: 'DATA' })
@@ -101,7 +103,7 @@ module.exports = () => {
       callback
     })
 
-    await 0 // breakpoint to let the promise execute
+    await sleep(100) // breakpoint to let the promise execute
 
     withWorld(world => {
       world.stream.push({ object: 'DATA' })
