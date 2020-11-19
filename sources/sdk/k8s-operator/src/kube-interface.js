@@ -250,6 +250,41 @@ class KubeInterface {
 
     return response.unwrap(await endpoint.delete())
   }
+
+  async exec({ namespace, name, command, container }) {
+    const { apiGroup, resourceVersion } = parseApiVersion('v1')
+    const endpoint = getEndpoint(this.client, {
+      apiGroup,
+      resourceVersion,
+      kind: 'Pod',
+      namespace,
+      name
+    })
+    return response.unwrap(await endpoint.exec.post({
+      qs: {
+        command,
+        container,
+        stdout: true,
+        stderr: true
+      }
+    }))
+  }
+
+  async logs({ namespace, name, container }) {
+    const { apiGroup, resourceVersion } = parseApiVersion('v1')
+    const endpoint = getEndpoint(this.client, {
+      apiGroup,
+      resourceVersion,
+      kind: 'Pod',
+      namespace,
+      name
+    })
+    return response.unwrap(await endpoint.log.get({
+      qs: {
+        container
+      }
+    }))
+  }
 }
 
 KubeInterface.Error = KubeError
