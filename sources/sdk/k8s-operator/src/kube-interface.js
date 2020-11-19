@@ -28,7 +28,9 @@ const getEndpoint = (client, meta, watch = false) => {
 
   const fns = [
     () => {
-      return apiGroup ? client.apis[apiGroup][resourceVersion] : client.api[resourceVersion]
+      return apiGroup
+        ? client.apis[apiGroup][resourceVersion]
+        : client.api[resourceVersion]
     },
     ep => {
       return watch ? ep.watch : ep
