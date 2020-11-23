@@ -18,7 +18,7 @@
     "test": "c8 -n src/ -a -r html -r text mocha -r tests/mocks/index.js tests/**/*.spec.js tests/*.spec.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.12.7",
     "@babel/eslint-parser": "^7.11.5",
     "@babel/eslint-plugin": "^7.11.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
