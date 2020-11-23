@@ -127,7 +127,7 @@ class KubeInterface {
     return await Promise.all(resources
       .map(resource => ({
         kind: resource.kind,
-        namespace: resource.metadata.namespace,
+        namespace: resource.metadata?.namespace,
         body: resource,
         ...parseApiVersion(resource.apiVersion)
       }))
@@ -284,6 +284,24 @@ class KubeInterface {
         container
       }
     }))
+  }
+
+  async canI({ apiVersion, kind, namespace, verb }) {
+    const { apiGroup } = parseApiVersion(apiVersion)
+    const resp = await this.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: 'SelfSubjectAccessReview',
+      spec: {
+        resourceAttributes: {
+          group: apiGroup,
+          resource: kind.toLowerCase(),
+          verb,
+          namespace
+        }
+      }
+    })
+
+    return resp.status.allowed
   }
 }
 
