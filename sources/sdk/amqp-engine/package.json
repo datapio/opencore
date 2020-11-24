@@ -31,6 +31,6 @@
   },
   "dependencies": {
     "amqplib": "^0.6.0",
-    "merge-options": "^3.0.3"
+    "merge-options": "^3.0.4"
   }
 }
