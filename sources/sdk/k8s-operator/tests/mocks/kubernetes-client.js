@@ -20,7 +20,13 @@ const example = makeNamed(
   {
     get: sinon.stub().resolves({ statusCode: 200, body: 'DATA' }),
     patch: sinon.stub().resolves({ statusCode: 200, body: 'DATA' }),
-    delete: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+    delete: sinon.stub().resolves({ statusCode: 200, body: 'DATA' }),
+    exec: {
+      post: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+    },
+    log: {
+      get: sinon.stub().resolves({ statusCode: 200, body: 'DATA' })
+    }
   }
 )
 
@@ -38,7 +44,13 @@ const failure = makeNamed(
   {
     get: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
     patch: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
-    delete: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' })
+    delete: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' }),
+    exec: {
+      post: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' })
+    },
+    log: {
+      get: sinon.stub().resolves({ statusCode: 404, body: 'ERROR' })
+    }
   }
 )
 
@@ -75,10 +87,11 @@ const apis = {
         }),
         example: watchExample,
       },
-      namespaces: sinon.stub().returns({
+      namespaces: sinon.stub().callsFake(ns => ({
         example,
+        pod: ns === 'example' ? example : failure,
         failure
-      }),
+      })),
       example,
       failure
     }
