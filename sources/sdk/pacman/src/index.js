@@ -1,7 +1,19 @@
-const { execute_manifest } = require('./sandbox.js')
+import { Pipeline } from './api'
 
+const main = async () => {
+  const argv = process.argv.slice(2)
 
-execute_manifest(
-  process.env.PACMAN_WORKSPACE_PVC,
-  process.env.PACMAN_MANIFEST_PATH
-)
+  return do {
+    if (argv.length !== 1) {
+      console.error('Usage: datapio-pacman [pipeline-module]')
+      1
+    }
+    else {
+      const [module] = argv
+      const pipeline: Pipeline = await import(module)
+      console.log(pipeline)
+    }
+  }
+}
+
+main().catch(console.error)
