@@ -6,6 +6,7 @@ import contextManager from './context'
 import helperManager from './helpers'
 import profileManager from './profile'
 import toolManager from './tools'
+import stageManager from './stage'
 
 export default {
   load: (modules: Array<string>): Promise<Array<Pipeline>> => {
@@ -18,9 +19,14 @@ export default {
     const tools = await toolManager.get(profile)
     helperManager.addTools(helpers, tools)
     await helperManager.addKube(helpers, profile)
-
     const values = await profile.values(helpers)
-    await profileManager.integration(profile, pipeline, helpers, values)
-    await profileManager.deployment(profile, pipeline, helpers, values)
+
+    if (profile.integration) {
+      await stageManager.integration(pipeline, helpers, values)
+    }
+
+    if (profile.deployment) {
+      await stageManager.deployment(pipeline, helpers, values)
+    }
   }
 }
