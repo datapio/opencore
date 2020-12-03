@@ -1,8 +1,9 @@
-/* @flow */
+// @flow
 
 import { KubeConfig } from 'kubernetes-client'
 
 export type ToolDefinition = {
+  name: string,
   module: string,
   options: any
 }
@@ -12,15 +13,19 @@ export type ToolDefinitionArray = Array<ToolDefinition>
 export type Resource = {
   apiVersion: string,
   kind: string,
-  metadata: object,
-  spec?: object,
-  status?: object
+  metadata: {},
+  spec?: {},
+  status?: {}
 }
 
 export type ResourceArray = Array<Resource>
 
-export type Helpers = {}
-export type Values = {}
+export type Helpers = {
+  [propName: string]: any
+}
+export type Values = {
+  [propName: string]: any
+}
 
 export type Profile = {
   integration: boolean,
@@ -35,7 +40,7 @@ export type ProfileSet = {
 }
 
 export type Component = {
-  defaultValues: () => Promise<object>,
+  defaultValues: () => Promise<{}>,
   integration: (helpers: Helpers, values: Values) => Promise<void>,
   deployment: (helpers: Helpers, values: Values) => Promise<ResourceArray>
 }
