@@ -1,16 +1,7 @@
 // @flow
 
-import type { Pipeline, Profile } from '../api'
+import type { Pipeline, Profile, Context } from '../api'
 import { KubeConfig } from 'kubernetes-client'
-
-export type ProfileTriggers = {
-  integration?: boolean,
-  deployment?: boolean
-}
-
-export type Context = {
-  profile: (name: string, triggers: ProfileTriggers) => Profile
-}
 
 const defaultProfile: Profile = {
   async tools() {
@@ -28,15 +19,15 @@ const defaultProfile: Profile = {
 
 export default {
   get: (pipeline: Pipeline): Context => ({
-    profile: (name, triggers = {}) => {
+    profile: (name, override = {}) => {
       const profile = pipeline.profiles[name] || defaultProfile
 
-      if (typeof triggers.integration === 'boolean') {
-        profile.integration = triggers.integration
+      if (typeof override.integration === 'boolean') {
+        profile.integration = override.integration
       }
 
-      if (typeof triggers.deployment === 'boolean') {
-        profile.deployment = triggers.deployment
+      if (typeof override.deployment === 'boolean') {
+        profile.deployment = override.deployment
       }
 
       return profile

@@ -8,15 +8,15 @@ import mergeOptions from 'merge-options'
 const capitalize = (str: string): string =>
   str.charAt(0).toUpperCase() + str.slice(1)
 
-async function defaultHandler() {
-  return this.profile()
+const defaultHandler = async function(context) {
+  return context.profile()
 }
 
 export default {
   get: (context: Context, pipeline: Pipeline, event: Event, helpers: Helpers): Promise<Profile> => {
     const handlerName = `on${capitalize(event.kind)}`
-    const handler = (pipeline[handlerName] || defaultHandler).bind(context)
-    return handler(helpers)
+    const handler = pipeline[handlerName] || defaultHandler
+    return handler(context, helpers)
   },
   integration: async (profile: Profile, pipeline: Pipeline, helpers: Helpers, values: Values): Promise<void> => {
     if (profile.integration) {

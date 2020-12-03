@@ -39,6 +39,15 @@ export type ProfileSet = {
   [name: string]: Profile
 }
 
+export type ProfileOverride = {
+  integration?: boolean,
+  deployment?: boolean
+}
+
+export type Context = {
+  profile: (name: string, override: ProfileOverride) => Profile
+}
+
 export type Component = {
   defaultValues: () => Promise<{}>,
   integration: (helpers: Helpers, values: Values) => Promise<void>,
@@ -60,7 +69,7 @@ export type Pipeline = {
   components: ComponentSet,
   profiles: ProfileSet,
 
-  onPush?: (helpers: Helpers) => Promise<Profile>,
-  onPullRequest?: (helpers: Helpers) => Promise<Profile>,
-  onLocal?: (helpers: Helpers) => Promise<Profile>
+  onPush?: (context: Context, helpers: Helpers) => Promise<Profile>,
+  onPullRequest?: (context: Context, helpers: Helpers) => Promise<Profile>,
+  onLocal?: (context: Context, helpers: Helpers) => Promise<Profile>
 }
