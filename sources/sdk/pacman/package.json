@@ -35,6 +35,7 @@
     "@datapio/sdk-k8s-operator": "^1.3.0",
     "flow-runtime": "^0.17.0",
     "merge-options": "^3.0.4",
+    "slugify": "^1.4.6",
     "sywac": "^1.3.0"
   }
 }
