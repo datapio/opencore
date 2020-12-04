@@ -3,6 +3,12 @@
 import type { Pipeline, Helpers, Values, Component, Context } from '../api'
 import type { Event } from './config'
 import mergeOptions from 'merge-options'
+import slugify from 'slugify'
+
+slugify.extend({
+  '.': '-',
+  '/': '_'
+})
 
 type StageFunction = (component: Component, values: Values) => Promise<any>
 
@@ -42,58 +48,62 @@ export default {
 
     const { kubectl } = helpers
 
-    try {
-      const releaseObject = await kubectl.get({
-        apiVersion: 'v1',
-        kind: 'Secret',
-        name: `datapio-release-${pipeline.release.name}`,
-        namespace: pipeline.release.namespace
-      })
-    }
-    catch (err) {
-      // TODO: create releaseObject
-    }
-
-    try {
-      const prevRevision = await kubectl.get({
-        apiVersion: 'v1',
-        kind: 'Secret',
-        name: releaseObject.spec.currentRevision,
-        namespace: pipeline.release.namespace
-      })
-    }
-    catch (err) {
-      // TODO: handle case when no previous revision
-    }
-
     const newRevision = await kubectl.create({
       apiVersion: 'v1',
       kind: 'Secret',
       metadata: {
         generateName: `datapio-revision-${pipeline.release.name}-`,
-        namespace: pipeline.release.namespace
-      },
-      stringData: Object.fromEntries(resources.map(rsrc => [
-        rsrc.metadata.name,
-        JSON.stringify(rsrc)
-      ]))
-    })
-
-    // TODO: diff between prevRevision and newRevision
-    // TODO: delete missing resources from newRevision
-    // TODO: patch resources present in both revisions
-    // TODO: create missing ressources from prevResion
-
-    await kubectl.patch({
-      apiVersion: 'v1',
-      kind: 'Secret',
-      name: releaseObject.metadata.name,
-      namespace: releaseObject.metadata.namespace,
-      patch: {
-        spec: {
-          currentRevision: newRevision.metadata.name
+        namespace: pipeline.release.namespace,
+        annotations: {
+          'app.kubernetes.io/managed-by': 'datapio',
+          'app.datap.io/kind': 'revision',
+          'app.datap.io/release': pipeline.release.name
         }
-      }
+      },
+      stringData: Object.fromEntries(resources.map(rsrc => {
+        const { apiVersion, kind, metadata: { name, namespace } } = rsrc
+
+        return [
+          slugify(`${apiVersion}_${kind}_${namespace}_${name}`),
+          JSON.stringify(rsrc)
+        ]
+      }))
     })
+
+    const releaseObject = {
+      name: `datapio-release-${pipeline.release.name}`,
+      revision: newRevision.metadata.name
+    }
+
+    try {
+      await kubectl.patch({
+        apiVersion: 'v1',
+        kind: 'Secret',
+        name: releaseObject.name,
+        namespace: pipeline.release.namespace,
+        patch: {
+          spec: {
+            currentRevision: releaseObject.revision
+          }
+        }
+      })
+    }
+    catch (err) {
+      await kubectl.create({
+        apiVersion: 'v1',
+        kind: 'Secret',
+        metadata: {
+          name: releaseObject.name,
+          namespace: pipeline.release.namespace,
+          annotations: {
+            'app.kubernetes.io/managed-by': 'datapio',
+            'app.datap.io/kind': 'release'
+          }
+        },
+        spec: {
+          currentRevision: releaseObject.revision
+        }
+      })
+    }
   }
 }
