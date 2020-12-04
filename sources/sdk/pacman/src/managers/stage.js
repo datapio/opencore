@@ -1,7 +1,6 @@
 // @flow
 
-import type { Pipeline, Helpers, Values, Component, Context } from '../api'
-import type { Event } from './config'
+import type { Pipeline, Helpers, Values, Component } from '../api'
 import mergeOptions from 'merge-options'
 import slugify from 'slugify'
 
@@ -19,15 +18,19 @@ const componentStage = (values: Values, stage: StageFunction) =>
       values
     )
 
-    return await stage(component, values)
+    return await stage(component, localValues)
   }
 
-const runStage = async (pipeline: Pipeline, helpers: Helpers, values: Values, stage: StageFunction): Promise<Array<any>> => {
-  const components = Object.values(pipeline.components)
+const runStage = async (
+  pipeline: Pipeline,
+  helpers: Helpers,
+  values: Values,
+  stage: StageFunction
+): Promise<Array<any>> => {
   const waiters = []
   const process = componentStage(values, stage)
 
-  for (const name in pipeline.components) {
+  for (const name of Object.keys(pipeline.components)) {
     waiters.push(process(pipeline.components[name]))
   }
 
@@ -35,15 +38,29 @@ const runStage = async (pipeline: Pipeline, helpers: Helpers, values: Values, st
 }
 
 export default {
-  integration: async (pipeline: Pipeline, helpers: Helpers, values: Values): Promise<void> => {
-    await runStage(pipeline, helpers, values, async (component, values) => {
-      await component.integration(helpers, values)
-    })
+  integration: async (
+    pipeline: Pipeline,
+    helpers: Helpers,
+    values: Values
+  ): Promise<void> => {
+    await runStage(
+      pipeline, helpers, values,
+      async (component, localValues) => {
+        await component.integration(helpers, localValues)
+      }
+    )
   },
-  deployment: async (pipeline: Pipeline, helpers: Helpers, values: Values): Promise<void> => {
-    const resourceSets = await runStage(pipeline, helpers, values, async (component, values) => {
-      return await component.deployment(helpers, values)
-    })
+  deployment: async (
+    pipeline: Pipeline,
+    helpers: Helpers,
+    values: Values
+  ): Promise<void> => {
+    const resourceSets = await runStage(
+      pipeline, helpers, values,
+      async (component, localValues) => {
+        return await component.deployment(helpers, localValues)
+      }
+    )
     const resources = [].concat(...resourceSets)
 
     const { kubectl } = helpers

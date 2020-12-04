@@ -12,7 +12,7 @@ export default {
     }
   },
   addTools: (helpers: Helpers, tools: Array<[string, any]>): void => {
-    tools.map(([name, tool]) => {
+    tools.forEach(([name, tool]) => {
       helpers[name] = tool
     })
   },

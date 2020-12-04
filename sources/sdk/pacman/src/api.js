@@ -45,7 +45,7 @@ export type ProfileOverride = {
 }
 
 export type Context = {
-  profile: (name: string, override: ProfileOverride) => Profile
+  profile: (name: string, override?: ProfileOverride) => Profile
 }
 
 export type Component = {

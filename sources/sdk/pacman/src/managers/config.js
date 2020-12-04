@@ -14,7 +14,10 @@ const parseFile = async (filename: string): any =>
   JSON.parse(await fs.readFile(filename, 'utf-8'))
 
 export default {
-  get: (configPath: string, eventPath: string): Promise<[Configuration, Event]> => {
+  get: (
+    configPath: string,
+    eventPath: string
+  ): Promise<[Configuration, Event]> => {
     return Promise.all([
       parseFile(configPath),
       parseFile(eventPath)
