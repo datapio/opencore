@@ -60,8 +60,7 @@ export type ComponentSet = {
 
 export type Release = {
   name: string,
-  namespace: string,
-  version?: string
+  namespace: string
 }
 
 export type Pipeline = {
