@@ -99,7 +99,7 @@ export default {
         name: releaseObject.name,
         namespace: pipeline.release.namespace,
         patch: {
-          spec: {
+          stringData: {
             currentRevision: releaseObject.revision
           }
         }
@@ -117,7 +117,7 @@ export default {
             'app.datap.io/kind': 'release'
           }
         },
-        spec: {
+        stringData: {
           currentRevision: releaseObject.revision
         }
       })
