@@ -270,12 +270,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@godaddy/terminus@^4.4.1":
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.4.1.tgz#0a54ba1363452a8199f46aed3f7931d55287c6b0"
-  integrity sha512-ZPwsG7xN+B2bvnEu6+o0rBPAFbXmm6Bk/RAR4b/nhjNOSJtbVFYTd+JSaJYL/jyESqcTcAyzlWO0dmbT4YsckQ==
+"@godaddy/terminus@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.5.0.tgz#618951107bb91fec68f194186f5c2c9392b8efa7"
+  integrity sha512-fARG14VkM3wgZbgT0G5rmXOmG6GLcRcPoTDS4/idaUJsaYuuuz5OqMSc22QZ94ixnMhr2V+vJ6JZQTlePDO01w==
   dependencies:
-    es6-promisify "^6.0.2"
     stoppable "^1.1.0"
 
 "@istanbuljs/schema@^0.1.2":
@@ -1629,11 +1628,6 @@ es-to-primitive@^1.2.1:
     is-callable "^1.1.4"
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
-
-es6-promisify@^6.0.2:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/es6-promisify/-/es6-promisify-6.1.1.tgz#46837651b7b06bf6fff893d03f29393668d01621"
-  integrity sha512-HBL8I3mIki5C1Cc9QjKUenHtnG0A5/xA8Q/AllRcfiwl2CZFXGK7ddBiCoRwAix4i2KxcQfjtIVcrVbB3vbmwg==
 
 escalade@^3.1.1:
   version "3.1.1"
