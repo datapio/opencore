@@ -1,3 +1,7 @@
+/**
+ * @module index
+ */
+
 const ResourceWatcher = require('./resource-watcher')
 const KubeInterface = require('./kube-interface')
 const ServerFactory = require('./server-factory')

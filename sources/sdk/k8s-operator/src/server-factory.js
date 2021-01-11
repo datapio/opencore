@@ -1,9 +1,38 @@
+/**
+ * HTTP(S) server(s) factory.
+ * @module server-factory
+ */
+
 const mergeOptions = require('merge-options').bind({ ignoreUndefined: true })
 const https = require('https')
 const http = require('http')
 const fs = require('fs')
 
+/**
+ * Creates HTTP(S) server(s)
+ * @class ServerFactory
+ */
 class ServerFactory {
+  /**
+   * @typedef ServerFactoryConfiguration
+   * @property {HTTPSConfiguration} https
+   * @property {HTTPConfiguration} http
+   */
+
+  /**
+   * @typedef HTTPSConfiguration
+   * @property {Boolean} enabled Activate HTTPS support
+   * @property {Number} port HTTPS port to listen
+   * @property {String} key Path to X.509 Server Certificate private key
+   * @property {String} cert Path to X.509 Server Certificate public key
+   * @property {String} ca Path to X.509 Certificate Authority that signed the Server Certificate
+   */
+
+  /**
+   * @typedef HTTPConfiguration
+   * @property port HTTP port to listen
+   */
+
   defaultOptions = {
     https: {
       enabled: false,
@@ -17,10 +46,24 @@ class ServerFactory {
     }
   }
 
+  /**
+   * Create a new Server Factory
+   * @param {ServerFactoryOptions} options
+   */
   constructor(options = {}) {
     this.options = mergeOptions(this.defaultOptions, options)
   }
 
+  /**
+   * @typedef {(http.Server|https.Server)} HTTPServer
+   */
+
+  /**
+   * Create the HTTP(S) server(s)
+   *
+   * @param {Object} api `createServer` options
+   * @returns {Array<HTTPServer>} HTTP(S) server(s)
+   */
   make(api) {
     const servers = [
       {

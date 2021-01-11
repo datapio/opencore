@@ -9,6 +9,7 @@ const crypto = require('crypto')
 const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
+const makeApolloContext = require('./graphql/context')
 
 class OperatorError extends Error {
   constructor(msg) {
@@ -82,51 +83,10 @@ class Operator {
 
     const authTokenProcessor = authTokenProcessorFactory(authCookieName)
 
-    const userContext = apolloRealOptions.context
-    apolloRealOptions.context = async ({ req, res, ...args }) => {
-      const ctx = await userContext({ req, res, ...args })
-
-      const kubeConfig = new kubernetes.KubeConfig()
-
-      kubeConfig.loadFromString(
-        JSON.stringify({
-          apiVersion: 'v1',
-          kind: 'Config',
-          clusters: [],
-          users: [],
-          contexts: [],
-          'current-context': ''
-        })
-      )
-
-      kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
-
-      const token = authTokenProcessor(req, res)
-
-      kubeConfig.addUser({
-        name: 'graphql-client',
-        token
-      })
-      kubeConfig.addContext({
-        cluster: this.kubectl.config.getCurrentCluster().name,
-        name: 'graphql-request',
-        user: 'graphql-client',
-        namespace: this.kubectl.config.getCurrentContextObject().namespace
-      })
-      kubeConfig.setCurrentContext('graphql-request')
-
-      const kubectl = new KubeInterface({
-        crds: this.kubectl.crds,
-        createCRDs: false,
-        config: kubeConfig
-      })
-      await kubectl.load()
-
-      return {
-        kubectl,
-        ...ctx
-      }
-    }
+    apolloRealOptions.context = makeApolloContext(
+      this,
+      apolloRealOptions.context
+    )
 
     this.apollo = new ApolloServer(apolloRealOptions)
     this.apollo.options = apolloRealOptions
