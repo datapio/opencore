@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@godaddy/terminus": "^4.5.0",
-    "@kubernetes/client-node": "^0.13.1",
+    "@kubernetes/client-node": "^0.13.2",
     "apollo-server-express": "^2.19.1",
     "cookie-parser": "^1.4.5",
     "kubernetes-client": "^9.0.0",
