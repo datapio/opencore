@@ -22,7 +22,7 @@
     "@babel/eslint-parser": "^7.11.5",
     "@babel/eslint-plugin": "^7.11.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "c8": "^7.1.2",
+    "c8": "^7.4.0",
     "casual": "^1.6.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
