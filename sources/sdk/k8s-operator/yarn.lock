@@ -302,10 +302,10 @@
     underscore "^1.9.1"
     ws "^6.1.0"
 
-"@kubernetes/client-node@^0.13.1":
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/@kubernetes/client-node/-/client-node-0.13.1.tgz#a8008bdc8ac580ff619810a86039911df688b79e"
-  integrity sha512-qGL/Sl5jUJS/6XYIhfhNeQuTNpWfkX1CycQsN6SNgaF7cD1kbB57NSaCaIgkcfEeDjll7b/ctk8sKCLH9HJ9yw==
+"@kubernetes/client-node@^0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@kubernetes/client-node/-/client-node-0.13.2.tgz#881eb407afbd5b499e5daf898ffcc40f839709e7"
+  integrity sha512-ufvGfjBXuy5LbZTJZ8bd1eRVgWUd9rRDCryMWNfxb4372Q60R1oG8qy7svUB9NqBmwFgKHuaXkrfq3rFFbGrew==
   dependencies:
     "@types/js-yaml" "^3.12.1"
     "@types/node" "^10.12.0"
