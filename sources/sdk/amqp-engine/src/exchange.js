@@ -1,6 +1,6 @@
 /**
  * Interface to exchange related amqplib channel methods.
- * 
+ *
  * @module exchange
  */
 
@@ -10,6 +10,7 @@
  * @class Exchange
  */
 class Exchange {
+
   /**
    * Create a new exchange from amqplib channel and name.
    * 

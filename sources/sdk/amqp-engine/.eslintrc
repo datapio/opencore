@@ -259,7 +259,11 @@
             "error",
             "never"
         ],
-        "valid-jsdoc": ["error", { "requireReturn": false }],
+        "valid-jsdoc": ["error", {
+            "requireReturn": false,
+            "requireReturnDescription": false,
+            "requireParamDescription": false
+        }],
         "vars-on-top": "error",
         "wrap-iife": "error",
         "wrap-regex": "error",
