@@ -8,6 +8,7 @@
  * @class CancelScope
  */
 class CancelScope {
+
   /**
    * Create a new cancel scope from a callback.
    * @param {Function} cleanup Callback to call on cancel.

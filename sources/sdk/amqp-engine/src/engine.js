@@ -1,6 +1,6 @@
 /**
  * Declarative interface of queues, exchanges, publishers and consumers.
- * 
+ *
  * @module engine
  */
 
@@ -14,10 +14,11 @@ const Queue = require('./queue')
 const encode = msg => Buffer.from(JSON.stringify(msg))
 
 /**
- * 
+ *
  * @class Engine
  */
 class Engine {
+
   /**
    * @typedef EngineConfiguration
    * @property {String} [url]
@@ -70,8 +71,8 @@ class Engine {
 
   /**
    * Create an engine.
-   * 
-   * @param {EngineConfiguration} options 
+   *
+   * @param {EngineConfiguration} options engine configuration.
    */
   constructor(options) {
     this.options = mergeOptions(this.defaultOptions, options)

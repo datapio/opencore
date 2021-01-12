@@ -90,7 +90,7 @@
         "lines-between-class-members": "error",
         "max-classes-per-file": "error",
         "max-depth": "error",
-        "max-len": "warn",
+        "max-len": "off",
         "max-lines": "error",
         "max-lines-per-function": "off",
         "max-nested-callbacks": "error",
@@ -259,7 +259,7 @@
             "error",
             "never"
         ],
-        "valid-jsdoc": "error",
+        "valid-jsdoc": ["error", { "requireReturn": false }],
         "vars-on-top": "error",
         "wrap-iife": "error",
         "wrap-regex": "error",
