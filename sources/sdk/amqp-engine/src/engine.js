@@ -1,3 +1,9 @@
+/**
+ * Declarative interface of queues, exchanges, publishers and consumers.
+ * 
+ * @module engine
+ */
+
 const mergeOptions = require('merge-options').bind({ ignoreUndefined: true });
 const amqp = require('amqplib')
 
@@ -7,7 +13,19 @@ const Queue = require('./queue')
 
 const encode = msg => Buffer.from(JSON.stringify(msg))
 
+/**
+ * 
+ * @class Engine
+ */
 class Engine {
+  /**
+   * @typedef EngineConfiguration
+   * @property {String} [url]
+   * @property {Map<String, ExchangeConfiguration>} [exchanges]
+   * @property {Map<String, QueueConfiguration>} [queues]
+   * @property {Map<String, PublisherConfiguration>} [publishers]
+   * @property {Map<String, ConsumerConfiguration>} [consumers]
+   */
   defaultOptions = {
     url: 'amqp://guest:guest@localhost:5672/',
     exchanges: {},
@@ -16,6 +34,11 @@ class Engine {
     consumers: {}
   }
 
+  /**
+   * @typedef ExchangeConfiguration
+   * @property {String} [type]
+   * @property {Object} [options] see {@link https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange|amqplib Documentation}
+   */
   defaultExchange = {
     type: 'topic',
     options: {
@@ -23,6 +46,11 @@ class Engine {
     }
   }
 
+  /**
+   * @typedef QueueConfiguration
+   * @property {Array<QueueBindingConfiguration>} [bindings]
+   * @property {Object} [options] see {@link https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue|amqplib Documentation}
+   */
   defaultQueue = {
     bindings: [],
     options: {
@@ -30,11 +58,21 @@ class Engine {
     }
   }
 
+  /**
+   * @typedef QueueBindingConfiguration
+   * @property {String} [exchange]
+   * @property {String} [routingKey]
+   */
   defaultQueueBinding = {
     exchange: 'default',
     routingKey: '#'
   }
 
+  /**
+   * Create an engine.
+   * 
+   * @param {EngineConfiguration} options 
+   */
   constructor(options) {
     this.options = mergeOptions(this.defaultOptions, options)
 
@@ -48,6 +86,9 @@ class Engine {
     this.cancelScopes = []
   }
 
+  /**
+   * Declare engine exchanges/queues and creates consumers/publishers.
+   */
   async declare() {
     this.conn = await amqp.connect(this.options.url)
     this.channel = await this.conn.createChannel()
@@ -117,6 +158,10 @@ class Engine {
     await this.afterDeclare()
   }
 
+  /**
+   * Consume messages from consumers.
+   * @returns {Promise<void>}
+   */
   async consume() {
     await this.beforeConsume()
 
@@ -145,6 +190,9 @@ class Engine {
     )
   }
 
+  /**
+   * Cancel consumers and close the connection.
+   */
   async shutdown() {
     await this.beforeShutdown()
 
@@ -163,10 +211,19 @@ class Engine {
     this.conn = null
   }
 
+  /**
+   * Callback called after declaring the engine.
+   */
   async afterDeclare() {}
 
+  /**
+   * Callback called before consuming messages.
+   */
   async beforeConsume() {}
 
+  /**
+   * Callback called before shuting down the engine.
+   */
   async beforeShutdown() {}
 }
 
