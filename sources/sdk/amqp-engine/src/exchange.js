@@ -6,14 +6,14 @@
 
 /**
  * Abstraction of AMQP exchange.
- * 
+ *
  * @class Exchange
  */
 class Exchange {
 
   /**
    * Create a new exchange from amqplib channel and name.
-   * 
+   *
    * @param {amqplib.Channel} channel
    * @param {String} name AMQP exchange name.
    */
@@ -32,7 +32,7 @@ class Exchange {
 
   /**
    * Remove AMQP exchange.
-   * 
+   *
    * @param {Object} options See {@link https://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange|amqplib documentation}.
    * @returns {Promise<Boolean>}
    */
@@ -42,7 +42,7 @@ class Exchange {
 
   /**
    * Bind AMQP source exchange to this AMQP exchange.
-   * 
+   *
    * @param {String} source source exchange name.
    * @param {String} pattern routing key.
    * @param {Object} args See {@link https://www.squaremobius.net/amqp.node/channel_api.html#channel_bindExchange|amqplib documentation}.
@@ -54,7 +54,7 @@ class Exchange {
 
   /**
    * Unbind AMQP source exchange to this AMQP exchange.
-   * 
+   *
    * @param {String} source source exchange name.
    * @param {String} pattern routing key
    * @param {Object} args See {@link https://www.squaremobius.net/amqp.node/channel_api.html#channel_unbindExchange|amqplib documentation}.

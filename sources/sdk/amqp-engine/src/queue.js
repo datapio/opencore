@@ -13,7 +13,7 @@ class Queue {
 
   /**
    * Create a new queue from amqplib channel and name.
-   * 
+   *
    * @param {amqplib.Channel} channel
    * @param {String} name AMQP queue name.
    */
