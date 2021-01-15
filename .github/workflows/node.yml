@@ -43,17 +43,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
-      - name: notify@slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          username: CIBot
-          fields: repo,message,commit,author,ref,took,job
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-        if: always()
-
   sdk-amqp-engine:
     runs-on: ubuntu-latest
     defaults:
@@ -91,17 +80,6 @@ jobs:
         run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: notify@slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          username: CIBot
-          fields: repo,message,commit,author,ref,took,job
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-        if: always()
 
   sdk-pacman:
     runs-on: ubuntu-latest
@@ -141,17 +119,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
-      - name: notify@slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          username: CIBot
-          fields: repo,message,commit,author,ref,took,job
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-        if: always()
-
   pipelinerunserver-archiver:
     runs-on: ubuntu-latest
     defaults:
@@ -177,17 +144,6 @@ jobs:
         run: yarn install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: notify@slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          username: CIBot
-          fields: repo,message,commit,author,ref,took,job
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-        if: always()
 
   pipelinerunserver-worker:
     runs-on: ubuntu-latest
@@ -215,10 +171,21 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
+  notify:
+    needs:
+      - sdk-k8s-operator
+      - sdk-amqp-engine
+      - sdk-pacman
+      - pipelinerunserver-archiver
+      - pipelinerunserver-worker
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: notify@slack
         uses: 8398a7/action-slack@v3
         with:
-          status: ${{ job.status }}
+          status: ${{ success() }}
           username: CIBot
           fields: repo,message,commit,author,ref,took,job
         env:
