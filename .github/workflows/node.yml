@@ -188,7 +188,7 @@ jobs:
         with:
           status: ${{ env.WORKFLOW_CONCLUSION }}
           username: CIBot
-          fields: repo,message,commit,author,ref,took,job
+          fields: repo,message,commit,author,ref,took
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
