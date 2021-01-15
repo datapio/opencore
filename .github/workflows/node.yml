@@ -182,10 +182,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - uses: technote-space/workflow-conclusion-action@v2
       - name: notify@slack
         uses: 8398a7/action-slack@v3
         with:
-          status: ${{ success() }}
+          status: ${{ env.WORKFLOW_CONCLUSION }}
           username: CIBot
           fields: repo,message,commit,author,ref,took,job
         env:
