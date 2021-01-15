@@ -37,6 +37,7 @@
     "@kubernetes/client-node": "^0.13.2",
     "apollo-server-express": "^2.19.2",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "kubernetes-client": "^9.0.0",
     "merge-options": "^3.0.4"
   }
