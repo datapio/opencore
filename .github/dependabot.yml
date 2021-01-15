@@ -4,11 +4,26 @@ updates:
     directory: "/sources/sdk/k8s-operator"
     schedule:
       interval: "daily"
+    labels:
+      - sdk/k8s-operator
+    commit-message:
+      prefix: ':arrow_up: '
+      prefix-development: ':arrow_up: '
   - package-ecosystem: "npm"
     directory: "/sources/sdk/amqp-engine"
     schedule:
       interval: "daily"
+    labels:
+      - sdk/amqp-engine
+    commit-message:
+      prefix: ':arrow_up: '
+      prefix-development: ':arrow_up: '
   - package-ecosystem: "npm"
     directory: "/sources/sdk/pacman"
     schedule:
       interval: "daily"
+    labels:
+      - sdk/pacman
+    commit-message:
+      prefix: ':arrow_up: '
+      prefix-development: ':arrow_up: '
