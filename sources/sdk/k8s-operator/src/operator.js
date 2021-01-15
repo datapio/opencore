@@ -77,7 +77,7 @@ class Operator {
     this.webapp.use(cookieParser(cookieSecret))
     this.webapp.use('/api', this.api)
     this.webapp.get('/graphql/logout', (req, res) => {
-      res.clearCookie(authCookieName)
+      res.cookie(authCookieName, { expires: Date.now() })
     })
 
     const apolloRealOptions = mergeOptions(
