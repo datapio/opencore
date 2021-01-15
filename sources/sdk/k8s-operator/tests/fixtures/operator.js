@@ -1,8 +1,11 @@
 const sinon = require('sinon')
 const kubectl = require('./kubectl')
 
+const webapp = sinon.spy()
+webapp.get = sinon.stub()
+
 module.exports = {
-  webapp: sinon.spy(),
+  webapp,
   healthCheck: sinon.stub().resolves(true),
   metrics: sinon.stub().resolves({}),
   kubectl,

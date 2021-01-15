@@ -3,7 +3,7 @@ const { ApolloServer } = require('apollo-server-express')
 const kubernetes = require('kubernetes-client')
 const express = require('express')
 const cookieParser = require('cookie-parser')
-
+const cors = require('cors')
 const crypto = require('crypto')
 
 const ServerFactory = require('./server-factory')
@@ -61,6 +61,7 @@ class Operator {
     serverOptions = {},
     kubeOptions = {},
     apolloOptions = {},
+    corsOptions = {},
     cookieSecret = crypto.randomBytes(48).toString('hex'),
     authCookieName = 'X-Datapio-Auth-Token',
     ...options
@@ -72,8 +73,12 @@ class Operator {
 
     this.api = apiFactory(this.kubectl)
     this.webapp = express()
+    this.webapp.use(cors(corsOptions))
     this.webapp.use(cookieParser(cookieSecret))
     this.webapp.use('/api', this.api)
+    this.webapp.get('/graphql/logout', (req, res) => {
+      res.cookie(authCookieName, { expires: Date.now() })
+    })
 
     const apolloRealOptions = mergeOptions(
       this.defaultApolloOptions,
