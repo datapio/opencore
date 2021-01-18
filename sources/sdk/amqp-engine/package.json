@@ -24,7 +24,7 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "c8": "^7.4.0",
     "chai": "^4.2.0",
-    "eslint": "^7.17.0",
+    "eslint": "^7.18.0",
     "mocha": "^8.2.1",
     "mock-require": "^3.0.3",
     "sinon": "^9.2.3"
