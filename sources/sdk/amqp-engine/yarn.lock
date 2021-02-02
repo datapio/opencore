@@ -431,10 +431,10 @@ buffer-more-ints@~1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-more-ints/-/buffer-more-ints-1.0.0.tgz#ef4f8e2dddbad429ed3828a9c55d44f05c611422"
   integrity sha512-EMetuGFz5SLsT0QTnXzINh4Ksr+oo4i+UGTXEshiGCQWnsgSs7ZhJ8fzlwQ+OzEMs0MpDAMr1hxnblp5a4vcHg==
 
-c8@^7.4.0:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/c8/-/c8-7.4.0.tgz#098ba30ba4a58de9e080645116ba8ae3d545fd5c"
-  integrity sha512-K8I7MEe2i4L91YBX3HtV10kKpU5uqGeyjtsdGS2FxfT0pk15d9jthujjR1ORRLrCJ4tXuDK9PSH2vChzRDoAZw==
+c8@^7.5.0:
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/c8/-/c8-7.5.0.tgz#a69439ab82848f344a74bb25dc5dd4e867764481"
+  integrity sha512-GSkLsbvDr+FIwjNSJ8OwzWAyuznEYGTAd1pzb/Kr0FMLuV4vqYJTyjboDTwmlUNAG6jAU3PFWzqIdKrOt1D8tw==
   dependencies:
     "@bcoe/v8-coverage" "^0.2.3"
     "@istanbuljs/schema" "^0.1.2"
