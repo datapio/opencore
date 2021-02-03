@@ -303,6 +303,42 @@ class KubeInterface {
 
     return resp.status.allowed
   }
+
+  async canThey({ apiVersion, kind, namespace, verb }) {
+    const { apiGroup } = parseApiVersion(apiVersion)
+    const resp = await this.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview',
+      spec: {
+        resourceAttributes: {
+          group: apiGroup,
+          resource: kind.toLowerCase(),
+          verb,
+          namespace
+        }
+      }
+    })
+
+    return resp.status.allowed
+  }
+
+  async myAccessRules({ apiVersion, kind, namespace, verb }) {
+    const { apiGroup } = parseApiVersion(apiVersion)
+    const resp = await this.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: 'SelfSubjectRulesReview',
+      spec: {
+        resourceAttributes: {
+          group: apiGroup,
+          resource: kind.toLowerCase(),
+          verb,
+          namespace
+        }
+      }
+    })
+
+    return resp.status.allowed
+  }
 }
 
 KubeInterface.Error = KubeError
