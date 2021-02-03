@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
-    "@babel/eslint-parser": "^7.11.5",
+    "@babel/eslint-parser": "^7.12.13",
     "@babel/eslint-plugin": "^7.11.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "c8": "^7.4.0",
