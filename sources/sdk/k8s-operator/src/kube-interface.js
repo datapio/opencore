@@ -286,58 +286,37 @@ class KubeInterface {
     }))
   }
 
-  async canI({ apiVersion, kind, namespace, verb }) {
-    const { apiGroup } = parseApiVersion(apiVersion)
-    const resp = await this.create({
-      apiVersion: 'authorization.k8s.io/v1',
-      kind: 'SelfSubjectAccessReview',
-      spec: {
-        resourceAttributes: {
-          group: apiGroup,
-          resource: kind.toLowerCase(),
-          verb,
-          namespace
+  async checkACL (rscKind) {
+    return async ({ apiVersion, kind, namespace, verb }) => {
+      const { apiGroup } = parseApiVersion(apiVersion)
+      const resp = await this.create({
+        apiVersion: 'authorization.k8s.io/v1',
+        kind: rscKind,
+        spec: {
+          resourceAttributes: {
+            group: apiGroup,
+            resource: kind.toLowerCase(),
+            verb,
+            namespace
+          }
         }
-      }
-    })
+      })
 
-    return resp.status.allowed
+      return resp.status
+    }
   }
 
-  async canThey({ apiVersion, kind, namespace, verb }) {
-    const { apiGroup } = parseApiVersion(apiVersion)
-    const resp = await this.create({
-      apiVersion: 'authorization.k8s.io/v1',
-      kind: namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview',
-      spec: {
-        resourceAttributes: {
-          group: apiGroup,
-          resource: kind.toLowerCase(),
-          verb,
-          namespace
-        }
-      }
-    })
-
-    return resp.status.allowed
+  async canI(rsc) {
+    return (await this.checkACL('SelfSubjectAccessReview')(rsc)).allowed
   }
 
-  async myAccessRules({ apiVersion, kind, namespace, verb }) {
-    const { apiGroup } = parseApiVersion(apiVersion)
-    const resp = await this.create({
-      apiVersion: 'authorization.k8s.io/v1',
-      kind: 'SelfSubjectRulesReview',
-      spec: {
-        resourceAttributes: {
-          group: apiGroup,
-          resource: kind.toLowerCase(),
-          verb,
-          namespace
-        }
-      }
-    })
+  async canThey(rsc) {
+    const rscKind = rsc.namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview'
+    return (await this.checkACL(rscKind)(rsc)).allowed
+  }
 
-    return resp.status.allowed
+  async myAccessRules(rsc) {
+    return this.checkACL('SelfSubjectRulesReview')(rsc)
   }
 }
 
