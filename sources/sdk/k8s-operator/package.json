@@ -29,7 +29,7 @@
     "eslint": "^7.17.0",
     "mocha": "^8.2.1",
     "mock-require": "^3.0.3",
-    "sinon": "^9.2.3",
+    "sinon": "^9.2.4",
     "through": "^2.3.8"
   },
   "dependencies": {
