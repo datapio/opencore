@@ -18,12 +18,12 @@
     "test": "c8 -n src/ -r html -r text mocha -r tests/mocks/index.js tests/"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.12.17",
     "@babel/eslint-parser": "^7.12.17",
     "@babel/eslint-plugin": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
     "c8": "^7.6.0",
-    "chai": "^4.2.0",
+    "chai": "^4.3.0",
     "eslint": "^7.20.0",
     "mocha": "^8.2.1",
     "mock-require": "^3.0.3",
