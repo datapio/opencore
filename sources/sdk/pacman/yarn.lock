@@ -64,7 +64,7 @@
 "@datapio/sdk-k8s-operator@file:../k8s-operator":
   version "1.4.1"
   dependencies:
-    "@godaddy/terminus" "^4.5.0"
+    "@godaddy/terminus" "^4.6.0"
     "@kubernetes/client-node" "^0.13.2"
     apollo-server-express "^2.19.2"
     cookie-parser "^1.4.5"
@@ -88,10 +88,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@godaddy/terminus@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.5.0.tgz#618951107bb91fec68f194186f5c2c9392b8efa7"
-  integrity sha512-fARG14VkM3wgZbgT0G5rmXOmG6GLcRcPoTDS4/idaUJsaYuuuz5OqMSc22QZ94ixnMhr2V+vJ6JZQTlePDO01w==
+"@godaddy/terminus@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.6.0.tgz#1e746cf1715cf39866fd4a25569deb88774dda27"
+  integrity sha512-5OaPBRYIex8YcvK+Jk6/wUNulaQMWt1RWIpfYmRbP+1On5FRf3bumDWBni3V0RQRkm3JIvZiXbIndumEtasOMg==
   dependencies:
     stoppable "^1.1.0"
 
@@ -1065,10 +1065,10 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-chai@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/chai/-/chai-4.2.0.tgz#760aa72cf20e3795e84b12877ce0e83737aa29e5"
-  integrity sha512-XQU3bhBukrOsQCuwZndwGcCVQHyZi53fQ6Ys1Fym7E4olpIqqZZhhoFJoaKVvV17lWQoXYwgWN2nF5crA8J2jw==
+chai@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.0.tgz#5523a5faf7f819c8a92480d70a8cccbadacfc25f"
+  integrity sha512-/BFd2J30EcOwmdOgXvVsmM48l0Br0nmZPlO0uOW4XKh6kpsUumRXBgPV+IlaqFaqr9cYbeoZAM1Npx0i4A+aiA==
   dependencies:
     assertion-error "^1.1.0"
     check-error "^1.0.2"
