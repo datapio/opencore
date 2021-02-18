@@ -1,7 +1,13 @@
 const sort = (items, { key, reversed = false }) => {
-  const sorted = items.slice().sort((item, other) =>
-    item[key] - other[key]
-  )
+  const sorted = items.slice().sort((item, other) => {
+    if (item[key] > other[key]) {
+      return 1
+    }
+    else if (item[key] < other[key]) {
+      return -1
+    }
+    return 0
+  })
 
   if (reversed) {
     sorted.reverse()
