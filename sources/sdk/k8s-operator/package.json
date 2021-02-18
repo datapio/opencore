@@ -24,7 +24,7 @@
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "c8": "^7.6.0",
     "casual": "^1.6.2",
-    "chai": "^4.2.0",
+    "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.20.0",
     "mocha": "^8.2.1",
