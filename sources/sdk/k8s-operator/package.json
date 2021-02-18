@@ -38,6 +38,7 @@
     "apollo-server-express": "^2.21.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "graphql": "^15.5.0",
     "kubernetes-client": "^9.0.0",
     "merge-options": "^3.0.4"
   }
