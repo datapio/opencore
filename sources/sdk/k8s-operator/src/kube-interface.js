@@ -80,6 +80,27 @@ const response = {
   }
 }
 
+
+const makeReviewer = (kubectl, reviewKind) =>
+  async ({ apiVersion, kind, namespace, verb }) => {
+    const { apiGroup } = parseApiVersion(apiVersion)
+    const resp = await kubectl.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: reviewKind,
+      spec: {
+        resourceAttributes: {
+          group: apiGroup,
+          resource: kind.toLowerCase(),
+          verb,
+          namespace
+        }
+      }
+    })
+
+    return resp.status
+  }
+
+
 class KubeInterface {
   constructor({ crds = [], createCRDs = true, config = null }) {
     if (config !== null) {
@@ -286,37 +307,30 @@ class KubeInterface {
     }))
   }
 
-  async checkACL (rscKind) {
-    return async ({ apiVersion, kind, namespace, verb }) => {
-      const { apiGroup } = parseApiVersion(apiVersion)
-      const resp = await this.create({
-        apiVersion: 'authorization.k8s.io/v1',
-        kind: rscKind,
-        spec: {
-          resourceAttributes: {
-            group: apiGroup,
-            resource: kind.toLowerCase(),
-            verb,
-            namespace
-          }
-        }
-      })
-
-      return resp.status
-    }
+  async canI(meta) {
+    const reviewer = makeReviewer(this, 'SelfSubjectAccessReview')
+    const review = await reviewer(meta)
+    return review.allowed
   }
 
-  async canI(rsc) {
-    return (await this.checkACL('SelfSubjectAccessReview')(rsc)).allowed
+  async canThey(meta) {
+    const reviewKind = meta.namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview'
+    const reviewer = makeReviewer(this, reviewKind)
+    const review = await reviewer(meta)
+    return review.allowed.allowed
   }
 
-  async canThey(rsc) {
-    const rscKind = rsc.namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview'
-    return (await this.checkACL(rscKind)(rsc)).allowed
-  }
+  async myAccessRules({ scopes = [] }) {
+    const { apiGroup } = parseApiVersion(apiVersion)
+    const resp = await this.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: 'SelfSubjectRulesReview',
+      spec: {
+        scopes
+      }
+    })
 
-  async myAccessRules(rsc) {
-    return this.checkACL('SelfSubjectRulesReview')(rsc)
+    return resp.status
   }
 }
 
