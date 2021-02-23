@@ -1,84 +1,14 @@
 const Request = require('kubernetes-client/backends/request')
 const kubernetes = require('kubernetes-client')
 
-
-class KubeError extends Error {
-  constructor(msg, details = null) {
-    super(msg)
-    this.name = this.constructor.name
-    this.details = details
-    Error.captureStackTrace(this, this.constructor)
-  }
-}
-
-const defaultCallback = async () => ({ condition: true, res: null })
-
-const parseApiVersion = apiVersion =>
-  // eslint-disable-next-line max-len
-  (/^(?:(?<apiGroup>[a-zA-Z][a-zA-Z0-9\-_.]*)\/)?(?<resourceVersion>.*)$/u).exec(apiVersion).groups
-
-const getEndpoint = (client, meta, watch = false) => {
-  const {
-    apiGroup,
-    resourceVersion,
-    kind,
-    namespace,
-    name
-  } = meta
-
-  const fns = [
-    () => {
-      return apiGroup
-        ? client.apis[apiGroup][resourceVersion]
-        : client.api[resourceVersion]
-    },
-    ep => {
-      return watch ? ep.watch : ep
-    },
-    ep => {
-      return namespace ? ep.namespaces(namespace) : ep
-    },
-    ep => {
-      return ep[kind.toLowerCase()]
-    },
-    ep => {
-      return name ? ep(name) : ep
-    }
-  ]
-
-  try {
-    return fns.reduce(
-      (ep, fn) => fn(ep),
-      null
-    )
-  }
-  catch (err) {
-    throw new KubeError(
-      'Unknown API',
-      {
-        meta,
-        err
-      }
-    )
-  }
-}
-
-const response = {
-  assertStatusCode: resp => {
-    if (resp.statusCode < 200 || resp.statusCode >= 300) {
-      throw new KubeError(
-        'Unexpected response from Kubernetes API Server',
-        {
-          resp
-        }
-      )
-    }
-  },
-  unwrap: (resp, many = false) => {
-    response.assertStatusCode(resp)
-    return many ? resp.body.items : resp.body
-  }
-}
+const {
+  KubeError,
+  defaultCallback,
+  parseApiVersion,
+  getEndpoint,
+  response,
+  makeReviewer
+} = require('./kube-interface-utils')
 
 class KubeInterface {
   constructor({ crds = [], createCRDs = true, config = null }) {
@@ -127,7 +57,7 @@ class KubeInterface {
     return await Promise.all(resources
       .map(resource => ({
         kind: resource.kind,
-        namespace: resource.metadata.namespace,
+        namespace: resource.metadata?.namespace,
         body: resource,
         ...parseApiVersion(resource.apiVersion)
       }))
@@ -284,6 +214,29 @@ class KubeInterface {
         container
       }
     }))
+  }
+
+  async canI(meta) {
+    const reviewer = makeReviewer(this, 'SelfSubjectAccessReview')
+    const review = await reviewer(meta)
+    return review.allowed
+  }
+
+  async canThey(meta) {
+    const reviewKind = meta.namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview'
+    const reviewer = makeReviewer(this, reviewKind)
+    const review = await reviewer(meta)
+    return review.allowed
+  }
+
+  async myAccessRules({ scopes = [] }) {
+    const resp = await this.create({
+      apiVersion: 'authorization.k8s.io/v1',
+      kind: 'SelfSubjectRulesReview',
+      spec: { scopes }
+    })
+
+    return resp.status
   }
 }
 
