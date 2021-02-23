@@ -226,7 +226,7 @@ class KubeInterface {
     const reviewKind = meta.namespace ? 'LocalSubjectAccessReview' : 'SubjectAccessReview'
     const reviewer = makeReviewer(this, reviewKind)
     const review = await reviewer(meta)
-    return review.allowed.allowed
+    return review.allowed
   }
 
   async myAccessRules({ scopes = [] }) {
