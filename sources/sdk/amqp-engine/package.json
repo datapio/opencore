@@ -18,10 +18,10 @@
     "test": "c8 -n src/ -r html -r text mocha -r tests/mocks/index.js tests/"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.17",
+    "@babel/core": "^7.13.1",
     "@babel/eslint-parser": "^7.12.17",
     "@babel/eslint-plugin": "^7.13.0",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
     "c8": "^7.6.0",
     "chai": "^4.3.0",
     "eslint": "^7.20.0",
@@ -30,7 +30,7 @@
     "sinon": "^9.2.4"
   },
   "dependencies": {
-    "amqplib": "^0.6.0",
+    "amqplib": "^0.7.0",
     "merge-options": "^3.0.4"
   }
 }
