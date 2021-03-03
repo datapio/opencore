@@ -48,6 +48,7 @@ const authTokenProcessorFactory = name => (req, res) => {
 
 class Operator {
   defaultApolloOptions = {
+    enabled: true,
     typeDefs: [],
     resolvers: {},
     context: () => ({})
@@ -76,70 +77,73 @@ class Operator {
     this.webapp.use(cors(corsOptions))
     this.webapp.use(cookieParser(cookieSecret))
     this.webapp.use('/api', this.api)
-    this.webapp.get('/graphql/logout', (req, res) => {
-      res.cookie(authCookieName, { expires: Date.now() })
-      res.end('')
-    })
 
     const apolloRealOptions = mergeOptions(
       this.defaultApolloOptions,
       apolloOptions
     )
 
-    const authTokenProcessor = authTokenProcessorFactory(authCookieName)
+    if (apolloRealOptions.enabled) {
+      this.webapp.get('/graphql/logout', (req, res) => {
+        res.cookie(authCookieName, { expires: Date.now() })
+        res.end('')
+      })
 
-    const userContext = apolloRealOptions.context
-    apolloRealOptions.context = async ({ req, res, ...args }) => {
-      const ctx = await userContext({ req, res, ...args })
+      const authTokenProcessor = authTokenProcessorFactory(authCookieName)
 
-      const kubeConfig = new kubernetes.KubeConfig()
+      const userContext = apolloRealOptions.context
+      apolloRealOptions.context = async ({ req, res, ...args }) => {
+        const ctx = await userContext({ req, res, ...args })
 
-      kubeConfig.loadFromString(
-        JSON.stringify({
-          apiVersion: 'v1',
-          kind: 'Config',
-          clusters: [],
-          users: [],
-          contexts: [],
-          'current-context': ''
+        const kubeConfig = new kubernetes.KubeConfig()
+
+        kubeConfig.loadFromString(
+          JSON.stringify({
+            apiVersion: 'v1',
+            kind: 'Config',
+            clusters: [],
+            users: [],
+            contexts: [],
+            'current-context': ''
+          })
+        )
+
+        kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
+
+        const token = authTokenProcessor(req, res)
+
+        kubeConfig.addUser({
+          name: 'graphql-client',
+          token
         })
-      )
+        kubeConfig.addContext({
+          cluster: this.kubectl.config.getCurrentCluster().name,
+          name: 'graphql-request',
+          user: 'graphql-client',
+          namespace: this.kubectl.config.getCurrentContextObject().namespace
+        })
+        kubeConfig.setCurrentContext('graphql-request')
 
-      kubeConfig.addCluster(this.kubectl.config.getCurrentCluster())
+        const kubectl = new KubeInterface({
+          crds: this.kubectl.crds,
+          createCRDs: false,
+          config: kubeConfig
+        })
+        await kubectl.load()
 
-      const token = authTokenProcessor(req, res)
-
-      kubeConfig.addUser({
-        name: 'graphql-client',
-        token
-      })
-      kubeConfig.addContext({
-        cluster: this.kubectl.config.getCurrentCluster().name,
-        name: 'graphql-request',
-        user: 'graphql-client',
-        namespace: this.kubectl.config.getCurrentContextObject().namespace
-      })
-      kubeConfig.setCurrentContext('graphql-request')
-
-      const kubectl = new KubeInterface({
-        crds: this.kubectl.crds,
-        createCRDs: false,
-        config: kubeConfig
-      })
-      await kubectl.load()
-
-      return {
-        kubectl,
-        ...ctx
+        return {
+          kubectl,
+          ...ctx
+        }
       }
-    }
 
-    this.apollo = new ApolloServer(apolloRealOptions)
-    this.apollo.options = apolloRealOptions
-    this.apollo.applyMiddleware({
-      app: this.webapp,
-      path: '/graphql'
-    })
+      this.apollo = new ApolloServer(apolloRealOptions)
+      this.apollo.options = apolloRealOptions
+      this.apollo.applyMiddleware({
+        app: this.webapp,
+        path: '/graphql'
+      })
+    }
 
     const serverFactory = new ServerFactory(serverOptions)
     this.service = new WebService(this, serverFactory)
