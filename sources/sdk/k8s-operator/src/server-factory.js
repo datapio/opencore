@@ -3,6 +3,8 @@ const https = require('https')
 const http = require('http')
 const fs = require('fs')
 
+const { OperatorError } = require('./errors')
+
 class ServerFactory {
   defaultOptions = {
     https: {
@@ -13,6 +15,7 @@ class ServerFactory {
       ca: '/path/to/ca.pem'
     },
     http: {
+      enabled: true,
       port: 8000
     }
   }
@@ -22,12 +25,14 @@ class ServerFactory {
   }
 
   make(api) {
-    const servers = [
-      {
+    const servers = []
+
+    if (this.options.http.enabled) {
+      servers.push({
         server: http.createServer(api),
         port: this.options.http.port
-      }
-    ]
+      })
+    }
 
     if (this.options.https.enabled) {
       servers.push({
@@ -41,6 +46,10 @@ class ServerFactory {
         ),
         port: this.options.https.port
       })
+    }
+
+    if (servers.length === 0) {
+      throw new OperatorError('No server configured')
     }
 
     return servers

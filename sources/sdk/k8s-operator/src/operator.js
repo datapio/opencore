@@ -9,14 +9,7 @@ const crypto = require('crypto')
 const ServerFactory = require('./server-factory')
 const WebService = require('./web-service')
 const KubeInterface = require('./kube-interface')
-
-class OperatorError extends Error {
-  constructor(msg) {
-    super(msg)
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, this.constructor)
-  }
-}
+const { OperatorError } = require('./errors')
 
 const defaultHttpApiFactory = () =>
   (request, response) => {
