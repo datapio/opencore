@@ -40,5 +40,5 @@ describe('KubeInterface', () => {
   describe('patch', require('./patch'))
   describe('delete', require('./delete'))
   describe('logs', require('./logs'))
-  describe.skip('exec', require('./exec'))
+  describe('exec', require('./exec'))
 })
