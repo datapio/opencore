@@ -28,6 +28,7 @@ describe('ServerFactory', () => {
         ca: '/path/to/ca.pem'
       },
       http: {
+        enabled: true,
         port: 8000
       }
     })
@@ -68,5 +69,43 @@ describe('ServerFactory', () => {
     sinon.assert.calledWith(fs.readFileSync, '/path/to/key.pem')
     sinon.assert.calledWith(fs.readFileSync, '/path/to/cert.pem')
     sinon.assert.calledWith(fs.readFileSync, '/path/to/ca.pem')
+  })
+
+  it('should create an HTTPS server when HTTPS is enabled but HTTP is disabled', () => {
+    const serverFactory = new ServerFactory({
+      https: { enabled: true },
+      http: { enabled: false }
+    })
+    const api = sinon.spy()
+    const servers = serverFactory.make(api)
+
+    expect(servers).to.be.an('array').of.length(1)
+    expect(servers[0]).to.be.an('object')
+    expect(servers[0].port).to.equal(8443)
+
+    sinon.assert.calledWith(https.createServer, {
+      key: 'DATA',
+      cert: 'DATA',
+      ca: 'DATA'
+    }, api)
+    sinon.assert.calledWith(fs.readFileSync, '/path/to/key.pem')
+    sinon.assert.calledWith(fs.readFileSync, '/path/to/cert.pem')
+    sinon.assert.calledWith(fs.readFileSync, '/path/to/ca.pem')
+  })
+
+  it('should throw an error when both HTTP and HTTPS are disabled', () => {
+    const serverFactory = new ServerFactory({
+      https: { enabled: false },
+      http: { enabled: false }
+    })
+    const api = sinon.spy()
+
+    try {
+      serverFactory.make(api)
+      throw new Error('no error thrown')
+    }
+    catch (err) {
+      expect(err.name).to.equal('OperatorError')
+    }
   })
 })
