@@ -150,7 +150,7 @@ class KubeInterface {
     return result
   }
 
-  async patch({ apiVersion, kind, namespace, name, patch }) {
+  async patch({ apiVersion, kind, namespace, name, patch, patchType = 'merge' }) {
     const { apiGroup, resourceVersion } = parseApiVersion(apiVersion)
     const endpoint = getEndpoint(this.client, {
       apiGroup,
@@ -160,10 +160,20 @@ class KubeInterface {
       name
     })
 
+    const contentType = {
+      json: 'application/json-patch+json',
+      merge: 'application/merge-patch+json',
+      strategic: 'application/strategic-merge-patch+json'
+    }
+
+    if (!(patchType in contentType)) {
+      throw new KubeError('Invalid patch type', { patchType })
+    }
+
     return response.unwrap(await endpoint.patch({
       body: patch,
       headers: {
-        'content-type': 'application/merge-patch+json'
+        'content-type': contentType[patchType]
       }
     }))
   }

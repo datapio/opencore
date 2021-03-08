@@ -40,8 +40,32 @@ module.exports = () => {
     }
     catch (err) {
       expect(err.name).to.equal('KubeError')
-      expect(err.details.resp.statusCode).to.equal(404)
-      expect(err.details.resp.body).to.equal('ERROR')
+      expect(err.details?.resp?.statusCode).to.equal(404)
+      expect(err.details?.resp?.body).to.equal('ERROR')
+    }
+  })
+
+  it('should throw an error if the patchType is invalid', async () => {
+    const kubectl = new KubeInterface({})
+    await kubectl.load()
+
+    try {
+      await kubectl.patch({
+        apiVersion: 'example.com/v1',
+        kind: 'Failure',
+        namespace: 'default',
+        name: 'example',
+        patch: {
+          spec: { foo: 'bar' }
+        },
+        patchType: 'invalid'
+      })
+
+      throw new Error('no error has been thrown')
+    }
+    catch (err) {
+      expect(err.name).to.equal('KubeError')
+      expect(err.details?.patchType).to.equal('invalid')
     }
   })
 }
