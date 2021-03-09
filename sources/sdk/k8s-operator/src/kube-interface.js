@@ -178,6 +178,19 @@ class KubeInterface {
     }))
   }
 
+  async replace(resource) {
+    const { apiGroup, resourceVersion } = parseApiVersion(resource.apiVersion)
+    const endpoint = getEndpoint(this.client, {
+      apiGroup,
+      resourceVersion,
+      kind: resource.kind,
+      namespace: resource.metadata.namespace,
+      name: resource.metadata.name
+    })
+
+    return response.unwrap(await endpoint.put({ body: resource }))
+  }
+
   async delete({ apiVersion, kind, namespace, name }) {
     const { apiGroup, resourceVersion } = parseApiVersion(apiVersion)
     const endpoint = getEndpoint(this.client, {
