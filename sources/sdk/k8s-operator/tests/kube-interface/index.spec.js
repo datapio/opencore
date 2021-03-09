@@ -38,6 +38,7 @@ describe('KubeInterface', () => {
   describe('get', require('./get'))
   describe('watch', require('./watch'))
   describe('patch', require('./patch'))
+  describe('replace', require('./replace'))
   describe('delete', require('./delete'))
   describe('logs', require('./logs'))
   describe('exec', require('./exec'))
