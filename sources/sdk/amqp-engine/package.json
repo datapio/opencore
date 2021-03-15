@@ -23,7 +23,7 @@
     "@babel/eslint-plugin": "^7.13.10",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "c8": "^7.6.0",
-    "chai": "^4.3.3",
+    "chai": "^4.3.4",
     "eslint": "^7.21.0",
     "mocha": "^8.3.2",
     "mock-require": "^3.0.3",
