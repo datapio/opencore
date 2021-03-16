@@ -310,10 +310,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@godaddy/terminus@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.6.0.tgz#1e746cf1715cf39866fd4a25569deb88774dda27"
-  integrity sha512-5OaPBRYIex8YcvK+Jk6/wUNulaQMWt1RWIpfYmRbP+1On5FRf3bumDWBni3V0RQRkm3JIvZiXbIndumEtasOMg==
+"@godaddy/terminus@^4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.7.0.tgz#1ad112a8304162eb7846f06721ae2722d0c0d5c4"
+  integrity sha512-6zrHP0AiKe5iPo9SSH9rYMbfaI5hLBJjBjga76qVvYoiqYfAyoDLyNnFR2zmSzZCIhDZGKF/C8CvL9wHoQ1q8w==
   dependencies:
     stoppable "^1.1.0"
 
