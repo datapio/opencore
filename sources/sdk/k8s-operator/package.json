@@ -26,14 +26,14 @@
     "casual": "^1.6.2",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^7.21.0",
+    "eslint": "^7.23.0",
     "mocha": "^8.3.2",
     "mock-require": "^3.0.3",
     "sinon": "^9.2.4",
     "through": "^2.3.8"
   },
   "dependencies": {
-    "@godaddy/terminus": "^4.6.0",
+    "@godaddy/terminus": "^4.7.1",
     "@kubernetes/client-node": "^0.14.0",
     "apollo-server-express": "^2.21.1",
     "cookie-parser": "^1.4.5",
