@@ -33,7 +33,7 @@
     "through": "^2.3.8"
   },
   "dependencies": {
-    "@godaddy/terminus": "^4.6.0",
+    "@godaddy/terminus": "^4.7.1",
     "@kubernetes/client-node": "^0.14.0",
     "apollo-server-express": "^2.21.1",
     "cookie-parser": "^1.4.5",
