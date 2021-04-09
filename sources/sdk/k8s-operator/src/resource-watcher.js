@@ -11,19 +11,35 @@ class ResourceWatcher {
   }
 
   async watch(operator) {
-    const stream = await operator.kubectl.watch(this.meta)
+    const context = {
+      stream: await operator.kubectl.watch(this.meta),
+      restart: true
+    }
     const handlers = {
       added: this.added.bind(this),
       modified: this.modified.bind(this),
       deleted: this.deleted.bind(this)
     }
 
-    stream.on('data', async ({ type, object }) => {
+    const callHandler = async ({ type, object }) => {
       const handler = handlers[type.toLowerCase()]
       await handler(operator, object)
-    })
+    }
+    const restartHandler = async () => {
+      if (context.restart) {
+        context.stream = await operator.kubectl.watch(this.meta)
+        context.stream.on('data', callHandler)
+        context.stream.on('end', restartHandler)
+      }
+    }
 
-    return new CancelScope(() => stream.end())
+    context.stream.on('data', callHandler)
+    context.stream.on('end', restartHandler)
+
+    return new CancelScope(() => {
+      context.restart = false
+      context.stream.end()
+    })
   }
 
   async added(operator, object) {} // eslint-disable-line no-unused-vars
