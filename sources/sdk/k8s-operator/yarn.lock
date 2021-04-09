@@ -361,10 +361,10 @@
     underscore "^1.9.1"
     ws "^6.1.0"
 
-"@kubernetes/client-node@^0.14.2":
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/@kubernetes/client-node/-/client-node-0.14.2.tgz#183c29a972a0073fe3e85b550058b1dc75a2c8e0"
-  integrity sha512-0/E6xXDL+qTpS8XCZBnuwbco9Q87NisQwN0TUEk3rR7g6RxlH+lv9E6pJhcoocFnDFstu24b3U6bIsHbCTd8kA==
+"@kubernetes/client-node@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@kubernetes/client-node/-/client-node-0.14.0.tgz#a02806f3b6fdb68fb51d451ee8ff01faa446f557"
+  integrity sha512-/37JHuEUAQ5GQ4kLKBmCYvGgf5W1KZWKreKGWFYH8VvT2Hl/o0aJZasu2w0EHEfmE11JCn0X9arVmOTyVCYvww==
   dependencies:
     "@types/js-yaml" "^3.12.1"
     "@types/node" "^10.12.0"
@@ -378,7 +378,6 @@
     isomorphic-ws "^4.0.1"
     js-yaml "^3.13.1"
     jsonpath-plus "^0.19.0"
-    net-keepalive "2.0.4"
     openid-client "^4.1.1"
     request "^2.88.0"
     rfc4648 "^1.3.0"
@@ -1500,13 +1499,6 @@ debug@4.3.1, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "2.1.2"
 
-debug@^3.1.0:
-  version "3.2.7"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
-  integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
-  dependencies:
-    ms "^2.1.1"
-
 decamelize@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-4.0.0.tgz#aa472d7bf660eb15f3494efd531cab7f2a709837"
@@ -1910,18 +1902,6 @@ fast-levenshtein@^2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-ffi-napi@^4.0.1:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/ffi-napi/-/ffi-napi-4.0.3.tgz#27a8d42a8ea938457154895c59761fbf1a10f441"
-  integrity sha512-PMdLCIvDY9mS32RxZ0XGb95sonPRal8aqRhLbeEtWKZTe2A87qRFG9HjOhvG8EX2UmQw5XNRMIOT+1MYlWmdeg==
-  dependencies:
-    debug "^4.1.1"
-    get-uv-event-loop-napi-h "^1.0.5"
-    node-addon-api "^3.0.0"
-    node-gyp-build "^4.2.1"
-    ref-napi "^2.0.1 || ^3.0.2"
-    ref-struct-di "^1.1.0"
-
 file-entry-cache@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/file-entry-cache/-/file-entry-cache-6.0.1.tgz#211b2dd9659cb0394b073e7323ac3c933d522027"
@@ -2114,18 +2094,6 @@ get-stream@^5.1.0:
   integrity sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==
   dependencies:
     pump "^3.0.0"
-
-get-symbol-from-current-process-h@^1.0.1, get-symbol-from-current-process-h@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/get-symbol-from-current-process-h/-/get-symbol-from-current-process-h-1.0.2.tgz#510af52eaef873f7028854c3377f47f7bb200265"
-  integrity sha512-syloC6fsCt62ELLrr1VKBM1ggOpMdetX9hTrdW77UQdcApPHLmf7CI7OKcN1c9kYuNxKcDe4iJ4FY9sX3aw2xw==
-
-get-uv-event-loop-napi-h@^1.0.5:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/get-uv-event-loop-napi-h/-/get-uv-event-loop-napi-h-1.0.6.tgz#42b0b06b74c3ed21fbac8e7c72845fdb7a200208"
-  integrity sha512-t5c9VNR84nRoF+eLiz6wFrEp1SE2Acg0wS+Ysa2zF0eROes+LzOfuTaVHxGy8AbS8rq7FHEJzjnCZo1BupwdJg==
-  dependencies:
-    get-symbol-from-current-process-h "^1.0.1"
 
 getpass@^0.1.1:
   version "0.1.7"
@@ -2914,7 +2882,7 @@ ms@2.1.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-ms@2.1.3, ms@^2.1.1:
+ms@2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
@@ -2934,14 +2902,6 @@ negotiator@0.6.2:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
-net-keepalive@2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/net-keepalive/-/net-keepalive-2.0.4.tgz#97862b22b0609e5a15a6c0f5bceead641d5c6041"
-  integrity sha512-T85XzamXNCzezArXJfbUk1ScDfhSRZFnKlp+KGiRuS7IPH6ftaUy+WQfW+i0EH3yRc5/kbyXNhSnmmnCQWrxBg==
-  dependencies:
-    ffi-napi "^4.0.1"
-    ref-napi "^3.0.0"
-
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -2958,25 +2918,10 @@ nise@^5.0.1:
     just-extend "^4.0.2"
     path-to-regexp "^1.7.0"
 
-node-addon-api@^2.0.0:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
-  integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
-
-node-addon-api@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.1.0.tgz#98b21931557466c6729e51cb77cd39c965f42239"
-  integrity sha512-flmrDNB06LIl5lywUz7YlNGZH/5p0M7W28k8hzd9Lshtdh1wshD2Y+U4h9LD6KObOy1f+fEVdgprPrEymjM5uw==
-
 node-fetch@^2.1.2, node-fetch@^2.2.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
-
-node-gyp-build@^4.2.1:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
-  integrity sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg==
 
 node-releases@^1.1.70:
   version "1.1.71"
@@ -3320,23 +3265,6 @@ rechoir@^0.6.2:
   integrity sha1-hSBLVNuoLVdC4oyWdW70OvUOM4Q=
   dependencies:
     resolve "^1.1.6"
-
-"ref-napi@^2.0.1 || ^3.0.2", ref-napi@^3.0.0:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/ref-napi/-/ref-napi-3.0.2.tgz#fe71c2a09df654baa66649d783c6e5ab182c19cb"
-  integrity sha512-5YE0XrvWteoTr5DR2sEqxefL06aml7c6qS7hGv3u27do4HlGQphwvB+zD1NYep9utMKScvwOZsSs9EPYdGBVsg==
-  dependencies:
-    debug "^4.1.1"
-    get-symbol-from-current-process-h "^1.0.2"
-    node-addon-api "^2.0.0"
-    node-gyp-build "^4.2.1"
-
-ref-struct-di@^1.1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ref-struct-di/-/ref-struct-di-1.1.1.tgz#5827b1d3b32372058f177547093db1fe1602dc10"
-  integrity sha512-2Xyn/0Qgz89VT+++WP0sTosdm9oeowLP23wRJYhG4BFdMUrLj3jhwHZNEytYNYgtPKLNTP3KJX4HEgBvM1/Y2g==
-  dependencies:
-    debug "^3.1.0"
 
 regexpp@^3.1.0:
   version "3.1.0"
