@@ -24,7 +24,7 @@
     "mocha": "^8.3.2",
     "mock-require": "^3.0.3",
     "c8": "^7.6.0",
-    "sinon": "^10.0.0"
+    "sinon": "^10.0.1"
   },
   "dependencies": {
     "@datapio/sdk-k8s-operator": "file:../k8s-operator",
