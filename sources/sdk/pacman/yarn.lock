@@ -75,11 +75,11 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@datapio/sdk-k8s-operator@file:../k8s-operator":
-  version "1.8.0"
+  version "1.8.3"
   dependencies:
-    "@godaddy/terminus" "^4.6.0"
+    "@godaddy/terminus" "^4.7.1"
     "@kubernetes/client-node" "^0.14.0"
-    apollo-server-express "^2.21.1"
+    apollo-server-express "^2.22.2"
     cookie-parser "^1.4.5"
     cors "^2.8.5"
     graphql "^15.5.0"
@@ -101,10 +101,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@godaddy/terminus@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.6.0.tgz#1e746cf1715cf39866fd4a25569deb88774dda27"
-  integrity sha512-5OaPBRYIex8YcvK+Jk6/wUNulaQMWt1RWIpfYmRbP+1On5FRf3bumDWBni3V0RQRkm3JIvZiXbIndumEtasOMg==
+"@godaddy/terminus@^4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@godaddy/terminus/-/terminus-4.7.1.tgz#f4b850617923e00f7080c64f2c97d653e4eea66a"
+  integrity sha512-WA1UpDIUvEJ6pMIlgXrzXkAjHdt33G+j7074MLppZ1b2uN8OaH/QKo5zrASrLCWuczwS31t69aMtqiPWN3ruBA==
   dependencies:
     stoppable "^1.1.0"
 
@@ -350,15 +350,6 @@
     "@types/range-parser" "*"
 
 "@types/express-serve-static-core@4.17.19", "@types/express-serve-static-core@^4.17.18":
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.19.tgz#00acfc1632e729acac4f1530e9e16f6dd1508a1d"
-  integrity sha512-DJOSHzX7pCiSElWaGR8kCprwibCB/3yW6vcT8VG3P0SJjnv19gnWG/AZMfM60Xj/YJIp/YCaDHyvzsFVeniARA==
-  dependencies:
-    "@types/node" "*"
-    "@types/qs" "*"
-    "@types/range-parser" "*"
-
-"@types/express-serve-static-core@^4.17.18":
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.19.tgz#00acfc1632e729acac4f1530e9e16f6dd1508a1d"
   integrity sha512-DJOSHzX7pCiSElWaGR8kCprwibCB/3yW6vcT8VG3P0SJjnv19gnWG/AZMfM60Xj/YJIp/YCaDHyvzsFVeniARA==
@@ -774,7 +765,7 @@ apollo-server-errors@^2.4.2:
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.4.2.tgz#1128738a1d14da989f58420896d70524784eabe5"
   integrity sha512-FeGxW3Batn6sUtX3OVVUm7o56EgjxDlmgpTLNyWcLb0j6P8mw9oLNyAm3B+deHA4KNdNHO5BmHS2g1SJYjqPCQ==
 
-apollo-server-express@^2.21.1:
+apollo-server-express@^2.22.2:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.22.2.tgz#30ac15e0298d4d06188e6ae86284dad937139274"
   integrity sha512-MRiWF/oT6toUz909iq1I08vKfRxaqRMKS/v9kzyEXcnuudUCQ5WnxrjZEh/iMEfr7RHSQ4STjY7E/ZooPnueqA==
@@ -1004,10 +995,10 @@ bytes@3.1.0:
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.1.0.tgz#f6cf7933a360e0588fa9fde85651cdc7f805d1f6"
   integrity sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==
 
-c8@^7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/c8/-/c8-7.6.0.tgz#0d3b1d01b662beea51a40be33db830a48edd5d3d"
-  integrity sha512-cQYCSepX54npWqOKAmRWwOnmN2XPyShpP3Hnw2VoaB/8fdiIke72tKClHLim4U5kSTFc1vjit0771oe+BL7qHw==
+c8@^7.7.1:
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/c8/-/c8-7.7.1.tgz#442c5e175f47c407d8631e8d82f17260f666ad10"
+  integrity sha512-OO9KpDGv1iTd/MBNUForJH7vPKt9XnRPWSBKeRJGma4xfTaKBObA0zWAplFpFRuf/qRmATFqGFrzxqDk51LXsw==
   dependencies:
     "@bcoe/v8-coverage" "^0.2.3"
     "@istanbuljs/schema" "^0.1.2"
@@ -1020,8 +1011,8 @@ c8@^7.6.0:
     rimraf "^3.0.0"
     test-exclude "^6.0.0"
     v8-to-istanbul "^7.1.0"
-    yargs "^16.0.0"
-    yargs-parser "^20.0.0"
+    yargs "^16.2.0"
+    yargs-parser "^20.2.7"
 
 cacheable-lookup@^5.0.3:
   version "5.0.3"
@@ -3955,10 +3946,10 @@ yargs-parser@20.2.4:
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.4.tgz#b42890f14566796f85ae8e3a25290d205f154a54"
   integrity sha512-WOkpgNhPTlE73h4VFAFsOnomJVaovO8VqLDzy5saChRBFQFBoMYirowyW+Q9HB4HFF4Z7VZTiG3iSzJJA29yRA==
 
-yargs-parser@^20.0.0, yargs-parser@^20.2.2:
-  version "20.2.5"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.5.tgz#5d37729146d3f894f39fc94b6796f5b239513186"
-  integrity sha512-jYRGS3zWy20NtDtK2kBgo/TlAoy5YUuhD9/LZ7z7W4j1Fdw2cqD0xEEclf8fxc8xjD6X5Qr+qQQwCEsP8iRiYg==
+yargs-parser@^20.2.2, yargs-parser@^20.2.7:
+  version "20.2.7"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.7.tgz#61df85c113edfb5a7a4e36eb8aa60ef423cbc90a"
+  integrity sha512-FiNkvbeHzB/syOjIUxFDCnhSfzAL8R5vs40MgLFBorXACCOAEaWu0gRZl14vG8MR9AOJIZbmkjhusqBYZ3HTHw==
 
 yargs-unparser@2.0.0:
   version "2.0.0"
@@ -3970,7 +3961,7 @@ yargs-unparser@2.0.0:
     flat "^5.0.2"
     is-plain-obj "^2.1.0"
 
-yargs@16.2.0, yargs@^16.0.0:
+yargs@16.2.0, yargs@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.2.0.tgz#1c82bf0f6b6a66eafce7ef30e376f49a12477f66"
   integrity sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==
