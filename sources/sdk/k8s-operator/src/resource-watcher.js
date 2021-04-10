@@ -25,16 +25,24 @@ class ResourceWatcher {
       const handler = handlers[type.toLowerCase()]
       await handler(operator, object)
     }
+
+    const errorHandler = async error => {
+      await this.errored(operator, error)
+      context.stream.end()
+    }
+
     const restartHandler = async () => {
       if (context.restart) {
         context.stream = await operator.kubectl.watch(this.meta)
         context.stream.on('data', callHandler)
         context.stream.on('end', restartHandler)
+        context.stream.on('error', errorHandler)
       }
     }
 
     context.stream.on('data', callHandler)
     context.stream.on('end', restartHandler)
+    context.stream.on('error', errorHandler)
 
     return new CancelScope(() => {
       context.restart = false
@@ -47,6 +55,8 @@ class ResourceWatcher {
   async modified(operator, object) {} // eslint-disable-line no-unused-vars
 
   async deleted(operator, object) {} // eslint-disable-line no-unused-vars
+
+  async errored(operator, error) {} // eslint-disable-line no-unused-vars
 }
 
 module.exports = ResourceWatcher
