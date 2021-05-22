@@ -24,7 +24,7 @@
     "casual": "^1.6.2",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^7.23.0",
+    "eslint": "^7.27.0",
     "mocha": "^8.3.2",
     "mock-require": "^3.0.3",
     "sinon": "^10.0.1",
