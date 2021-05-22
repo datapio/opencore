@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '14.x'
           always-auth: true
-          registry-url: https://npm.pkg.github.com
+          registry-url: 'https://registry.npmjs.org'
           scope: '@datapio'
 
       - name: setup@yarn
@@ -29,7 +29,7 @@ jobs:
       - name: install@yarn
         run: yarn install
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -41,7 +41,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_AUTH_TOKEN }}
 
   sdk-amqp-engine:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         with:
           node-version: '14.x'
           always-auth: true
-          registry-url: https://npm.pkg.github.com
+          registry-url: 'https://registry.npmjs.org'
           scope: '@datapio'
 
       - name: setup@yarn
@@ -67,7 +67,7 @@ jobs:
       - name: install@yarn
         run: yarn install
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_AUTH_TOKEN }}
 
       - name: lint@yarn
         run: yarn run lint
@@ -79,108 +79,15 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: /bin/sh ../../../.github/scripts/maybe-publish.sh
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  sdk-pacman:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: sources/sdk/pacman
-
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@master
-
-      - name: setup@node
-        uses: actions/setup-node@master
-        with:
-          node-version: '14.x'
-          always-auth: true
-          registry-url: https://npm.pkg.github.com
-          scope: '@datapio'
-
-      - name: setup@yarn
-        run: npm install -g yarn
-
-      - name: install@yarn
-        run: yarn install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: lint@yarn
-        run: yarn run lint
-
-      - name: test@yarn
-        run: yarn run test
-
-      - name: publish@yarn
-        if: github.ref == 'refs/heads/master'
-        run: /bin/sh ../../../.github/scripts/maybe-publish.sh
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  pipelinerunserver-archiver:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: sources/operators/pipelinerunserver/apps/archiver
-
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@master
-
-      - name: setup@node
-        uses: actions/setup-node@master
-        with:
-          node-version: '14.x'
-          always-auth: true
-          registry-url: https://npm.pkg.github.com
-          scope: '@datapio'
-
-      - name: setup@yarn
-        run: npm install -g yarn
-
-      - name: install@yarn
-        run: yarn install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-  pipelinerunserver-worker:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: sources/operators/pipelinerunserver/apps/worker
-
-    steps:
-      - name: checkout@scm
-        uses: actions/checkout@master
-
-      - name: setup@node
-        uses: actions/setup-node@master
-        with:
-          node-version: '14.x'
-          always-auth: true
-          registry-url: https://npm.pkg.github.com
-          scope: '@datapio'
-
-      - name: setup@yarn
-        run: npm install -g yarn
-
-      - name: install@yarn
-        run: yarn install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PUBLIC_NPM_AUTH_TOKEN }}
 
   notify:
     needs:
       - sdk-k8s-operator
       - sdk-amqp-engine
-      - sdk-pacman
-      - pipelinerunserver-archiver
-      - pipelinerunserver-worker
     if: always()
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: technote-space/workflow-conclusion-action@v2
       - name: notify@slack
