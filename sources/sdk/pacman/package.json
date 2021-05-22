@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@datapio/sdk-k8s-operator": "file:../k8s-operator",
-    "dockerode": "^3.2.1",
+    "dockerode": "^3.3.0",
     "git-repo-info": "^2.1.1",
     "ignore": "^5.1.8",
     "node-vault": "^0.9.21",
