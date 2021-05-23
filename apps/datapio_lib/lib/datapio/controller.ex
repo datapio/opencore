@@ -103,12 +103,6 @@ defmodule Datapio.Controller do
           end
         )
 
-    resources = %{
-      added: resources[:added] |> Map.values(),
-      modified: resources[:modified] |> Map.values(),
-      deleted: resources[:deleted] |> Map.values()
-    }
-
     resources[:added]
       |> Map.values()
       |> Enum.map(&send(self(), {:added, &1}))
