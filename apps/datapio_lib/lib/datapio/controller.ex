@@ -68,53 +68,58 @@ defmodule Datapio.Controller do
 
   @impl true
   def handle_info(:list, %Datapio.Controller{} = state) do
-    K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
-      # Execute Query
-      |> K8s.Client.run(state.conn)
-      # Parse API Server Response
-      |> (fn {:ok, %{ "items" => items }} -> items end).()
-      # Split items into added/modified
-      |> Stream.map(fn resource ->
-        %{ "metadata" => %{ "uid" => uid }} = resource
+    resources =
+      K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
+        # Execute Query
+        |> K8s.Client.run(state.conn)
+        # Parse API Server Response
+        |> (fn {:ok, %{ "items" => items }} -> items end).()
+        # Split items into added/modified
+        |> Stream.map(fn resource ->
+          %{ "metadata" => %{ "uid" => uid }} = resource
 
-        case state.cache[uid] do
-          nil ->
-            {:added, uid, resource}
+          case state.cache[uid] do
+            nil ->
+              {:added, uid, resource}
 
-          _ ->
-            {:modified, uid, resource}
-        end
-      end)
-      # Build Map from added/modified items with removed from cache
-      |> Enum.reduce(
-        %{ added: %{}, modified: %{}, deleted: state.cache },
-        fn
-          {:added, uid, resource}, resources ->
-            %{
+            _ ->
+              {:modified, uid, resource}
+          end
+        end)
+        # Build Map from added/modified items with removed from cache
+        |> Enum.reduce(
+          %{ added: %{}, modified: %{}, deleted: state.cache },
+          fn
+            {:added, uid, resource}, resources -> %{
               added: resources[:added] |> Map.put(uid, resource),
               modified: resources[:modified],
               deleted: resources[:deleted] |> Map.delete(uid)
             }
-          {:modified, uid, resource}, resources ->
-            %{
+            {:modified, uid, resource}, resources -> %{
               added: resources[:added],
               modified: resources[:modified] |> Map.put(uid, resource),
               deleted: resources[:deleted] |> Map.delete(uid)
             }
-        end
-      )
-      # Transform submaps into arrays
-      |> (fn resources -> %{
-        added: resources[:added] |> Map.values(),
-        modified: resources[:modified] |> Map.values(),
-        deleted: resources[:deleted] |> Map.values()
-      } end).()
-      # Send events
-      |> (fn resources ->
-        resources[:added] |> Enum.map(&send(self(), {:added, &1}))
-        resources[:modified] |> Enum.map(&send(self(), {:modified, &1}))
-        resources[:deleted] |> Enum.map(&send(self(), {:deleted, &1}))
-      end).()
+          end
+        )
+
+    resources = %{
+      added: resources[:added] |> Map.values(),
+      modified: resources[:modified] |> Map.values(),
+      deleted: resources[:deleted] |> Map.values()
+    }
+
+    resources[:added]
+      |> Map.values()
+      |> Enum.map(&send(self(), {:added, &1}))
+
+    resources[:modified]
+      |> Map.values()
+      |> Enum.map(&send(self(), {:modified, &1}))
+
+    resources[:deleted]
+      |> Map.values()
+      |> Enum.map(&send(self(), {:deleted, &1}))
 
     Process.send_after(self(), :list, state.poll_delay)
 
