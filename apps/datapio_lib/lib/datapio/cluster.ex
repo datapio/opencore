@@ -10,7 +10,10 @@ defmodule Datapio.ClusterSupervisor do
   end
 
   def start_link() do
-    config = Application.fetch_env!(:datapio, :cluster)
+    config = [
+      service_name: System.get_env("DATAPIO_SERVICE_NAME", nil),
+      app_name: System.get_env("DATAPIO_APP_NAME", "datapio-opencore")
+    ]
 
     topologies = case config[:service_name] do
       nil -> []
