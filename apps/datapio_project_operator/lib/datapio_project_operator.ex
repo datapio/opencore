@@ -1,5 +1,3 @@
 defmodule DatapioProjectOperator do
-  @moduledoc """
-  Documentation for `DatapioProjectOperator`.
-  """
+  @moduledoc false
 end

@@ -1,5 +1,3 @@
 defmodule DatapioPipelinerunServer do
-  @moduledoc """
-  Documentation for `DatapioPipelinerunServer`.
-  """
+  @moduledoc false
 end
