@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.ClusterSupervisor do
+defmodule Datapio.ClusterSupervisor do
   @moduledoc false
 
   def child_spec(_args) do
