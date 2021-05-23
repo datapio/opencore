@@ -10,19 +10,14 @@ defmodule Datapio.ClusterSupervisor do
   end
 
   def start_link() do
-    config = [
-      service_name: System.get_env("DATAPIO_SERVICE_NAME", nil),
-      app_name: System.get_env("DATAPIO_APP_NAME", "datapio-opencore")
-    ]
-
-    topologies = case config[:service_name] do
+    topologies = case System.get_env("DATAPIO_SERVICE_NAME", nil) do
       nil -> []
       svc -> [
         default: [
           strategy: Cluster.Strategy.Kubernetes.DNS,
           config: [
             service: svc,
-            application_name: config[:app_name]
+            application_name: System.get_env("DATAPIO_APP_NAME", "datapio-opencore")
           ]
         ]
       ]
