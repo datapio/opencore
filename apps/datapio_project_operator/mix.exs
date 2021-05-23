@@ -24,8 +24,8 @@ defmodule DatapioProjectOperator.MixProject do
 
   defp deps do
     [
+      {:libcluster, "~> 3.2"},
       {:highlander, "~> 0.2"},
-      {:bonny, "~> 0.4"},
       {:k8s, "~> 0.5"},
       {:datapio_pipelinerun_server, in_umbrella: true}
     ]

@@ -6,6 +6,7 @@ defmodule DatapioProjectOperator.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      DatapioProjectOperator.ClusterSupervisor,
       {Highlander, DatapioProjectOperator.Controller}
     ]
 
