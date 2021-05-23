@@ -8,7 +8,14 @@ defmodule DatapioOpencore.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
 
-      # Docs
+      releases: [
+        datapio: [
+          applications: [
+            datapio_pipelinerun_server: :permanent,
+            datapio_project_operator: :permanent
+          ]
+        ]
+      ],
 
       # Docs
       name: "Datapio OpenCore",
