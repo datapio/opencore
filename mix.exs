@@ -23,9 +23,10 @@ defmodule DatapioOpencore.MixProject do
       homepage_url: "https://datapio.co",
       docs: [
         main: "datapio-opencore",
-        markdown_processor_options: [
-          code_class_prefix: "language-"
-        ],
+        markdown_processor: {
+          ExDoc.Markdown.Earmark,
+          [code_class_prefix: "language-"]
+        },
         before_closing_head_tag: &documentation_head/1,
         before_closing_body_tag: &documentation_body/1,
         extras: [
