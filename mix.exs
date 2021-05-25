@@ -20,7 +20,7 @@ defmodule DatapioOpencore.MixProject do
       # Docs
       name: "Datapio OpenCore",
       source_url: "https://github.com/datapio/opencore",
-      homepage_url: "https://datapio.co",
+      homepage_url: "https://opencore.datapio.co",
       docs: [
         main: "datapio-opencore",
         markdown_processor: {

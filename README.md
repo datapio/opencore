@@ -1,5 +1,9 @@
 # Datapio OpenCore
 
+*As part of the [Datapio](https://datapio.co) ecosystem*
+
+---
+
 ## 🔎 What is it ?
 
 Datapio OpenCore is a continuous integration and deployment platform featuring:
@@ -12,4 +16,4 @@ Datapio OpenCore is a continuous integration and deployment platform featuring:
 
 ## 📝 Documentation
 
-The documentation is accessible [here](https://datapio.co/docs/).
+The documentation is accessible [here](https://opencore.datapio.co/).
