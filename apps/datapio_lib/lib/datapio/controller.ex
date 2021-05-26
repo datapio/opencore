@@ -23,6 +23,8 @@ defmodule Datapio.Controller do
     supervisor_opts = opts |> Keyword.get(:supervisor, [])
 
     quote do
+      use Norm
+
       @behaviour Datapio.Controller
 
       def child_spec(_args) do
@@ -34,6 +36,21 @@ defmodule Datapio.Controller do
 
       def start_link() do
         Datapio.Controller.start_link(__MODULE__, unquote(opts))
+      end
+
+      defp resource_schema do
+        unquote(opts) |> Keyword.get(:schema, schema(%{}))
+      end
+
+      def validate_resource(%{} = resource), do: conform!(resource, resource_schema())
+
+      def with_resource(%{} = resource, func) do
+        try do
+          result = validate_resource(resource) |> func.()
+          {:ok, result}
+        rescue
+          err -> {:error, err}
+        end
       end
     end
   end
