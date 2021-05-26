@@ -10,12 +10,14 @@ defmodule Datapio.Controller do
     :namespace,
     :conn,
     :poll_delay,
+    :reconcile_delay,
     :cache
   ]
 
   @callback add(map()) :: :ok | :error
   @callback modify(map()) :: :ok | :error
   @callback delete(map()) :: :ok | :error
+  @callback reconcile(map()) :: :ok | :error
 
   defmacro __using__(opts) do
     supervisor_opts = opts |> Keyword.get(:supervisor, [])
@@ -42,7 +44,8 @@ defmodule Datapio.Controller do
       api_version: opts |> Keyword.fetch!(:api_version),
       kind: opts |> Keyword.fetch!(:kind),
       namespace: opts |> Keyword.get(:namespace, :all),
-      poll_delay: opts |> Keyword.get(:poll_delay, 5000)
+      poll_delay: opts |> Keyword.get(:poll_delay, 5000),
+      reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30000)
     ]
     GenServer.start_link(__MODULE__, options, name: module)
   end
@@ -54,7 +57,9 @@ defmodule Datapio.Controller do
       path -> K8s.Conn.from_file(path)
     end
 
-    send(self(), :list)
+    self() |> send(:list)
+    self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
+
     {:ok, %Datapio.Controller{
       module: opts[:module],
       api_version: opts[:api_version],
@@ -62,6 +67,7 @@ defmodule Datapio.Controller do
       namespace: opts[:namespace],
       conn: conn,
       poll_delay: opts[:poll_delay],
+      reconcile_delay: opts[:reconcile_delay],
       cache: %{}
     }}
   end
@@ -115,7 +121,22 @@ defmodule Datapio.Controller do
       |> Map.values()
       |> Enum.map(&send(self(), {:deleted, &1}))
 
-    Process.send_after(self(), :list, state.poll_delay)
+    self() |> Process.send_after(:list, state.poll_delay)
+
+    {:noreply, state}
+  end
+
+  def handle_info(:reconcile, %Datapio.Controller{} = state) do
+    K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
+      # Execute Query
+      |> K8s.Client.run(state.conn)
+      # Parse API Server Response
+      |> (fn {:ok, %{ "items" => items }} -> items end).()
+      |> Enum.map(fn resource ->
+        :ok = apply(state.module, :reconcile, [resource])
+      end)
+
+    self() |> Process.send_after(:reconcile, state.reconcile_delay)
 
     {:noreply, state}
   end
