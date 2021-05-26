@@ -34,8 +34,8 @@ defmodule Datapio.Resource do
   end
 
   def is_owned(%{} = resource, %{} = owner) do
-    with {:ok, owner} <- conform_owner_resource(owner),
-         {:ok, resource} <- conform_owned_resource(resource, owner)
+    with {:ok, _} <- conform_owner_resource(owner),
+         {:ok, _} <- conform_owned_resource(resource, owner)
     do
       true
     else
