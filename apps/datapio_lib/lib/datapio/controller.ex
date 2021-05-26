@@ -52,6 +52,14 @@ defmodule Datapio.Controller do
           err -> {:error, err}
         end
       end
+
+      def run_operation(operation) do
+        GenServer.call(__MODULE__, {:run, operation})
+      end
+
+      def run_operations(operations) do
+        GenServer.call(__MODULE__, {:async, operations})
+      end
     end
   end
 
@@ -87,6 +95,16 @@ defmodule Datapio.Controller do
       reconcile_delay: opts[:reconcile_delay],
       cache: %{}
     }}
+  end
+
+  @impl true
+  def handle_call({:run, operation}, _from, %Datapio.Controller{} = state) do
+    {:reply, K8s.Client.run(operation, state.conn), state}
+  end
+
+  @impl true
+  def handle_call({:async, operations}, _from, %Datapio.Controller{} = state) do
+    {:reply, K8s.Client.async(operations, state.conn), state}
   end
 
   @impl true
