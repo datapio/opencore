@@ -17,7 +17,7 @@ jobs:
           elixir-version: '1.12.x'
 
       - name: setup@kubernetes
-        uses: engineerd/setup-kind@master
+        uses: engineerd/setup-kind@v0.5.0
         with:
           name: datapio-kind
 
