@@ -23,8 +23,6 @@ defmodule Datapio.Controller do
     supervisor_opts = opts |> Keyword.get(:supervisor, [])
 
     quote do
-      use Norm
-
       @behaviour Datapio.Controller
 
       def child_spec(_args) do
@@ -39,15 +37,19 @@ defmodule Datapio.Controller do
       end
 
       defp resource_schema do
-        unquote(opts) |> Keyword.get(:schema, schema(%{}))
+        unquote(opts) |> Keyword.get(:schema, %{}) |> JsonXema.new()
       end
 
-      def validate_resource(%{} = resource), do: conform!(resource, resource_schema())
+      def validate_resource(%{} = resource) do
+        JsonXema.validate(resource_schema(), resource)
+      end
 
       def with_resource(%{} = resource, func) do
         try do
-          result = validate_resource(resource) |> func.()
-          {:ok, result}
+          validate_resource(resource)
+            |> (fn {:ok, rsrc} -> rsrc end).()
+            |> func.()
+            |> (fn result -> {:ok, result} end).()
         rescue
           err -> {:error, err}
         end
