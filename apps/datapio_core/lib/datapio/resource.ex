@@ -85,7 +85,7 @@ defmodule Datapio.Resource do
   def list_contains(%{} = resource, items) do
     resource_schema = %{
       "type" => "object",
-      "required" => ["uid"],
+      "required" => ["metadata"],
       "properties" => %{
         "metadata" => %{
           "type" => "object",
