@@ -2,6 +2,7 @@ defmodule Datapio.Controller do
   @moduledoc false
 
   use GenServer
+  alias Datapio.Dependencies, as: Deps
 
   defstruct [
     :module,
@@ -79,7 +80,7 @@ defmodule Datapio.Controller do
 
   @impl true
   def init(opts) do
-    {:ok, conn} = K8s.Conn.lookup(:default)
+    {:ok, conn} = Deps.get(:k8s_conn).lookup(:default)
 
     self() |> send(:list)
     self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
@@ -98,20 +99,20 @@ defmodule Datapio.Controller do
 
   @impl true
   def handle_call({:run, operation}, _from, %Datapio.Controller{} = state) do
-    {:reply, K8s.Client.run(operation, state.conn), state}
+    {:reply, Deps.get(:k8s_client).run(operation, state.conn), state}
   end
 
   @impl true
   def handle_call({:async, operations}, _from, %Datapio.Controller{} = state) do
-    {:reply, K8s.Client.async(operations, state.conn), state}
+    {:reply, Deps.get(:k8s_client).async(operations, state.conn), state}
   end
 
   @impl true
   def handle_info(:list, %Datapio.Controller{} = state) do
     resources =
-      K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
+      Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
         # Execute Query
-        |> K8s.Client.run(state.conn)
+        |> Deps.get(:k8s_client).run(state.conn)
         # Parse API Server Response
         |> (fn {:ok, %{ "items" => items }} -> items end).()
         # Split items into added/modified
@@ -161,9 +162,9 @@ defmodule Datapio.Controller do
   end
 
   def handle_info(:reconcile, %Datapio.Controller{} = state) do
-    K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
+    Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
       # Execute Query
-      |> K8s.Client.run(state.conn)
+      |> Deps.get(:k8s_client).run(state.conn)
       # Parse API Server Response
       |> (fn {:ok, %{ "items" => items }} -> items end).()
       |> Enum.map(fn resource ->

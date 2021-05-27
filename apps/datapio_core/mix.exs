@@ -11,13 +11,18 @@ defmodule DatapioLib.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps()
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/mocks"]
+  defp elixirc_paths(_), do: ["lib"]
+
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {Datapio.Application, []}
     ]
   end
 
