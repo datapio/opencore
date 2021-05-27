@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "required": ["spec"],
+  "properties": {
+    "spec": {
+      "type": "object",
+      "required": ["webhooks"],
+      "properties": {
+        "ingress": {
+          "type": "object",
+          "default": {"enabled": false},
+          "oneOf": [
+            {
+              "required": ["enabled"],
+              "properties": {
+                "enabled": {"enum": [false]}
+              }
+            },
+            {
+              "required": ["enabled", "host"],
+              "properties": {
+                "enabled": {"enum": [true]},
+                "host": {"type": "string", "minLength": 1},
+                "labels": {"type": "object", "default": {}},
+                "annotations": {"type": "object", "default": {}},
+                "tls": {
+                  "oneOf": [
+                    {"type": "null"},
+                    {"enum": [false]},
+                    {"type": "string", "minLength": 1}
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "webhooks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "max_concurrent_jobs", "history"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "max_concurrent_jobs": {"type": "integer", "minimum": 1},
+              "history": {"type": "integer", "minimum": 0}
+            }
+          }
+        }
+      }
+    }
+  }
+}
