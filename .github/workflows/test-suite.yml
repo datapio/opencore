@@ -1,0 +1,31 @@
+---
+name: Run Datapio Test Suite
+
+on: [push]
+
+jobs:
+  datapio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@scm
+        uses: actions/checkout@main
+
+      - name: setup@elixir
+        uses: erlef/setup-beam@main
+        with:
+          otp-version: '22.x'
+          elixir-version: '1.11.x'
+
+      - name: setup@kubernetes
+        uses: engineerd/setup-kind@master
+        with:
+          name: datapio-kind
+
+      - name: deps@mix
+        run: mix deps.get
+
+      - name: compile@mix
+        run: mix compile
+
+      - name: test@mix
+        run: mix test
