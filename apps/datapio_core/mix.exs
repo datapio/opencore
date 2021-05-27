@@ -25,7 +25,7 @@ defmodule DatapioLib.MixProject do
     [
       {:libcluster, "~> 3.2"},
       {:k8s, "~> 0.5"},
-      {:norm, "~> 0.12"}
+      {:json_xema, "~> 0.6"}
     ]
   end
 end
