@@ -25,7 +25,6 @@ defmodule DatapioProjectOperator.MixProject do
   defp deps do
     [
       {:highlander, "~> 0.2"},
-      {:norm, "~> 0.12"},
       {:datapio_core, in_umbrella: true},
       {:datapio_pipelinerun_server, in_umbrella: true}
     ]
