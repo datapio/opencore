@@ -77,7 +77,7 @@ defmodule Datapio.Resource do
       {:error, {:owner, err}} ->
         raise err
 
-      e ->
+      _ ->
         false
     end
   end
