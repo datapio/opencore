@@ -77,10 +77,7 @@ defmodule Datapio.Controller do
 
   @impl true
   def init(opts) do
-    conn = case System.get_env("KUBECONFIG") do
-      nil -> K8s.Conn.from_service_account()
-      path -> K8s.Conn.from_file(path)
-    end
+    {:ok, conn} = K8s.Conn.lookup(:default)
 
     self() |> send(:list)
     self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
