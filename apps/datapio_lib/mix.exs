@@ -24,7 +24,7 @@ defmodule DatapioLib.MixProject do
   defp deps do
     [
       {:libcluster, "~> 3.2"},
-      {:k8s, "~> 0.5"}
+      {:k8s, "~> 1.0"}
     ]
   end
 end
