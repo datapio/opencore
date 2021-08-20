@@ -1,7 +1,9 @@
 defmodule DatapioProjectOperator.Resources.Pipeline do
   @moduledoc false
 
-  defp klifter_image, do: Application.fetch_env!(:datapio, :klifter_image)
+  defp klifter_image do
+    System.get_env("DATAPIO_KLIFTER_IMAGE", "ghcr.io/datapio/klifter:latest")
+  end
 
   def from_project(project) do
     %{ "namespace" => namespace, "name" => name, "uid" => uid } = project["metadata"]
