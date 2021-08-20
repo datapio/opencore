@@ -17,7 +17,7 @@ defmodule Datapio.ClusterSupervisor do
     System.get_env(var[:env], var[:default])
   end
 
-  defp cluster_opts, do: Application(:datapio_core, :cluster_opts, [])
+  defp cluster_opts, do: Application.get_env(:datapio_core, :cluster_opts, [])
 
   def child_spec(_args) do
     %{
