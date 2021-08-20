@@ -38,7 +38,9 @@ defmodule Datapio.Controller do
       end
 
       defp resource_schema do
-        unquote(opts) |> Keyword.get(:schema, %{}) |> JsonXema.new()
+        unquote(opts)
+          |> Keyword.get(:schema, %{})
+          |> JsonXema.new(loader: Datapio.SchemaLoader)
       end
 
       def validate_resource(%{} = resource) do

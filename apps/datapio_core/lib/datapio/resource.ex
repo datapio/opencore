@@ -15,7 +15,7 @@ defmodule Datapio.Resource do
           }
         }
       }
-    } |> JsonXema.new()
+    } |> JsonXema.new(loader: Datapio.SchemaLoader)
 
     with :ok <- JsonXema.validate(schema, owner)
     do
@@ -50,7 +50,7 @@ defmodule Datapio.Resource do
           }
         }
       }
-    } |> JsonXema.new()
+    } |> JsonXema.new(loader: Datapio.SchemaLoader)
 
     with :ok <- JsonXema.validate(schema, resource)
     do
@@ -102,11 +102,11 @@ defmodule Datapio.Resource do
     }
 
     :ok = resource_schema
-       |> JsonXema.new()
+       |> JsonXema.new(loader: Datapio.SchemaLoader)
        |> JsonXema.validate!(resource)
 
     :ok = collection_schema
-      |> JsonXema.new()
+      |> JsonXema.new(loader: Datapio.SchemaLoader)
       |> JsonXema.validate!(items)
 
     items
