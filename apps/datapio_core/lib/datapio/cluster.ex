@@ -5,7 +5,7 @@ defmodule Datapio.ClusterSupervisor do
     var = Application.get_env(:datapio_core, :service_name, [
       env: "DATAPIO_SERVICE_NAME",
       default: nil
-    )
+    ])
     System.get_env(var[:env], var[:default])
   end
 
