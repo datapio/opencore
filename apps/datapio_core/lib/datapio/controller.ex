@@ -80,7 +80,7 @@ defmodule Datapio.Controller do
 
   @impl true
   def init(opts) do
-    {:ok, conn} = Deps.get(:k8s_conn).lookup(:default)
+    {:ok, conn} = Datapio.K8sConn.lookup()
 
     self() |> send(:list)
     self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
