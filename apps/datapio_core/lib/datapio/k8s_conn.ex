@@ -1,4 +1,6 @@
 defmodule Datapio.K8sConn do
+  alias Datapio.Dependencies, as: Deps
+
   def lookup() do
     case System.get_env("KUBECONFIG") do
       nil -> Deps.get(:k8s_conn).from_service_account()
