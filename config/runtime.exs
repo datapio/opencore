@@ -10,11 +10,6 @@ config :datapio_pipelinerun_server,
 
 case config_env() do
   :prod ->
-    default_k8s_conn = case System.get_env("KUBECONFIG") do
-      nil -> %{}
-      path -> %{ conn: path }
-    end
-
     default_k8s_topology = case System.get_env("DATAPIO_SERVICE_NAME", nil) do
       nil -> []
       svc -> [
@@ -28,15 +23,10 @@ case config_env() do
       ]
     end
 
-    config :k8s,
-      clusters: %{ default: default_k8s_conn }
-
     config :datapio_core,
       topology: default_k8s_topology
 
   _ ->
-    config :k8s,
-      clusters: %{ default: %{ conn: System.get_env("KUBECONFIG", "~/.kube/config") } }
 
     config :datapio_core,
       topology: []
