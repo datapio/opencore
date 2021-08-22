@@ -11,7 +11,7 @@ defmodule Datapio.Application do
   end
 
   defp init do
-    modules = Application.fetch_env!(:datapio_core, :mocks)
+    modules = Application.get_env(:datapio_core, :mocks, [])
 
     Deps.setup()
     Deps.register(:k8s_conn, modules |> Keyword.get(:k8s_conn, K8s.Conn))
