@@ -101,12 +101,12 @@ defmodule Datapio.Controller do
 
   @impl true
   def handle_call({:run, operation}, _from, %Datapio.Controller{} = state) do
-    {:reply, Deps.get(:k8s_client).run(operation, state.conn), state}
+    {:reply, Deps.get(:k8s_client).run(state.conn, operation), state}
   end
 
   @impl true
   def handle_call({:async, operations}, _from, %Datapio.Controller{} = state) do
-    {:reply, Deps.get(:k8s_client).async(operations, state.conn), state}
+    {:reply, Deps.get(:k8s_client).async(state.conn, operations), state}
   end
 
   @impl true
@@ -114,7 +114,7 @@ defmodule Datapio.Controller do
     resources =
       Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
         # Execute Query
-        |> Deps.get(:k8s_client).run(state.conn)
+        |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
         # Parse API Server Response
         |> (fn {:ok, %{ "items" => items }} -> items end).()
         # Split items into added/modified
@@ -166,7 +166,7 @@ defmodule Datapio.Controller do
   def handle_info(:reconcile, %Datapio.Controller{} = state) do
     Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
       # Execute Query
-      |> Deps.get(:k8s_client).run(state.conn)
+      |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
       # Parse API Server Response
       |> (fn {:ok, %{ "items" => items }} -> items end).()
       |> Enum.map(fn resource ->
