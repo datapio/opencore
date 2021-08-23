@@ -1,10 +1,10 @@
 defmodule DatapioProjectOperator.Resources.Ingress do
   @moduledoc false
 
-  def from_project(%{ "spec" => %{ "ingress" => %{ "enabled" => true } } } = project) do
-    %{ "metadata" => project_meta, "spec" => project_spec } = project
-    %{ "namespace" => namespace, "name" => name, "uid" => uid } = project_meta
-    %{ "ingress" => ingress_config, "webhooks" => webhooks } = project_spec
+  def from_project(%{"spec" => %{"ingress" => %{"enabled" => true}}} = project) do
+    %{"metadata" => project_meta, "spec" => project_spec} = project
+    %{"namespace" => namespace, "name" => name, "uid" => uid} = project_meta
+    %{"ingress" => ingress_config, "webhooks" => webhooks} = project_spec
 
     [
       %{
@@ -53,12 +53,12 @@ defmodule DatapioProjectOperator.Resources.Ingress do
           false ->
             %{}
 
-          secretName ->
+          secret_name ->
             %{
               "tls" => [
                 %{
-                  "hosts" => [ ingress_config["host"] ],
-                  "secretName" => secretName
+                  "hosts" => [ingress_config["host"]],
+                  "secretName" => secret_name
                 }
               ]
             }

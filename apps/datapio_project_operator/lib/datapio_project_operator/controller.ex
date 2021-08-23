@@ -99,7 +99,7 @@ defmodule DatapioProjectOperator.Controller do
 
   defp observed_state(project) do
     namespace = project["metadata"]["namespace"]
-    get_items = fn {:ok, %{ "items" => items }} -> items end
+    get_items = fn {:ok, %{"items" => items}} -> items end
 
     pipelines = K8s.Client.list("tekton.dev/v1alpha1", "Pipeline", namespace: namespace)
       |> run_operation()
@@ -146,10 +146,10 @@ defmodule DatapioProjectOperator.Controller do
       |> Enum.map_reduce([], fn (resource, operations) ->
         is_desired = resource |> Datapio.Resource.list_contains(desired[kind])
 
-        if not is_desired do
-          operations ++ [K8s.Client.delete(resource)]
-        else
+        if is_desired do
           operations
+        else
+          operations ++ [K8s.Client.delete(resource)]
         end
       end)
       |> run_operations()
