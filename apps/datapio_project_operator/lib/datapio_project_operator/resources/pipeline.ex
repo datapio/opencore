@@ -6,7 +6,7 @@ defmodule DatapioProjectOperator.Resources.Pipeline do
   end
 
   def from_project(project) do
-    %{ "namespace" => namespace, "name" => name, "uid" => uid } = project["metadata"]
+    %{"namespace" => namespace, "name" => name, "uid" => uid} = project["metadata"]
 
     %{
       "apiVersion" => "tekton.dev/v1alpha1",
@@ -30,7 +30,7 @@ defmodule DatapioProjectOperator.Resources.Pipeline do
             "type" => "git"
           }
         ],
-        "tasks" => [ get_klifter_task() ]
+        "tasks" => [get_klifter_task()]
       }
     }
   end

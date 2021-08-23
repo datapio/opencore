@@ -2,7 +2,7 @@ defmodule DatapioProjectOperator.Resources.TriggerBinding do
   @moduledoc false
 
   def from_project(project) do
-    %{ "namespace" => namespace, "name" => name, "uid" => uid } = project["metadata"]
+    %{"namespace" => namespace, "name" => name, "uid" => uid} = project["metadata"]
 
     %{
       "apiVersion" => "triggers.tekton.dev/v1alpha1",

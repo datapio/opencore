@@ -2,9 +2,9 @@ defmodule DatapioProjectOperator.Resources.TriggerTemplates do
   @moduledoc false
 
   def from_project(project) do
-    %{ "metadata" => project_meta, "spec" => project_spec } = project
-    %{ "namespace" => namespace, "name" => name, "uid" => uid } = project_meta
-    %{ "webhooks" => webhooks } = project_spec
+    %{"metadata" => project_meta, "spec" => project_spec} = project
+    %{"namespace" => namespace, "name" => name, "uid" => uid} = project_meta
+    %{"webhooks" => webhooks} = project_spec
 
     webhooks |> Enum.map(fn webhook ->
       %{
@@ -24,8 +24,8 @@ defmodule DatapioProjectOperator.Resources.TriggerTemplates do
         },
         "spec" => %{
           "params" => [
-            %{ "name" => "revision" },
-            %{ "name" => "url" }
+            %{"name" => "revision"},
+            %{"name" => "url"}
           ],
           "resourcetemplates" => [
             get_pipelinerun_request_template(name, webhook)
