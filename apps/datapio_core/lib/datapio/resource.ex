@@ -64,7 +64,8 @@ defmodule Datapio.Resource do
     with :ok <- validate_owner_resource(owner),
          :ok <- validate_owned_resource(resource, owner)
     do
-      resource["metadata"]["ownerReferences"]
+      resource["metadata"]
+        |> Map.get("ownerReferences", [])
         |> Stream.filter(fn ref ->
           ref["apiVersion"] == owner["apiVersion"] and \
           ref["kind"] == owner["kind"] and \
@@ -72,10 +73,13 @@ defmodule Datapio.Resource do
           ref["uid"] == owner["metadata"]["uid"]
         end)
         |> Enum.count()
-        |> (fn i -> i > 0 end).()
+        |> then(&(&1 > 0))
     else
-      {:error, {:owner, err}} ->
-        raise err
+      {:error, {:owner, reason}} ->
+        raise reason
+
+      {:error, {:owned, reason}} ->
+        raise reason
 
       _ ->
         false
