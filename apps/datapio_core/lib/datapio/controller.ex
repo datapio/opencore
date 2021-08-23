@@ -173,14 +173,26 @@ defmodule Datapio.Controller do
 
   @impl true
   def handle_info(:reconcile, %Datapio.Controller{} = state) do
-    Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
-      # Execute Query
-      |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
-      # Parse API Server Response
-      |> (fn {:ok, %{"items" => items}} -> items end).()
-      |> Enum.each(fn resource ->
-        :ok = apply(state.module, :reconcile, [resource])
-      end)
+    operation = Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
+    {:ok, %{"items" => items}} = Deps.get(:k8s_client).run(state.conn, operation)
+
+    Enum.each(fn resource ->
+      %{"metadata" => %{"uid" => uid}} = resource
+
+      case apply(state.module, :reconcile, [resource]) do
+        :ok -> :ok
+        {:error, reason} ->
+          Logger.error([
+            event: "reconcile",
+            scope: "controller",
+            module: state.module,
+            api_version: state.api_version,
+            kind: kind,
+            uid: uid,
+            reason: reason
+          ])
+      end
+    end)
 
     self() |> Process.send_after(:reconcile, state.reconcile_delay)
 
@@ -190,7 +202,20 @@ defmodule Datapio.Controller do
   @impl true
   def handle_info({:added, resource}, %Datapio.Controller{} = state) do
     %{"metadata" => %{"uid" => uid}} = resource
-    :ok = apply(state.module, :add, [resource])
+
+    case apply(state.module, :add, [resource]) do
+      :ok -> :ok
+      {:error, reason} ->
+        Logger.error([
+          event: "added",
+          scope: "controller",
+          module: state.module,
+          api_version: state.api_version,
+          kind: kind,
+          uid: uid,
+          reason: reason
+        ])
+    end
 
     cache = state.cache |> Map.put(uid, resource)
 
@@ -203,7 +228,20 @@ defmodule Datapio.Controller do
     %{"metadata" => %{"resourceVersion" => old_ver}} = state.cache[uid]
 
     cache = if old_ver != new_ver do
-      :ok = apply(state.module, :modify, [resource])
+      case apply(state.module, :modify, [resource]) do
+        :ok -> :ok
+        {:error, reason} ->
+          Logger.error([
+            event: "modified",
+            scope: "controller",
+            module: state.module,
+            api_version: state.api_version,
+            kind: kind,
+            uid: uid,
+            reason: reason
+          ])
+      end
+
       state.cache |> Map.put(uid, resource)
     else
       state.cache
@@ -215,7 +253,21 @@ defmodule Datapio.Controller do
   @impl true
   def handle_info({:deleted, resource}, state) do
     %{"metadata" => %{"uid" => uid}} = resource
-    :ok = apply(state.module, :delete, [resource])
+
+    case apply(state.module, :delete, [resource]) do
+      :ok -> :ok
+      {:error, reason} ->
+        Logger.error([
+          event: "deleted",
+          scope: "controller",
+          module: state.module,
+          api_version: state.api_version,
+          kind: kind,
+          uid: uid,
+          reason: reason
+        ])
+    end
+
     cache = state.cache |> Map.delete(uid)
 
     {:noreply, %Datapio.Controller{state | cache: cache}}
