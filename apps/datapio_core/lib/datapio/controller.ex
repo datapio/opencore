@@ -187,7 +187,7 @@ defmodule Datapio.Controller do
             scope: "controller",
             module: state.module,
             api_version: state.api_version,
-            kind: kind,
+            kind: state.kind,
             uid: uid,
             reason: reason
           ])
@@ -211,7 +211,7 @@ defmodule Datapio.Controller do
           scope: "controller",
           module: state.module,
           api_version: state.api_version,
-          kind: kind,
+          kind: state.kind,
           uid: uid,
           reason: reason
         ])
@@ -236,7 +236,7 @@ defmodule Datapio.Controller do
             scope: "controller",
             module: state.module,
             api_version: state.api_version,
-            kind: kind,
+            kind: state.kind,
             uid: uid,
             reason: reason
           ])
@@ -262,7 +262,7 @@ defmodule Datapio.Controller do
           scope: "controller",
           module: state.module,
           api_version: state.api_version,
-          kind: kind,
+          kind: state.kind,
           uid: uid,
           reason: reason
         ])
