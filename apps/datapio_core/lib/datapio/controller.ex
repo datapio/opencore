@@ -176,7 +176,7 @@ defmodule Datapio.Controller do
     operation = Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
     {:ok, %{"items" => items}} = Deps.get(:k8s_client).run(state.conn, operation)
 
-    Enum.each(fn resource ->
+    items |> Enum.each(fn resource ->
       %{"metadata" => %{"uid" => uid}} = resource
 
       case apply(state.module, :reconcile, [resource]) do
