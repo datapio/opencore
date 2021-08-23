@@ -13,7 +13,7 @@ defmodule DatapioProjectOperator.Controller do
 
 
   @impl true
-  def add(%{} = project) do
+  def add(%{} = project, _options) do
     Logger.debug("ADDED", [
       name: project["metadata"]["name"],
       namespace: project["metadata"]["namespace"]
@@ -28,7 +28,7 @@ defmodule DatapioProjectOperator.Controller do
   end
 
   @impl true
-  def modify(%{} = project) do
+  def modify(%{} = project, _options) do
     Logger.debug("MODIFIED", [
       name: project["metadata"]["name"],
       namespace: project["metadata"]["namespace"]
@@ -43,7 +43,7 @@ defmodule DatapioProjectOperator.Controller do
   end
 
   @impl true
-  def delete(%{} = project) do
+  def delete(%{} = project, _options) do
     Logger.debug("DELETED", [
       name: project["metadata"]["name"],
       namespace: project["metadata"]["namespace"]
@@ -52,7 +52,7 @@ defmodule DatapioProjectOperator.Controller do
   end
 
   @impl true
-  def reconcile(%{} = project) do
+  def reconcile(%{} = project, _options) do
     Logger.debug("RECONCILE", [
       name: project["metadata"]["name"],
       namespace: project["metadata"]["namespace"]
