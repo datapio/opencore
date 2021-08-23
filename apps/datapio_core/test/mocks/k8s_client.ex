@@ -14,6 +14,7 @@ defmodule DatapioMock.K8s.Client do
     pid |> send(%HTTPoison.AsyncHeaders{})
     pid |> send(%HTTPoison.AsyncChunk{chunk: Jason.encode!(added)})
     pid |> send(%HTTPoison.AsyncChunk{chunk: Jason.encode!(modified)})
+    pid |> send(%HTTPoison.AsyncChunk{chunk: Jason.encode!(modified)})
     pid |> send(%HTTPoison.AsyncChunk{chunk: Jason.encode!(deleted)})
     pid |> send(%HTTPoison.AsyncEnd{})
     {:ok, nil}
@@ -23,6 +24,14 @@ defmodule DatapioMock.K8s.Client do
     {:ok, %{
       "items" => [get_mock_resource()]
     }}
+  end
+
+  def run(_conn, {:operation, :test, payload}) do
+    {:ok, payload}
+  end
+
+  def async(_conn, operations) do
+    {:ok, operations |> Enum.map(fn {:operation, :test, payload} -> payload end)}
   end
 
   defp get_mock_resource(resource_version \\ 1), do: %{

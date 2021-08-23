@@ -63,6 +63,32 @@ defmodule DatapioTest.Resource do
         Datapio.Resource.is_owned(resource, owner)
       end
     end
+
+    test "should raise an error if the owner reference has no UID" do
+      resource = %{
+        "metadata" => %{
+          "ownerReferences" => [
+            %{
+              "apiVersion" => "v1",
+              "kind" => "Example",
+              "name" => "foo"
+            }
+          ]
+        }
+      }
+      owner = %{
+        "apiVersion" => "v1",
+        "kind" => "Example",
+        "metadata" => %{
+          "name" => "foo",
+          "uid" => "UUID"
+        }
+      }
+
+      assert_raise JsonXema.ValidationError, fn ->
+        Datapio.Resource.is_owned(resource, owner)
+      end
+    end
   end
 
   describe "list_contains/2" do
