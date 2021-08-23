@@ -67,20 +67,20 @@ defmodule DatapioTest.Resource do
 
   describe "list_contains/2" do
     test "should return true if a resource with the same uid is found" do
-      resource = %{ "metadata" => %{ "uid" => "u1" } }
+      resource = %{"metadata" => %{"uid" => "u1"}}
       collection = [
-        %{ "metadata" => %{ "uid" => "u1" } },
-        %{ "metadata" => %{ "uid" => "u2" } }
+        %{"metadata" => %{"uid" => "u1"}},
+        %{"metadata" => %{"uid" => "u2"}}
       ]
 
       assert Datapio.Resource.list_contains(resource, collection) == true
     end
 
     test "should return true if no resource with the same uid is found" do
-      resource = %{ "metadata" => %{ "uid" => "u3" } }
+      resource = %{"metadata" => %{"uid" => "u3"}}
       collection = [
-        %{ "metadata" => %{ "uid" => "u1" } },
-        %{ "metadata" => %{ "uid" => "u2" } }
+        %{"metadata" => %{"uid" => "u1"}},
+        %{"metadata" => %{"uid" => "u2"}}
       ]
 
       assert Datapio.Resource.list_contains(resource, collection) == false
@@ -89,18 +89,18 @@ defmodule DatapioTest.Resource do
     test "should raise an exception if the resources do not have a uid" do
       resource = %{}
       collection = [
-        %{ "metadata" => %{ "uid" => "u1" } },
-        %{ "metadata" => %{ "uid" => "u2" } }
+        %{"metadata" => %{"uid" => "u1"}},
+        %{"metadata" => %{"uid" => "u2"}}
       ]
 
       assert_raise JsonXema.ValidationError, fn ->
         Datapio.Resource.list_contains(resource, collection)
       end
 
-      resource = %{ "metadata" => %{ "uid" => "u1" } }
+      resource = %{"metadata" => %{"uid" => "u1"}}
       collection = [
         %{},
-        %{ "metadata" => %{ "uid" => "u2" } }
+        %{"metadata" => %{"uid" => "u2"}}
       ]
 
       assert_raise JsonXema.ValidationError, fn ->

@@ -28,9 +28,9 @@ defmodule DatapioLib.MixProject do
 
   defp deps do
     [
-      {:libcluster, "~> 3.2"},
-      {:k8s, "~> 1.0"},
-      {:json_xema, "~> 0.6"}
+      {:libcluster, "~> 3.2"},  # Automatic Node discovery
+      {:k8s, "~> 1.0"},         # Kubernetes Client
+      {:json_xema, "~> 0.6"}    # JSON Schema validation
     ]
   end
 end

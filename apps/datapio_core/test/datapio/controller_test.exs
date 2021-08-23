@@ -4,22 +4,22 @@ defmodule DatapioTest.Controller.TestController do
     kind: :example
 
   @impl true
-  def add(resource) do
+  def add(_resource) do
     :ok
   end
 
   @impl true
-  def modify(resource) do
+  def modify(_resource) do
     :ok
   end
 
   @impl true
-  def delete(resource) do
+  def delete(_resource) do
     :ok
   end
 
   @impl true
-  def reconcile(resource) do
+  def reconcile(_resource) do
     :ok
   end
 end
