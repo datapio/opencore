@@ -1,4 +1,8 @@
 defmodule Datapio.K8sConn do
+  @moduledoc """
+  Generate K8s.Conn object.
+  """
+
   alias Datapio.Dependencies, as: Deps
 
   def lookup() do

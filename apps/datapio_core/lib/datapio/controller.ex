@@ -1,5 +1,7 @@
 defmodule Datapio.Controller do
-  @moduledoc false
+  @moduledoc """
+  Provides behavior to observe Kubernetes resources.
+  """
 
   use GenServer
   alias Datapio.Dependencies, as: Deps
@@ -74,8 +76,8 @@ defmodule Datapio.Controller do
       api_version: opts |> Keyword.fetch!(:api_version),
       kind: opts |> Keyword.fetch!(:kind),
       namespace: opts |> Keyword.get(:namespace, :all),
-      poll_delay: opts |> Keyword.get(:poll_delay, 5000),
-      reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30000)
+      poll_delay: opts |> Keyword.get(:poll_delay, 5_000),
+      reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30_000)
     ]
     GenServer.start_link(__MODULE__, options, name: module)
   end
@@ -116,10 +118,10 @@ defmodule Datapio.Controller do
         # Execute Query
         |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
         # Parse API Server Response
-        |> (fn {:ok, %{ "items" => items }} -> items end).()
+        |> (fn {:ok, %{"items" => items}} -> items end).()
         # Split items into added/modified
         |> Stream.map(fn resource ->
-          %{ "metadata" => %{ "uid" => uid }} = resource
+          %{"metadata" => %{"uid" => uid}} = resource
 
           case state.cache[uid] do
             nil ->
@@ -131,7 +133,7 @@ defmodule Datapio.Controller do
         end)
         # Build Map from added/modified items with removed from cache
         |> Enum.reduce(
-          %{ added: %{}, modified: %{}, deleted: state.cache },
+          %{added: %{}, modified: %{}, deleted: state.cache},
           fn
             {:added, uid, resource}, resources -> %{
               added: resources[:added] |> Map.put(uid, resource),
@@ -148,15 +150,15 @@ defmodule Datapio.Controller do
 
     resources[:added]
       |> Map.values()
-      |> Enum.map(&send(self(), {:added, &1}))
+      |> Enum.each(&send(self(), {:added, &1}))
 
     resources[:modified]
       |> Map.values()
-      |> Enum.map(&send(self(), {:modified, &1}))
+      |> Enum.each(&send(self(), {:modified, &1}))
 
     resources[:deleted]
       |> Map.values()
-      |> Enum.map(&send(self(), {:deleted, &1}))
+      |> Enum.each(&send(self(), {:deleted, &1}))
 
     self() |> Process.send_after(:list, state.poll_delay)
 
@@ -168,8 +170,8 @@ defmodule Datapio.Controller do
       # Execute Query
       |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
       # Parse API Server Response
-      |> (fn {:ok, %{ "items" => items }} -> items end).()
-      |> Enum.map(fn resource ->
+      |> (fn {:ok, %{"items" => items}} -> items end).()
+      |> Enum.each(fn resource ->
         :ok = apply(state.module, :reconcile, [resource])
       end)
 
@@ -179,7 +181,7 @@ defmodule Datapio.Controller do
   end
 
   def handle_info({:added, resource}, %Datapio.Controller{} = state) do
-    %{ "metadata" => %{ "uid" => uid }} = resource
+    %{"metadata" => %{"uid" => uid}} = resource
     :ok = apply(state.module, :add, [resource])
 
     cache = state.cache |> Map.put(uid, resource)
@@ -188,8 +190,8 @@ defmodule Datapio.Controller do
   end
 
   def handle_info({:modified, resource}, %Datapio.Controller{} = state) do
-    %{ "metadata" => %{ "uid" => uid, "resourceVersion" => new_ver }} = resource
-    %{ "metadata" => %{ "resourceVersion" => old_ver }} = state.cache[uid]
+    %{"metadata" => %{"uid" => uid, "resourceVersion" => new_ver}} = resource
+    %{"metadata" => %{"resourceVersion" => old_ver}} = state.cache[uid]
 
     cache = if old_ver != new_ver do
       :ok = apply(state.module, :modify, [resource])
@@ -202,7 +204,7 @@ defmodule Datapio.Controller do
   end
 
   def handle_info({:deleted, resource}, state) do
-    %{ "metadata" => %{ "uid" => uid }} = resource
+    %{"metadata" => %{"uid" => uid}} = resource
     :ok = apply(state.module, :delete, [resource])
     cache = state.cache |> Map.delete(uid)
 

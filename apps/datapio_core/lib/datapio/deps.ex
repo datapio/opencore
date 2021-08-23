@@ -1,4 +1,8 @@
 defmodule Datapio.Dependencies do
+  @moduledoc """
+  Dependency Injection container.
+  """
+
   def setup do
     :ets.new(__MODULE__, [:set, :public, :named_table])
   end

@@ -1,26 +1,28 @@
 defmodule Datapio.Resource do
+  @moduledoc """
+  Resource utility functions.
+  """
+
   defp validate_owner_resource(%{} = owner) do
     schema = %{
       "type" => "object",
       "required" => ["apiVersion", "kind", "metadata"],
       "properties" => %{
-        "apiVersion" => %{ "type" => "string", "minLength" => 1},
-        "kind" => %{ "type" => "string", "minLength" => 1},
+        "apiVersion" => %{"type" => "string", "minLength" => 1},
+        "kind" => %{"type" => "string", "minLength" => 1},
         "metadata" => %{
           "type" => "object",
           "required" => ["name", "uid"],
           "properties" => %{
-            "name" => %{ "type" => "string", "minLength" => 1},
-            "uid" => %{ "type" => "string", "minLength" => 1}
+            "name" => %{"type" => "string", "minLength" => 1},
+            "uid" => %{"type" => "string", "minLength" => 1}
           }
         }
       }
     } |> JsonXema.new(loader: Datapio.SchemaLoader)
 
-    with :ok <- JsonXema.validate(schema, owner)
-    do
-      :ok
-    else
+    case JsonXema.validate(schema, owner) do
+      :ok -> :ok
       {:error, err} -> {:error, {:owner, err}}
     end
   end
@@ -40,10 +42,10 @@ defmodule Datapio.Resource do
                 "type" => "object",
                 "required" => ["apiVersion", "kind", "name", "uid"],
                 "properties" => %{
-                  "apiVersion" => %{ "type" => "string", "minLength" => 1},
-                  "kind" => %{ "type" => "string", "minLength" => 1},
-                  "name" => %{ "type" => "string", "minLength" => 1},
-                  "uid" => %{ "type" => "string", "minLength" => 1}
+                  "apiVersion" => %{"type" => "string", "minLength" => 1},
+                  "kind" => %{"type" => "string", "minLength" => 1},
+                  "name" => %{"type" => "string", "minLength" => 1},
+                  "uid" => %{"type" => "string", "minLength" => 1}
                 }
               }
             }
@@ -52,10 +54,8 @@ defmodule Datapio.Resource do
       }
     } |> JsonXema.new(loader: Datapio.SchemaLoader)
 
-    with :ok <- JsonXema.validate(schema, resource)
-    do
-      :ok
-    else
+    case JsonXema.validate(schema, resource) do
+      :ok -> :ok
       {:error, err} -> {:error, {:owned, err}}
     end
   end
@@ -91,7 +91,7 @@ defmodule Datapio.Resource do
           "type" => "object",
           "required" => ["uid"],
           "properties" => %{
-            "uid" => %{ "type" => "string", "minLength" => 1}
+            "uid" => %{"type" => "string", "minLength" => 1}
           }
         }
       }
