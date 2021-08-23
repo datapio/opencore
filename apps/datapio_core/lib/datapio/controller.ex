@@ -15,13 +15,14 @@ defmodule Datapio.Controller do
     :conn,
     :watcher,
     :reconcile_delay,
-    :cache
+    :cache,
+    :options
   ]
 
-  @callback add(map()) :: :ok | :error
-  @callback modify(map()) :: :ok | :error
-  @callback delete(map()) :: :ok | :error
-  @callback reconcile(map()) :: :ok | :error
+  @callback add(map(), keyword()) :: :ok | :error
+  @callback modify(map(), keyword()) :: :ok | :error
+  @callback delete(map(), keyword()) :: :ok | :error
+  @callback reconcile(map(), keyword()) :: :ok | :error
 
   defmacro __using__(opts) do
     supervisor_opts = opts |> Keyword.get(:supervisor, [])
@@ -29,15 +30,20 @@ defmodule Datapio.Controller do
     quote do
       @behaviour Datapio.Controller
 
-      def child_spec(_args) do
+      def child_spec(args) do
         %{
           id: __MODULE__,
-          start: {__MODULE__, :start_link, []}
+          start: {__MODULE__, :start_link, args}
         } |> Supervisor.child_spec(unquote(supervisor_opts))
       end
 
       def start_link() do
-        Datapio.Controller.start_link(__MODULE__, unquote(opts))
+        start_link([])
+      end
+
+      def start_link(extra_opts) do
+        args = unquote(opts) |> Keyword.merge([extra_opts: extra_opts])
+        Datapio.Controller.start_link(__MODULE__, args)
       end
 
       defp resource_schema do
@@ -77,7 +83,8 @@ defmodule Datapio.Controller do
       api_version: opts |> Keyword.fetch!(:api_version),
       kind: opts |> Keyword.fetch!(:kind),
       namespace: opts |> Keyword.get(:namespace, :all),
-      reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30_000)
+      reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30_000),
+      options: opts |> Keyword.get(:extra_opts, [])
     ]
     GenServer.start_link(__MODULE__, options, name: module)
   end
@@ -97,7 +104,8 @@ defmodule Datapio.Controller do
       conn: conn,
       watcher: nil,
       reconcile_delay: opts[:reconcile_delay],
-      cache: %{}
+      cache: %{},
+      options: opts[:options]
     }}
   end
 
@@ -179,7 +187,7 @@ defmodule Datapio.Controller do
     items |> Enum.each(fn resource ->
       %{"metadata" => %{"uid" => uid}} = resource
 
-      case apply(state.module, :reconcile, [resource]) do
+      case apply(state.module, :reconcile, [resource, state.options]) do
         :ok -> :ok
         {:error, reason} ->
           Logger.error([
@@ -203,7 +211,7 @@ defmodule Datapio.Controller do
   def handle_info({:added, resource}, %Datapio.Controller{} = state) do
     %{"metadata" => %{"uid" => uid}} = resource
 
-    case apply(state.module, :add, [resource]) do
+    case apply(state.module, :add, [resource, state.options]) do
       :ok -> :ok
       {:error, reason} ->
         Logger.error([
@@ -228,7 +236,7 @@ defmodule Datapio.Controller do
     %{"metadata" => %{"resourceVersion" => old_ver}} = state.cache[uid]
 
     cache = if old_ver != new_ver do
-      case apply(state.module, :modify, [resource]) do
+      case apply(state.module, :modify, [resource, state.options]) do
         :ok -> :ok
         {:error, reason} ->
           Logger.error([
@@ -254,7 +262,7 @@ defmodule Datapio.Controller do
   def handle_info({:deleted, resource}, state) do
     %{"metadata" => %{"uid" => uid}} = resource
 
-    case apply(state.module, :delete, [resource]) do
+    case apply(state.module, :delete, [resource, state.options]) do
       :ok -> :ok
       {:error, reason} ->
         Logger.error([
