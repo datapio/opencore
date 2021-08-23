@@ -27,5 +27,8 @@ jobs:
       - name: compile@mix
         run: mix compile
 
+      - name: lint@mix
+        run: mix credo --all
+
       - name: test@mix
-        run: mix test
+        run: mix test --no-start
