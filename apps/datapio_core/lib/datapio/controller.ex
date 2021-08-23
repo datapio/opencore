@@ -3,6 +3,7 @@ defmodule Datapio.Controller do
   Provides behavior to observe Kubernetes resources.
   """
 
+  require Logger
   use GenServer
   alias Datapio.Dependencies, as: Deps
 
@@ -12,7 +13,7 @@ defmodule Datapio.Controller do
     :kind,
     :namespace,
     :conn,
-    :poll_delay,
+    :watcher,
     :reconcile_delay,
     :cache
   ]
@@ -76,7 +77,6 @@ defmodule Datapio.Controller do
       api_version: opts |> Keyword.fetch!(:api_version),
       kind: opts |> Keyword.fetch!(:kind),
       namespace: opts |> Keyword.get(:namespace, :all),
-      poll_delay: opts |> Keyword.get(:poll_delay, 5_000),
       reconcile_delay: opts |> Keyword.get(:reconcile_delay, 30_000)
     ]
     GenServer.start_link(__MODULE__, options, name: module)
@@ -86,7 +86,7 @@ defmodule Datapio.Controller do
   def init(opts) do
     {:ok, conn} = Datapio.K8sConn.lookup()
 
-    self() |> send(:list)
+    self() |> send(:watch)
     self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
 
     {:ok, %Datapio.Controller{
@@ -95,7 +95,7 @@ defmodule Datapio.Controller do
       kind: opts[:kind],
       namespace: opts[:namespace],
       conn: conn,
-      poll_delay: opts[:poll_delay],
+      watcher: nil,
       reconcile_delay: opts[:reconcile_delay],
       cache: %{}
     }}
@@ -112,59 +112,66 @@ defmodule Datapio.Controller do
   end
 
   @impl true
-  def handle_info(:list, %Datapio.Controller{} = state) do
-    resources =
-      Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
-        # Execute Query
-        |> (&(Deps.get(:k8s_client).run(state.conn, &1))).()
-        # Parse API Server Response
-        |> (fn {:ok, %{"items" => items}} -> items end).()
-        # Split items into added/modified
-        |> Stream.map(fn resource ->
-          %{"metadata" => %{"uid" => uid}} = resource
+  def handle_info(:watch, %Datapio.Controller{} = state) do
+    operation = Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
+    {:ok, watcher} = Deps.get(:k8s_client).watch(state.conn, operation, stream_to: self())
+    {:noreply, %Datapio.Controller{state | watcher: watcher}}
+  end
 
-          case state.cache[uid] do
-            nil ->
-              {:added, uid, resource}
+  @impl true
+  def handle_info(%HTTPoison.AsyncStatus{code: 200}, %Datapio.Controller{} = state) do
+    {:noreply, state}
+  end
 
-            _ ->
-              {:modified, uid, resource}
-          end
-        end)
-        # Build Map from added/modified items with removed from cache
-        |> Enum.reduce(
-          %{added: %{}, modified: %{}, deleted: state.cache},
-          fn
-            {:added, uid, resource}, resources -> %{
-              added: resources[:added] |> Map.put(uid, resource),
-              modified: resources[:modified],
-              deleted: resources[:deleted] |> Map.delete(uid)
-            }
-            {:modified, uid, resource}, resources -> %{
-              added: resources[:added],
-              modified: resources[:modified] |> Map.put(uid, resource),
-              deleted: resources[:deleted] |> Map.delete(uid)
-            }
-          end
-        )
+  @impl true
+  def handle_info(%HTTPoison.AsyncStatus{code: code}, %Datapio.Controller{} = state) do
+    Logger.error([
+      event: "watch",
+      scope: "controller",
+      module: state.module,
+      api_version: state.api_version,
+      kind: state.kind,
+      reason: code
+    ])
+    {:stop, :normal, state}
+  end
 
-    resources[:added]
-      |> Map.values()
-      |> Enum.each(&send(self(), {:added, &1}))
+  @impl true
+  def handle_info(%HTTPoison.AsyncHeaders{}, %Datapio.Controller{} = state) do
+    {:noreply, state}
+  end
 
-    resources[:modified]
-      |> Map.values()
-      |> Enum.each(&send(self(), {:modified, &1}))
+  @impl true
+  def handle_info(%HTTPoison.AsyncChunk{chunk: chunk}, %Datapio.Controller{} = state) do
+    event = Jason.decode!(chunk)
 
-    resources[:deleted]
-      |> Map.values()
-      |> Enum.each(&send(self(), {:deleted, &1}))
+    case event["type"] do
+      "ADDED" ->
+        self() |> send({:added, event["object"]})
 
-    self() |> Process.send_after(:list, state.poll_delay)
+      "MODIFIED" ->
+        self() |> send({:modified, event["object"]})
+
+      "DELETED" ->
+        self() |> send({:deleted, event["object"]})
+    end
 
     {:noreply, state}
   end
 
+  @impl true
+  def handle_info(%HTTPoison.AsyncEnd{}, %Datapio.Controller{} = state) do
+    self() |> send(:watch)
+    {:noreply, %Datapio.Controller{state | watcher: nil}}
+  end
+
+  @impl true
+  def handle_info(%HTTPoison.Error{reason: {:closed, :timeout}}, %Datapio.Controller{} = state) do
+    self() |> send(:watch)
+    {:noreply, %Datapio.Controller{state | watcher: nil}}
+  end
+
+  @impl true
   def handle_info(:reconcile, %Datapio.Controller{} = state) do
     Deps.get(:k8s_client).list(state.api_version, state.kind, namespace: state.namespace)
       # Execute Query
@@ -180,6 +187,7 @@ defmodule Datapio.Controller do
     {:noreply, state}
   end
 
+  @impl true
   def handle_info({:added, resource}, %Datapio.Controller{} = state) do
     %{"metadata" => %{"uid" => uid}} = resource
     :ok = apply(state.module, :add, [resource])
@@ -189,6 +197,7 @@ defmodule Datapio.Controller do
     {:noreply, %Datapio.Controller{state | cache: cache}}
   end
 
+  @impl true
   def handle_info({:modified, resource}, %Datapio.Controller{} = state) do
     %{"metadata" => %{"uid" => uid, "resourceVersion" => new_ver}} = resource
     %{"metadata" => %{"resourceVersion" => old_ver}} = state.cache[uid]
@@ -203,6 +212,7 @@ defmodule Datapio.Controller do
     {:noreply, %Datapio.Controller{state | cache: cache}}
   end
 
+  @impl true
   def handle_info({:deleted, resource}, state) do
     %{"metadata" => %{"uid" => uid}} = resource
     :ok = apply(state.module, :delete, [resource])
