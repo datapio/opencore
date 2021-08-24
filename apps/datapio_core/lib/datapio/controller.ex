@@ -94,7 +94,7 @@ defmodule Datapio.Controller do
     {:ok, conn} = Datapio.K8sConn.lookup()
 
     self() |> send(:watch)
-    self() |> Process.send_after(:reconcile, opts[:reconcile_delay])
+    self() |> send(:reconcile)
 
     {:ok, %Datapio.Controller{
       module: opts[:module],
