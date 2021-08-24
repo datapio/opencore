@@ -1,5 +1,7 @@
 defmodule DatapioProjectOperator.Controller do
-  @moduledoc false
+  @moduledoc """
+  Handle the lifecycle of Project resources.
+  """
 
   require Logger
 
