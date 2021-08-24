@@ -99,36 +99,39 @@ defmodule DatapioProjectOperator.Controller do
 
   defp observed_state(project) do
     namespace = project["metadata"]["namespace"]
-    get_items = fn {:ok, %{"items" => items}} -> items end
+    get_items = fn
+      {:ok, %{"items" => items}} -> items
+      _ -> []
+    end
 
     pipelines = K8s.Client.list("tekton.dev/v1alpha1", "Pipeline", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     servers = K8s.Client.list("datapio.co/v1", "PipelineRunServer", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     templates = K8s.Client.list("triggers.tekton.dev/v1alpha1", "TriggerTemplate", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     bindings = K8s.Client.list("triggers.tekton.dev/v1alpha1", "TriggerBinding", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     event_listeners = K8s.Client.list("triggers.tekton.dev/v1alpha1", "EventListener", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     ingresses = K8s.Client.list("networking.k8s.io/v1", "Ingress", namespace: namespace)
       |> run_operation()
-      |> get_items.()
+      |> then(get_items)
       |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
 
     %{
