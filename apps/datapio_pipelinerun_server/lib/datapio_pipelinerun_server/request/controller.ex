@@ -19,6 +19,7 @@ defmodule DatapioPipelineRunServer.Request.Controller do
     case with_resource(request, &schedule_request/1) do
       {:ok, _} -> :ok
       err -> err
+    end
   end
 
   @impl true
