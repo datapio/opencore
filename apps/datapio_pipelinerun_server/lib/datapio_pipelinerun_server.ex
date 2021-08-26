@@ -1,3 +1,3 @@
-defmodule DatapioPipelinerunServer do
+defmodule DatapioPipelineRunServer do
   @moduledoc false
 end
