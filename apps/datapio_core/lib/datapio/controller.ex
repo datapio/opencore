@@ -59,9 +59,9 @@ defmodule Datapio.Controller do
       def with_resource(%{} = resource, func) do
         try do
           validate_resource(resource)
-            |> (fn {:ok, rsrc} -> rsrc end).()
-            |> func.()
-            |> (fn result -> {:ok, result} end).()
+            |> then(fn {:ok, rsrc} -> rsrc end)
+            |> then(func)
+            |> then(fn result -> {:ok, result} end)
         rescue
           err -> {:error, err}
         end
