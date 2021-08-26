@@ -8,7 +8,7 @@ config :logger, :console,
 config :datapio_core,
   service_name: [env: "DATAPIO_SERVICE_NAME", default: nil],
   app_name: [env: "DATAPIO_APP_NAME", default: "datapio-opencore"],
-  cluster_opts: [],
+  cluster_opts: [connect: {DatapioPipelineRunServer.Cluster, :connect_node, []}],
   mocks: []
 
 import_config "#{config_env()}.exs"
