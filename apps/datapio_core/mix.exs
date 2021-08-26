@@ -30,7 +30,8 @@ defmodule DatapioLib.MixProject do
     [
       {:libcluster, "~> 3.2"},  # Automatic Node discovery
       {:k8s, "~> 1.0"},         # Kubernetes Client
-      {:json_xema, "~> 0.6"}    # JSON Schema validation
+      {:json_xema, "~> 0.6"},   # JSON Schema validation
+      {:jason, "~> 1.2"}        # JSON Encoder/Decoder
     ]
   end
 end
