@@ -17,7 +17,7 @@ defmodule DatapioPipelinerunServer.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :datapio_core],
+      extra_applications: [:logger, :mnesia, :datapio_core],
       mod: {DatapioPipelinerunServer.Application, []}
     ]
   end
