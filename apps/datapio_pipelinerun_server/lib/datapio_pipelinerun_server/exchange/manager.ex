@@ -39,14 +39,17 @@ defmodule DatapioPipelineRunServer.Exchange.Manager do
 
   @impl true
   def init(_args) do
-    {:ok, connection} = Deps.get(:amqp_conn).open(get_rabbitmq_url())
-    {:ok, channel} = Deps.get(:amqp_channel).open(connection)
-    :ok = Deps.get(:amqp_exchange).declare(get_exchange_name(), :direct)
-
-    {:ok, %__MODULE__{
-      conn: connection,
-      chan: channel
-    }}
+    with {:ok, connection} <- connect_to_rabbitmq(),
+         {:ok, channel} = open_channel(connection),
+         :ok <- declare_exchange(channel)
+    do
+      {:ok, %__MODULE__{
+        conn: connection,
+        chan: channel
+      }}
+    else
+      err -> err
+    end
   end
 
   @impl true
@@ -77,12 +80,6 @@ defmodule DatapioPipelineRunServer.Exchange.Manager do
   end
 
   @impl true
-  def handle_cast({:shutdown_worker, consumer_tag}, %__MODULE__{} = state) do
-    stop_consumer(state.chan, consumer_tag)
-    {:noreply, state}
-  end
-
-  @impl true
   def handle_call({:send_request, request}, _from, %__MODULE__{} = state) do
     server_name = "#{request["metadata"]["namespace"]}.#{request["spec"]["server"]}"
 
@@ -94,5 +91,11 @@ defmodule DatapioPipelineRunServer.Exchange.Manager do
       {:error, reason} ->
         {:reply, {:error, reason}, state}
     end
+  end
+
+  @impl true
+  def handle_cast({:shutdown_worker, consumer_tag}, %__MODULE__{} = state) do
+    stop_consumer(state.chan, consumer_tag)
+    {:noreply, state}
   end
 end
