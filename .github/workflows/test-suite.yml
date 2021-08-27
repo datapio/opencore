@@ -31,4 +31,6 @@ jobs:
         run: mix credo --all
 
       - name: test@mix
-        run: cd apps/datapio_core && mix test --cover
+        run: |
+          cd apps/datapio_core && mix test --cover && cd ../..
+          cd apps/datapio_mq && mix test --cover && cd ../..
