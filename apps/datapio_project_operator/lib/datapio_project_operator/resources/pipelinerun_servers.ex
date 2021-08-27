@@ -2,9 +2,9 @@ defmodule DatapioProjectOperator.Resources.PipelineRunServers do
   @moduledoc false
 
   def from_project(project) do
-    %{ "metadata" => project_meta, "spec" => project_spec } = project
-    %{ "namespace" => namespace, "name" => name, "uid" => uid } = project_meta
-    %{ "webhooks" => webhooks } = project_spec
+    %{"metadata" => project_meta, "spec" => project_spec} = project
+    %{"namespace" => namespace, "name" => name, "uid" => uid} = project_meta
+    %{"webhooks" => webhooks} = project_spec
 
     webhooks |> Enum.map(fn webhook ->
       %{
