@@ -11,14 +11,18 @@ defmodule DatapioPipelinerunServer.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps()
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/mocks"]
+  defp elixirc_paths(_), do: ["lib"]
+
   def application do
     [
-      extra_applications: [:logger, :mnesia, :datapio_core],
-      mod: {DatapioPipelinerunServer.Application, []}
+      extra_applications: [:lager, :logger, :amqp, :mnesia, :datapio_core],
+      mod: {DatapioPipelineRunServer.Application, []}
     ]
   end
 
