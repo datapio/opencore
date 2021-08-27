@@ -12,6 +12,7 @@ defmodule DatapioOpencore.MixProject do
         datapio: [
           applications: [
             datapio_core: :permanent,
+            datapio_mq: :permanent,
             datapio_pipelinerun_server: :permanent,
             datapio_project_operator: :permanent
           ]
