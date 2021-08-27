@@ -1,8 +1,9 @@
 defmodule DatapioPipelineRunServer.Worker.Handler do
   @moduledoc """
-  Consume
+  Consume PipelineRunRequest from queues.
   """
 
+  import DatapioPipelineRunServer.Worker.Utilities
   use GenServer, restart: :transient
 
   defstruct [:tag, :history]
@@ -75,7 +76,7 @@ defmodule DatapioPipelineRunServer.Worker.Handler do
         handle_request(request)
         archive_requests(state.history)
 
-      err -> :ok
+      _ -> :ok
     end
 
     {:noreply, state}
