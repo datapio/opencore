@@ -1,21 +1,39 @@
-# DatapioMq
+# Datapio Message Queue
 
-**TODO: Add description**
+This project implements a simple message queue application in pure Elixir.
 
-## Installation
+## ✨ Features
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `datapio_mq` to your list of dependencies in `mix.exs`:
+ - distributed message queues with [Horde](https://hexdocs.pm/horde/readme.html)
+ - multiple load-balanced consumers
+
+## ⚗️ Example
 
 ```elixir
-def deps do
-  [
-    {:datapio_mq, "~> 0.1.0"}
-  ]
+defmodule Example.Consumer do
+  use Datapio.MQ.Consumer
+
+  def handle_message(msg, data) do
+    IO.inspect({:received, msg, data})
+    :timer.sleep(1000)
+    :ack
+  end
+
+  def handle_shutdown(data) do
+    IO.inspect(:shutdown)
+  end
 end
+
+{:ok, _} = Datapio.MQ.start_queue(Example.Queue)
+{:ok, _} = Example.Consumer.start_link([
+  queue: Example.Queue,
+  data: :foo
+])
+{:ok, _} = Example.Consumer.start_link([
+  queue: Example.Queue,
+  data: :bar
+])
+
+:ok = Datapio.MQ.Queue.publish(Example.Queue, :hello)
+:ok = Datapio.MQ.Queue.publish(Example.Queue, :world)
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/datapio_mq](https://hexdocs.pm/datapio_mq).
-

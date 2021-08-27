@@ -36,6 +36,10 @@ defmodule DatapioOpencore.MixProject do
             filename: "datapio-opencore",
             title: "Datapio OpenCore"
           ],
+          "apps/datapio_mq/README.md": [
+            filename: "datapio-mq",
+            title: "Datapio Message Queue"
+          ],
           "apps/datapio_pipelinerun_server/README.md": [
             filename: "datapio-pipelinerun-server",
             title: "Datapio PipelineRun Server"
