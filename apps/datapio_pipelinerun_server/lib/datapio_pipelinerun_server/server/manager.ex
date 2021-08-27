@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Scheduler.Worker.Handler do
+defmodule DatapioPipelineRunServer.Server.Manager do
   @moduledoc """
   Consume
   """
@@ -85,7 +85,7 @@ defmodule DatapioPipelineRunServer.Scheduler.Worker.Handler do
     new_state = %__MODULE__{state | workers: new_worker_count}
     errors = resps
       |> Stream.filter(fn
-        :ok -> false,
+        :ok -> false
         _ -> true
       end)
       |> Enum.map(fn {:error, reason} -> reason end)

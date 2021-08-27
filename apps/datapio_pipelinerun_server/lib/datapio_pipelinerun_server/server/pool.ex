@@ -27,6 +27,6 @@ defmodule DatapioPipelineRunServer.Server.Pool do
   end
 
   def shutdown_server(server_name) do
-    Server.Manager.stop(server_name)
+    Server.Manager.shutdown(server_name)
   end
 end
