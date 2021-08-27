@@ -1,8 +1,8 @@
-defmodule DatapioMqTest do
+defmodule DatapioTest.MQ do
   use ExUnit.Case
-  doctest DatapioMq
 
-  test "greets the world" do
-    assert DatapioMq.hello() == :world
-  end
+  doctest Datapio.MQ
+  doctest Datapio.MQ.Application
+  doctest Datapio.MQ.Queue
+  doctest Datapio.MQ.Consumer
 end
