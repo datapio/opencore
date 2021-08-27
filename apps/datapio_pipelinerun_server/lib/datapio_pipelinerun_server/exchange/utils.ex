@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Scheduler.Utilities do
+defmodule DatapioPipelineRunServer.Exchange.Utilities do
   @moduledoc """
   Utility functions for the scheduler.
   """
@@ -9,12 +9,36 @@ defmodule DatapioPipelineRunServer.Scheduler.Utilities do
     System.get_env("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/")
   end
 
+  def connect_to_rabbitmq do
+    case Deps.get(:amqp_conn).open(get_rabbitmq_url()) do
+      {:ok, connection} -> {:ok, connection}
+      {:error, reason} -> {:error, {:connect_to_rabbitmq, reason}}
+    end
+  end
+
+  def open_channel(connection) do
+    case Deps.get(:amqp_channel).open(connection) do
+      {:ok, channel} -> {:ok, channel}
+      {:error, reason} -> {:error, {:open_channel, reason}}
+    end
+  end
+
   def get_exchange_name do
     Application.get_env(
       :datapio_pipelinerun_server,
       :default_exchange,
       "datapio.pipelinerunservers"
     )
+  end
+
+  def declare_exchange(channel) do
+    resp = channel
+      |> Deps.get(:amqp_exchange).declare(get_exchange_name(), :direct)
+
+    case resp do
+      :ok -> :ok
+      {:error, reason} -> {:error, {:declare_exchange, reason}}
+    end
   end
 
   def declare_queue(channel) do
