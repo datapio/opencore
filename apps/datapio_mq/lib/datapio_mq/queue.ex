@@ -3,13 +3,26 @@ defmodule Datapio.MQ.Queue do
   Distributed in-memory queue with multiple consumers.
   """
 
-  use GenServer, restart: :transient
+  use GenServer
   require Logger
 
   defstruct [:name, :queue, :sinks]
 
   defp via_tuple(queue_name) do
     {:via, Horde.Registry, {Datapio.MQ.Registry, queue_name}}
+  end
+
+  def child_spec(opts) do
+    queue_name = case opts do
+      [] -> __MODULE__
+      [name] -> name
+    end
+
+    %{
+      id: "#{__MODULE__}_#{queue_name}",
+      start: {__MODULE__, :start_link, [queue_name]},
+      restart: :transient
+    }
   end
 
   def start_link(queue_name) do
@@ -25,13 +38,13 @@ defmodule Datapio.MQ.Queue do
     end
   end
 
-  def drain(queue_name, nil) do
+  def drain(queue_name) do
     drain(queue_name, self())
   end
 
   def drain(queue_name, pid) do
     proc_name = via_tuple(queue_name)
-    GenServer.call(proc_name, queue_name, {:drain, pid})
+    GenServer.call(proc_name, {:drain, pid})
   end
 
   def publish(queue_name, message) do
@@ -41,7 +54,7 @@ defmodule Datapio.MQ.Queue do
 
   def shutdown(queue_name) do
     proc_name = via_tuple(queue_name)
-    GenServer.call(proc_name, :shutdown)
+    GenServer.cast(proc_name, :shutdown)
   end
 
   @impl true
@@ -106,7 +119,7 @@ defmodule Datapio.MQ.Queue do
   end
 
   @impl true
-  def handle_call(:shutdown, _from, %__MODULE__{} = state) do
+  def handle_cast(:shutdown, %__MODULE__{} = state) do
     state.sinks |> Enum.each(fn sink ->
       send(sink.pid, :shutdown)
       :stopped = Task.await(sink)
