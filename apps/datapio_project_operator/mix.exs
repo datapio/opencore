@@ -9,7 +9,7 @@ defmodule DatapioProjectOperator.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -17,7 +17,7 @@ defmodule DatapioProjectOperator.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :datapio_core],
       mod: {DatapioProjectOperator.Application, []}
     ]
   end
@@ -25,7 +25,7 @@ defmodule DatapioProjectOperator.MixProject do
   defp deps do
     [
       {:highlander, "~> 0.2"},
-      {:datapio_lib, in_umbrella: true},
+      {:datapio_core, in_umbrella: true},
       {:datapio_pipelinerun_server, in_umbrella: true}
     ]
   end

@@ -11,6 +11,7 @@ defmodule DatapioOpencore.MixProject do
       releases: [
         datapio: [
           applications: [
+            datapio_core: :permanent,
             datapio_pipelinerun_server: :permanent,
             datapio_project_operator: :permanent
           ]
@@ -53,7 +54,8 @@ defmodule DatapioOpencore.MixProject do
 
   defp deps do
     [
-      {:ex_doc, git: "https://github.com/linkdd/ex_doc.git", branch: "patch-1", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.25", only: :dev, runtime: false},        # Documentation
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false}  # Static Analysis
     ]
   end
 
