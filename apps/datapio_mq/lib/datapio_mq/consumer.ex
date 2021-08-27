@@ -1,4 +1,8 @@
 defmodule Datapio.MQ.Consumer do
+  @moduledoc """
+  Distributed queue consumer behavior.
+  """
+
   @callback handle_message(term(), term()) :: :ack | :nack
   @callback handle_shutdown(term()) :: :ok
 
