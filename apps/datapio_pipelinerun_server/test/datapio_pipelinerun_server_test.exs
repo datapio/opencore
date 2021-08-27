@@ -1,4 +1,4 @@
-defmodule DatapioPipelinerunServerTest do
+defmodule DatapioPipelineRunServerTest do
   use ExUnit.Case
-  doctest DatapioPipelinerunServer
+  doctest DatapioPipelineRunServer
 end
