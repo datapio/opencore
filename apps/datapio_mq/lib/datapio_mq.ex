@@ -3,16 +3,8 @@ defmodule Datapio.MQ do
   Documentation for `DatapioMq`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> DatapioMq.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def start_queue(queue_name) do
+    child = {Datapio.MQ.Queue, [queue_name]}
+    Horde.DynamicSupervisor.start_child(Datapio.MQ.Pool, child)
   end
 end

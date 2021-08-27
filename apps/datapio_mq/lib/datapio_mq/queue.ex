@@ -8,13 +8,12 @@ defmodule Datapio.MQ.Queue do
 
   defstruct [:name, :queue, :sinks]
 
-  defp via_tuple(exchange_name, queue_name) do
-    registry_name = Module.concat(exchange_name, Registry)
-    {:via, Horde.Registry, {registry_name, queue_name}}
+  defp via_tuple(queue_name) do
+    {:via, Horde.Registry, {Datapio.MQ.Registry, queue_name}}
   end
 
-  def start_link(exchange_name, queue_name) do
-    proc_name = via_tuple(exchange_name, queue_name)
+  def start_link(queue_name) do
+    proc_name = via_tuple(queue_name)
 
     case GenServer.start_link(__MODULE__, queue_name, name: proc_name) do
       {:ok, pid} ->
@@ -26,22 +25,22 @@ defmodule Datapio.MQ.Queue do
     end
   end
 
-  def drain(exchange_name, queue_name, nil) do
-    drain(exchange_name, queue_name, self())
+  def drain(queue_name, nil) do
+    drain(queue_name, self())
   end
 
-  def drain(exchange_name, queue_name, pid) do
-    proc_name = via_tuple(exchange_name, queue_name)
+  def drain(queue_name, pid) do
+    proc_name = via_tuple(queue_name)
     GenServer.call(proc_name, queue_name, {:drain, pid})
   end
 
-  def publish(exchange_name, queue_name, message) do
-    proc_name = via_tuple(exchange_name, queue_name)
+  def publish(queue_name, message) do
+    proc_name = via_tuple(queue_name)
     GenServer.call(proc_name, {:publish, message})
   end
 
-  def shutdown(exchange_name, queue_name) do
-    proc_name = via_tuple(exchange_name, queue_name)
+  def shutdown(queue_name) do
+    proc_name = via_tuple(queue_name)
     GenServer.call(proc_name, :shutdown)
   end
 
