@@ -3,17 +3,10 @@ defmodule DatapioTest.MQ.Queue do
 
   @queue DatapioTest.MQ.Queue.Example
 
-  def with_queue(fun) do
-    {:ok, pid} = Datapio.MQ.start_queue(@queue)
-    ref = Process.monitor(pid)
-
-    fun.()
-
-    Datapio.MQ.Queue.shutdown(@queue)
-
-    receive do
-      {:DOWN, ^ref, _, _, _} -> :ok
-    end
+  @tag capture_log: true
+  setup do
+    :ok = Application.stop(:datapio_mq)
+    :ok = Application.start(:datapio_mq)
   end
 
   test "internal state" do
@@ -30,44 +23,45 @@ defmodule DatapioTest.MQ.Queue do
 
   @tag capture_log: true
   test "publish message with no consumer" do
-    with_queue(fn ->
-      assert :ok == @queue |> Datapio.MQ.Queue.publish(:hello)
-    end)
+    {:ok, _} = Datapio.MQ.start_queue(@queue)
+
+    assert :ok == @queue |> Datapio.MQ.Queue.publish(:hello)
+    assert :ok == @queue |> Datapio.MQ.Queue.shutdown()
   end
 
   @tag capture_log: true
   test "consume message with empty queue" do
-    with_queue(fn ->
-      assert :ok == @queue |> Datapio.MQ.Queue.drain()
-      assert :ok == @queue |> Datapio.MQ.Queue.publish(Hello.World)
+    {:ok, _} = Datapio.MQ.start_queue(@queue)
 
-      assert_receive {:datapio_mq_consume, Hello.World}
-    end)
+    assert :ok == @queue |> Datapio.MQ.Queue.drain()
+    assert :ok == @queue |> Datapio.MQ.Queue.publish(Hello.World)
+
+    assert_receive {:datapio_mq_consume, Hello.World}
   end
 
   @tag capture_log: true
   test "consume message with non-empty queue" do
-    with_queue(fn ->
-      assert :ok == @queue |> Datapio.MQ.Queue.publish(Hello.World)
-      assert :ok == @queue |> Datapio.MQ.Queue.drain()
+    {:ok, _} = Datapio.MQ.start_queue(@queue)
 
-      assert_receive {:datapio_mq_consume, Hello.World}
-    end)
+    assert :ok == @queue |> Datapio.MQ.Queue.publish(Hello.World)
+    assert :ok == @queue |> Datapio.MQ.Queue.drain()
+
+    assert_receive {:datapio_mq_consume, Hello.World}
   end
 
   @tag capture_log: true
   test "shutdown queue with consumers" do
-    with_queue(fn ->
-      assert :ok == @queue |> Datapio.MQ.Queue.drain()
-    end)
+    {:ok, _} = Datapio.MQ.start_queue(@queue)
+
+    assert :ok == @queue |> Datapio.MQ.Queue.drain()
+    assert :ok == @queue |> Datapio.MQ.Queue.shutdown()
 
     assert_receive :datapio_mq_shutdown
   end
 
   @tag capture_log: true
   test "start already started queue" do
-    with_queue(fn ->
-      assert :ignore == Datapio.MQ.start_queue(@queue)
-    end)
+    {:ok, _} = Datapio.MQ.start_queue(@queue)
+    assert :ignore == Datapio.MQ.start_queue(@queue)
   end
 end
