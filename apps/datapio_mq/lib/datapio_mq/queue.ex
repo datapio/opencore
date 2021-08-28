@@ -9,7 +9,8 @@ defmodule Datapio.MQ.Queue do
   defstruct [:name, :queue, :sinks]
 
   defp via_tuple(queue_name) do
-    {:via, Horde.Registry, {Datapio.MQ.Registry, queue_name}}
+    name = "queue-#{queue_name}"
+    {:via, Horde.Registry, {Datapio.MQ.Registry, name}}
   end
 
   def child_spec(opts) do
@@ -85,11 +86,18 @@ defmodule Datapio.MQ.Queue do
         sink = Task.async(fn ->
           receive do
             {:ok, message} ->
-              send(pid, {:datapio_mq_consume, message})
-              :ok
+              if Process.alive?(pid) do
+                send(pid, {:datapio_mq_consume, message})
+                :ok
+              else
+                :dead
+              end
 
             :shutdown ->
-              send(pid, :datapio_mq_shutdown)
+              if Process.alive?(pid) do
+                send(pid, :datapio_mq_shutdown)
+              end
+
               :stopped
           end
         end)
@@ -113,8 +121,17 @@ defmodule Datapio.MQ.Queue do
       [sink | sinks] ->
         # If there is a sink, waiting for a message, forward it as soon as possible
         send(sink.pid, {:ok, message})
-        result = Task.await(sink)
-        {:reply, result, %__MODULE__{state | sinks: sinks}}
+
+        case Task.await(sink) do
+          :ok ->
+            # If the sink successfully consumed the message, remove the sink
+            {:reply, :ok, %__MODULE__{state | sinks: sinks}}
+
+          _ ->
+            # If the sink was not alive, enqueue the message and remove the sink
+            new_queue = state.queue ++ [message]
+            {:reply, :ok, %__MODULE__{state | queue: new_queue, sinks: sinks}}
+        end
     end
   end
 
