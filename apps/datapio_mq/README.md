@@ -25,11 +25,15 @@ defmodule Example.Consumer do
 end
 
 {:ok, _} = Datapio.MQ.start_queue(Example.Queue)
-{:ok, _} = Example.Consumer.start_link([
+{:ok, _} = Datapio.MQ.start_consumer([
+  id: 0,
+  module: Example.Consumer,
   queue: Example.Queue,
   data: :foo
 ])
-{:ok, _} = Example.Consumer.start_link([
+{:ok, _} = Datapio.MQ.start_consumer([
+  id: 1,
+  module: Example.Consumer,
   queue: Example.Queue,
   data: :bar
 ])
