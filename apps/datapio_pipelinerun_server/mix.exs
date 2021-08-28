@@ -29,9 +29,9 @@ defmodule DatapioPipelinerunServer.MixProject do
   defp deps do
     [
       {:datapio_core, in_umbrella: true},  # Datapio Core Library
+      {:datapio_mq, in_umbrella: true},    # Message Queue application
       {:highlander, "~> 0.2"},             # Ensure single process across cluster
-      {:horde, "~> 0.8"},                  # Load Balance workload across cluster
-      {:amqp, "~> 2.1"},                   # RabbitMQ client
+      {:horde, "~> 0.8"}                   # Load Balance workload across cluster
     ]
   end
 end
