@@ -12,6 +12,7 @@ defmodule DatapioOpencore.MixProject do
         datapio: [
           applications: [
             datapio_core: :permanent,
+            datapio_mq: :permanent,
             datapio_pipelinerun_server: :permanent,
             datapio_project_operator: :permanent
           ]
@@ -34,6 +35,10 @@ defmodule DatapioOpencore.MixProject do
           "README.md": [
             filename: "datapio-opencore",
             title: "Datapio OpenCore"
+          ],
+          "apps/datapio_mq/README.md": [
+            filename: "datapio-mq",
+            title: "Datapio Message Queue"
           ],
           "apps/datapio_pipelinerun_server/README.md": [
             filename: "datapio-pipelinerun-server",
@@ -62,23 +67,19 @@ defmodule DatapioOpencore.MixProject do
   defp documentation_head(:epub), do: ""
   defp documentation_head(:html) do
     """
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
-      integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ=="
+    <link rel="stylesheet" href="https://cdn.link-society.com/css/prism/1.24.1/prism-light.css" />
+    <link rel="stylesheet" href="https://cdn.link-society.com/css/prism/1.24.1/prism-dark.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-core.min.js"
-      integrity="sha512-xR+IAyN+t9EBIOOJw5m83FTVMDsPd63IhJ3ElP4gmfUFnQlX9+eWGLp3P4t3gIjpo2Z1JzqtW/5cjgn+oru3yQ=="
-      crossorigin="anonymous" referrerpolicy="no-referrer"
+      defer
     ></script>
     <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/autoloader/prism-autoloader.min.js"
-      integrity="sha512-zc7WDnCM3aom2EziyDIRAtQg1mVXLdILE09Bo+aE1xk0AM2c2cVLfSW9NrxE5tKTX44WBY0Z2HClZ05ur9vB6A=="
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
+      defer
     ></script>
     """
   end

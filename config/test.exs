@@ -1,5 +1,8 @@
 import Config
 
+config :logger, :console,
+  level: :none
+
 config :lager,
   error_logger_redirect: false,
   handlers: [level: :none]
