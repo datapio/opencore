@@ -20,11 +20,12 @@ defmodule DatapioTest.MQ.Consumer do
 
   test "consumer behavior" do
     {:ok, _} = Datapio.MQ.start_queue(@queue)
-    consumer = {__MODULE__.ExampleConsumer, [
+    {:ok, _} = Datapio.MQ.start_consumer([
+      module: __MODULE__.ExampleConsumer,
+      id: 0,
       queue: @queue,
       data: self()
-    ]}
-    start_supervised!(consumer)
+    ])
 
     assert :ok == @queue |> Datapio.MQ.Queue.publish(:hello)
     assert_receive {:received_message, :hello}
