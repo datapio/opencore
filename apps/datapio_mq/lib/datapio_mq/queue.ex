@@ -83,24 +83,7 @@ defmodule Datapio.MQ.Queue do
     case state.queue do
       [] ->
         # If no message in queue, wait for a message
-        sink = Task.async(fn ->
-          receive do
-            {:ok, message} ->
-              if Process.alive?(pid) do
-                send(pid, {:datapio_mq_consume, message})
-                :ok
-              else
-                :dead
-              end
-
-            :shutdown ->
-              if Process.alive?(pid) do
-                send(pid, :datapio_mq_shutdown)
-              end
-
-              :stopped
-          end
-        end)
+        sink = Task.async(fn -> sink_handler(pid) end)
 
         {:reply, :ok, %__MODULE__{state | sinks: state.sinks ++ [sink]}}
 
@@ -143,5 +126,24 @@ defmodule Datapio.MQ.Queue do
     end)
 
     {:stop, :normal, %__MODULE__{state | sinks: []}}
+  end
+
+  defp sink_handler(pid) do
+    receive do
+      {:ok, message} ->
+        if Process.alive?(pid) do
+          send(pid, {:datapio_mq_consume, message})
+          :ok
+        else
+          :dead
+        end
+
+      :shutdown ->
+        if Process.alive?(pid) do
+          send(pid, :datapio_mq_shutdown)
+        end
+
+        :stopped
+    end
   end
 end
