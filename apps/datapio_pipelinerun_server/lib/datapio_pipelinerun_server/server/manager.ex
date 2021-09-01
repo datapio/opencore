@@ -92,8 +92,8 @@ defmodule DatapioPipelineRunServer.Server.Manager do
     ]
 
     errors = case Datapio.MQ.start_consumer(opts) do
-      {:ok, _pid} -> errors,
-      :ignored -> errors,
+      {:ok, _pid} -> errors
+      :ignored -> errors
       {:error, reason} -> [reason | errors]
     end
 

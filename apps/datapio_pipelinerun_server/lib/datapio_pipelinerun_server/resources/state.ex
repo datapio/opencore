@@ -31,7 +31,7 @@ defmodule DatapioPipelineRunServer.Resources.State do
         "name" => name,
         "namespace" => namespace
       }
-    }} = resource
+    } = resource
 
     selector = [namespace: namespace, name: name]
     op = Deps.get(:k8s_client).get(api_version, kind, selector)

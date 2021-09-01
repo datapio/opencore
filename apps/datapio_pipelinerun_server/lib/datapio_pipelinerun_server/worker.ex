@@ -3,11 +3,10 @@ defmodule DatapioPipelineRunServer.Worker do
   Consume PipelineRunRequest from queues.
   """
 
-  @controller DatapioPipelineRunServer.Request.Controller
-
   alias DatapioPipelineRunServer.Resources.PipelineRun
   alias DatapioPipelineRunServer.Resources.Request
   alias DatapioPipelineRunServer.Resources.State
+  alias Datapio.Dependencies, as: Deps
 
   use Datapio.MQ.Consumer
   require Logger
@@ -27,12 +26,13 @@ defmodule DatapioPipelineRunServer.Worker do
   defp handle_request(:unscheduled, request, options) do
     %{
       "metadata" => %{"name" => name, "namespace" => namespace},
-      "spec" => %{"pipeline" => pipeline, "runTemplate" => template}
+      "spec" => %{"pipeline" => pipeline, "runSpecTemplate" => template}
     } = request
 
     extra_resources = request["spec"] |> Map.get("extraResources", [])
 
     pipelinerun = PipelineRun.from_template(template, [
+      owner: request,
       name: name,
       namespace: namespace,
       pipeline: pipeline
@@ -40,7 +40,7 @@ defmodule DatapioPipelineRunServer.Worker do
 
     with true <- State.apply(extra_resources),
          :ok <- run_pipeline(pipelinerun),
-         :ok <- archive_request(request)
+         :ok <- archive_request(request, options[:history])
     do
       :ack
     else
@@ -70,7 +70,7 @@ defmodule DatapioPipelineRunServer.Worker do
     end
   end
 
-  defp monitor_pipeline(pipelinerun) do
+  defp run_pipeline(pipelinerun) do
     case State.apply([pipelinerun]) do
       false -> {:error, {:runner, "Failed to apply PipelineRun"}}
       true -> wait_for_pipeline(pipelinerun)
@@ -88,7 +88,7 @@ defmodule DatapioPipelineRunServer.Worker do
         "name" => name,
         "namespace" => namespace
       }
-    }} = pipelinerun
+    } = pipelinerun
 
     selector = [namespace: namespace, name: name]
     operation = client.get(api_version, kind, selector)
@@ -108,12 +108,12 @@ defmodule DatapioPipelineRunServer.Worker do
       {:error, :timeout} ->
         wait_for_pipeline(pipelinerun)
 
-      {:error, reason}
+      {:error, reason} ->
         {:error, {:runner, reason}}
     end
   end
 
-  defp archive_request(request) do
+  defp archive_request(_request, _history) do
     {:error, {:archiver, "Not implemented"}}
   end
 end
