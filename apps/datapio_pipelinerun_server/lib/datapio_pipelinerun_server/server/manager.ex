@@ -5,7 +5,7 @@ defmodule DatapioPipelineRunServer.Server.Manager do
 
   use GenServer, restart: :transient
 
-  defstruct [:name, :queue, :workers]
+  defstruct [:name, :workers]
 
   def start_link(server_name) do
     name = via_tuple(server_name)
@@ -24,7 +24,7 @@ defmodule DatapioPipelineRunServer.Server.Manager do
   end
 
   def shutdown(server_name) do
-    GenServer.call(via_tuple(server_name), :shutdown)
+    GenServer.cast(via_tuple(server_name), :shutdown)
   end
 
   defp via_tuple(server_name) do
@@ -34,28 +34,17 @@ defmodule DatapioPipelineRunServer.Server.Manager do
 
   @impl true
   def init(server_name) do
-    case DatapioPipelineRunServer.Exchange.Manager.setup_server(server_name) do
-      {:ok, queue} ->
-        {:ok, %__MODULE__{
-          name: server_name,
-          queue: queue,
-          workers: 1
-        }}
+    Datapio.MQ.start_queue(server_name)
 
-      err ->
-        err
-    end
+    {:ok, %__MODULE__{
+      name: server_name,
+      workers: 1
+    }}
   end
 
   @impl true
   def terminate(_reason, %__MODULE__{} = state) do
-    worker_count = state.workers
-
-    Enum.to_list(1..worker_count)
-      |> Enum.each(&shutdown_worker(state.name, &1))
-
-    DatapioPipelineRunServer.Exchange.Manager.shutdown_server(state.queue)
-
+    Datapio.MQ.Queue.shutdown(state.name)
     :ok
   end
 
@@ -64,52 +53,65 @@ defmodule DatapioPipelineRunServer.Server.Manager do
     old_worker_count = state.workers
     new_worker_count = options[:workers]
 
-    resps = cond do
+    errors = cond do
       old_worker_count < new_worker_count ->
-        Enum.to_list(old_worker_count..new_worker_count)
-          |> Stream.map(&schedule_worker([
-            server_name: state.name,
-            queue_name: state.queue,
-            history: options[:history],
-            id: &1
-          ]))
+        new_worker_ids = Enum.to_list(old_worker_count..new_worker_count)
+        schedule_workers(state.name, options[:history], new_worker_ids)
 
       new_worker_count > old_worker_count ->
-        Enum.to_list(new_worker_count..old_worker_count)
-          |> Stream.map(&shutdown_worker(state.name, &1))
+        old_worker_ids = Enum.to_list(new_worker_count..old_worker_count)
+        shutdown_workers(state.name, old_worker_ids)
 
-      old_worker_count == new_worker_count ->
+      new_worker_count == old_worker_count ->
         []
     end
 
-    new_state = %__MODULE__{state | workers: new_worker_count}
-    errors = resps
-      |> Stream.filter(fn
-        :ok -> false
-        _ -> true
-      end)
-      |> Enum.map(fn {:error, reason} -> reason end)
-
-    case errors do
-      [] -> {:reply, :ok, new_state}
-      reasons -> {:reply, {:error, reasons}, new_state}
+    resp = case errors do
+      [] -> :ok
+      reasons -> {:error, reasons}
     end
+
+    {:reply, resp, %__MODULE__{state | workers: new_worker_count}}
   end
 
   @impl true
-  def handle_call(:shutdown, _from, %__MODULE__{} = state) do
+  def handle_cast(:shutdown, %__MODULE__{} = state) do
     {:stop, :normal, state}
   end
 
-  defp schedule_worker(options) do
-    DatapioPipelineRunServer.Worker.Pool.start_worker([
-      server_name: options[:server_name],
-      worker_id: options[:id],
-      history: options[:history]
-    ])
+  defp schedule_workers(server_name, history, worker_ids) do
+    schedule_workers(server_name, history, worker_ids, [])
   end
 
-  defp shutdown_worker(server_name, worker_id) do
-    DatapioPipelineRunServer.Worker.Pool.shutdown_worker(server_name, worker_id)
+  defp schedule_workers(server_name, history, [], errors), do: errors
+  defp schedule_workers(server_name, history, [worker_id | worker_ids], errors) do
+    opts = [
+      module: DatapioPipelineRunServer.Worker,
+      queue: server_name,
+      data: [history: history]
+    ]
+
+    errors = case Datapio.MQ.start_consumer(opts) do
+      {:ok, _pid} -> errors,
+      :ignored -> errors,
+      {:error, reason} -> [reason | errors]
+    end
+
+    schedule_workers(server_name, history, worker_ids, errors)
+  end
+
+  defp shutdown_workers(server_name, worker_ids) do
+    shutdown_workers(server_name, worker_ids, [])
+  end
+
+  defp shutdown_workers(server_name, [], errors), do: errors
+  defp shutdown_workers(server_name, [worker_id | worker_ids], errors) do
+    resp = DatapioPipelineRunServer.Worker.shutdown(worker_id)
+    errors = case resp do
+      :ok -> errors
+      {:error, reason} -> [reason | errors]
+    end
+
+    shutdown_workers(server_name, worker_ids, errors)
   end
 end

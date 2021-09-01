@@ -3,7 +3,7 @@ defmodule DatapioPipelineRunServer.Server.Controller do
   Observe PipelineRunServer resources.
   """
 
-  alias DatapioPipelineRunServer.Server.Pool, as: Pool
+  alias DatapioPipelineRunServer.Server.Pool
 
   use Datapio.Controller,
     api_version: "datapio.co/v1",
@@ -48,6 +48,7 @@ defmodule DatapioPipelineRunServer.Server.Controller do
   defp configure_server(server) do
     worker_count = server["spec"]["max_concurrent_jobs"]
     history = server["spec"]["history"]
+
     Pool.configure_server(get_server_name(server), [
       workers: worker_count,
       history: history
