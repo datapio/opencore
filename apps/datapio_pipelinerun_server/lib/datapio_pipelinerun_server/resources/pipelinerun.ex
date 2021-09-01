@@ -4,11 +4,11 @@ defmodule DatapioPipelineRunServer.Resources.PipelineRun do
   """
 
   def completed?(pipelinerun) do
-    completionTime = pipelinerun
+    completion_time = pipelinerun
       |> Map.get("status", %{})
       |> Map.get("completionTime", nil)
 
-    case completionTime do
+    case completion_time do
       nil -> false
       _ -> true
     end
