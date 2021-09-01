@@ -3,8 +3,6 @@ defmodule DatapioPipelineRunServer.Application do
 
   use Application
 
-  alias Datapio.Dependencies, as: Deps
-
   @impl true
   def start(_type, _args) do
     with :ok <- DatapioPipelineRunServer.Mnesia.create_tables(),
