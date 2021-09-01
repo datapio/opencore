@@ -9,8 +9,6 @@ defmodule DatapioPipelineRunServer.Supervisor do
 
   def init(_args) do
     children = [
-      DatapioPipelineRunServer.Exchange.Supervisor,
-      DatapioPipelineRunServer.Worker.Supervisor,
       DatapioPipelineRunServer.Server.Supervisor,
       DatapioPipelineRunServer.Request.Supervisor
     ]
