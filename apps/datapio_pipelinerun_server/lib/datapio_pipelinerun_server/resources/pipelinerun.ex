@@ -13,4 +13,29 @@ defmodule DatapioPipelineRunServer.Resources.PipelineRun do
       _ -> true
     end
   end
+
+  def from_template(template, options) do
+    owner = options |> Keyword.fetch!(:owner)
+    name = options |> Keyword.fetch!(:name)
+    namespace = options |> Keyword.fetch!(:namespace)
+    pipeline = options |> Keyword.fetch!(:pipeline)
+
+    %{
+      "apiVersion" => "tekton.dev/v1alpha1",
+      "kind" => "PipelineRun",
+      "metadata" => %{
+        "name" => name,
+        "namespace" => namespace,
+        "ownerReferences" => [
+          %{
+            "apiVersion" => ownert["apiVersion"],
+            "kind" => ownert["kind"],
+            "name" => name,
+            "uid" => ownert["metadata"]["uid"]
+          }
+        ]
+      },
+      "spec" => template |> Map.merge(%{"pipelineRef" => %{"name" => pipeline}})
+    }
+  end
 end
