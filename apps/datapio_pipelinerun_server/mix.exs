@@ -21,7 +21,7 @@ defmodule DatapioPipelinerunServer.MixProject do
 
   def application do
     [
-      extra_applications: [:lager, :logger, :amqp, :mnesia, :datapio_core],
+      extra_applications: [:logger, :mnesia, :datapio_core, :datapio_mq],
       mod: {DatapioPipelineRunServer.Application, []}
     ]
   end
