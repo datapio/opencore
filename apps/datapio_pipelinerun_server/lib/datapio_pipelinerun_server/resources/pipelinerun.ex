@@ -28,10 +28,10 @@ defmodule DatapioPipelineRunServer.Resources.PipelineRun do
         "namespace" => namespace,
         "ownerReferences" => [
           %{
-            "apiVersion" => ownert["apiVersion"],
-            "kind" => ownert["kind"],
+            "apiVersion" => owner["apiVersion"],
+            "kind" => owner["kind"],
             "name" => name,
-            "uid" => ownert["metadata"]["uid"]
+            "uid" => owner["metadata"]["uid"]
           }
         ]
       },
