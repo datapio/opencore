@@ -15,7 +15,10 @@ defmodule Datapio.Play.Manifest do
       Datapio.Play.Utilities.discover_books()
 
       try do
+        :ets.insert(:datapio_play_config, {:dry_run, true})
         unquote(books)  # First pass, tag books
+
+        :ets.insert(:datapio_play_config, {:dry_run, false})
         unquote(books)  # Second pass, run books
       rescue
         e in BookNotFoundError ->
@@ -46,7 +49,13 @@ defmodule Datapio.Play.Manifest do
           :ets.insert(:datapio_play_books, {book, true})
 
         [{book, true}] ->  # Second pass
-          apply(book, :run_book, [])
+          case :ets.lookup(:datapio_play_config, :dry_run) do
+            [{:dry_run, false}] ->
+              apply(book, :run_book, [])
+
+            [{:dry_run, true}] ->
+              :ok
+          end
       end
     end
   end
