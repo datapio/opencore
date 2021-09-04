@@ -3,7 +3,7 @@ defmodule Datapio.Play.Manifest do
   Defines the macro to build the play manifest.
   """
 
-  alias Datapio.Play.BookNotFound
+  alias Datapio.Play.BookNotFoundError
 
   @doc """
   Defines what books to run and what task to perform in case of book failure.
@@ -18,8 +18,8 @@ defmodule Datapio.Play.Manifest do
         unquote(books)  # First pass, tag books
         unquote(books)  # Second pass, run books
       rescue
-        e in BookNotFound ->
-          IO.puts("!! BookNotFound: #{e.name}")
+        e in BookNotFoundError ->
+          IO.puts("!! ERROR: #{Exception.message(e)}")
 
         e ->
           IO.puts("!! ERROR: #{Exception.message(e)}")
@@ -40,7 +40,7 @@ defmodule Datapio.Play.Manifest do
     quote do
       case :ets.lookup(:datapio_play_books, unquote(book)) do
         [] ->
-          raise BookNotFound, name: unquote(book)
+          raise BookNotFoundError, name: unquote(book)
 
         [{book, false}] ->  # First pass
           :ets.insert(:datapio_play_books, {book, true})

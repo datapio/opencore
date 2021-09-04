@@ -1,4 +1,4 @@
-defmodule Datapio.Play.BookFailed do
+defmodule Datapio.Play.BookFailedError do
   @moduledoc """
   Error raised when a book execution failed.
   """

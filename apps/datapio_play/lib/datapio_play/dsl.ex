@@ -3,8 +3,8 @@ defmodule Datapio.Play.DSL do
   Defines the macros to create books.
   """
 
-  alias Datapio.Play.BookFailed
-  alias Datapio.Play.TaskFailed
+  alias Datapio.Play.BookFailedError
+  alias Datapio.Play.TaskFailedError
 
   defmacro __using__(_opts) do
     quote do
@@ -26,7 +26,7 @@ defmodule Datapio.Play.DSL do
 
         rescue
           e ->
-            raise BookFailed, name: unquote(name), with: e
+            reraise BookFailedError, [name: unquote(name), with: e], __STACKTRACE__
 
         end
       end
@@ -45,7 +45,7 @@ defmodule Datapio.Play.DSL do
 
       rescue
         e ->
-          raise TaskFailed, name: unquote(name), with: e
+          reraise TaskFailedError, [name: unquote(name), with: e], __STACKTRACE__
 
       end
     end

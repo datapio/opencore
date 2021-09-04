@@ -1,4 +1,4 @@
-defmodule Datapio.Play.TaskFailed do
+defmodule Datapio.Play.TaskFailedError do
   @moduledoc """
   Error raised when a task execution failed.
   """

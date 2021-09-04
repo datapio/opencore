@@ -1,7 +1,7 @@
 defmodule Datapio.Play.Utilities do
   @moduledoc false
 
-  alias Datapio.Play.StepFailed
+  alias Datapio.Play.StepFailedError
 
   def discover_books() do
     books_dir = case :ets.lookup(:datapio_play_config, :books_dir) do
@@ -39,7 +39,7 @@ defmodule Datapio.Play.Utilities do
         output
 
       {output, exit_code} ->
-        raise StepFailed, name: name, info: {output, exit_code}
+        raise StepFailedError, name: name, info: {output, exit_code}
     end
   end
 
@@ -52,7 +52,7 @@ defmodule Datapio.Play.Utilities do
         result
 
       {:error, reason} ->
-        raise StepFailed, name: name, info: reason
+        raise StepFailedError, name: name, info: reason
     end
   end
 end

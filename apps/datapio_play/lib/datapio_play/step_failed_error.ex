@@ -1,4 +1,4 @@
-defmodule Datapio.Play.StepFailed do
+defmodule Datapio.Play.StepFailedError do
   @moduledoc """
   Error raised when a step execution failed.
   """

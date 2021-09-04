@@ -1,4 +1,4 @@
-defmodule Datapio.Play.BookNotFound do
+defmodule Datapio.Play.BookNotFoundError do
   @moduledoc """
   Error raised when trying to run a non-existant book.
   """
