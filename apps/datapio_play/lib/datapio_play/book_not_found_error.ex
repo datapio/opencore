@@ -6,6 +6,6 @@ defmodule Datapio.Play.BookNotFoundError do
   defexception name: "book"
 
   def message(e) do
-    "Book '#{e.name}' was not found"
+    "Book(#{e.name}) was not found"
   end
 end

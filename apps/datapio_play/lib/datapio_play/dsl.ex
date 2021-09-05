@@ -19,7 +19,7 @@ defmodule Datapio.Play.DSL do
   defmacro book(name, do: block) do
     quote do
       def run_book() do
-        IO.puts("===[ #{unquote(name)} ]===")
+        IO.puts(IO.ANSI.format([:green, :birght, "===[ #{unquote(name)} ]==="]))
 
         try do
           unquote(block)
@@ -38,7 +38,7 @@ defmodule Datapio.Play.DSL do
   """
   defmacro task(name, do: block) do
     quote do
-      IO.puts(":: #{unquote(name)}")
+      IO.puts(IO.ANSI.format([:blue, :bright, ":: #{unquote(name)}"]))
 
       try do
         unquote(block)

@@ -4,8 +4,4 @@ defmodule Datapio.Play.StepFailedError do
   """
 
   defexception name: "step", info: []
-
-  def message(e) do
-    "Step '#{e.name}' failed: #{inspect(e.info)}"
-  end
 end

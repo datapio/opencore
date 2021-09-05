@@ -4,6 +4,7 @@ defmodule Datapio.Play.Manifest do
   """
 
   alias Datapio.Play.BookNotFoundError
+  alias Datapio.Play.BookFailedError
 
   @doc """
   Defines what books to run and what task to perform in case of book failure.
@@ -22,10 +23,10 @@ defmodule Datapio.Play.Manifest do
         unquote(books)  # Second pass, run books
       rescue
         e in BookNotFoundError ->
-          IO.puts("!! ERROR: #{Exception.message(e)}")
+          IO.puts(IO.ANSI.format([:red, :birght, "!! ERROR: #{Exception.message(e)}"]))
 
         e ->
-          IO.puts("!! ERROR: #{Exception.message(e)}")
+          IO.puts(IO.ANSI.format([:red, :bright, "!! ERROR: #{Exception.message(e)}"]))
 
           unquote(on_failure)
       end

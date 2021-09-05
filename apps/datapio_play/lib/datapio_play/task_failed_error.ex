@@ -4,8 +4,4 @@ defmodule Datapio.Play.TaskFailedError do
   """
 
   defexception name: "task", with: nil
-
-  def message(e) do
-    "Task '#{e.name}' failed with error: #{Exception.message(e.with)}"
-  end
 end
