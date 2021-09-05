@@ -15,7 +15,7 @@ defmodule Datapio.Play.StepLogger do
       [{:current_step, name}] -> name
     end
 
-    prefix = IO.ANSI.format([:blue, "[#{book}] [#{task}] [#{step}] >>> "])
+    prefix = IO.ANSI.format([:blue, "Book(#{book}) > Task(#{task}) > Step(#{step}) >>> "])
     %__MODULE__{prefix: prefix}
   end
 
@@ -23,6 +23,6 @@ defmodule Datapio.Play.StepLogger do
     msg
       |> String.split(~r/\R/)
       |> Stream.filter(fn s -> String.length(s) > 0 end)
-      |> Enum.each(&IO.puts(logger.prefix <> &1))
+      |> Enum.each(fn s -> IO.puts("#{logger.prefix}#{s}") end)
   end
 end
