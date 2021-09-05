@@ -5,23 +5,14 @@ defmodule Datapio.Play.BookFailedError do
 
   defexception name: "book", with: nil
 
+  alias Datapio.Play.TaskFailedError
+
   def message(e) do
     case e.with do
-      task_error in TaskFailedError ->
-        case task_error.with do
-          step_error in StepFailedError ->
-            """
-            Book(#{e.name}) > Task(#{task_error.name}) > Step(#{step_error.name}):
-            #{inspect(step_error.info)}
-            """
-
-          err ->
-            """
-            Book(#{e.name}) > Task(#{task_error.name}):
-            #{Exception.message(err)}
-            """
-
-        end
+      %TaskFailedError{} = err ->
+        """
+        Book(#{e.name}) > #{Exception.message(err)}
+        """
 
       err ->
         """
