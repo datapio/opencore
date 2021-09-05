@@ -23,12 +23,17 @@ defmodule Datapio.Play.Utilities do
       end)
   end
 
-  def run_step(:shell, name, opts) do
+  def run_step(kind, name, opts) do
+    :ets.insert(:datapio_play_config, {:current_step, name})
+    do_run_step(kind, name, opts)
+  end
+
+  defp do_run_step(:shell, name, opts) do
     command = opts |> Keyword.fetch!(:command)
     shell_opts = [
       into: case opts |> Keyword.get(:capture_output, false) do
         true -> ""
-        false -> IO.stream()
+        false -> Datapio.Play.StepLogger.new()
       end,
       stderr_to_stdout: true,
       env: opts |> Keyword.get(:environ, [])
@@ -38,7 +43,7 @@ defmodule Datapio.Play.Utilities do
       {output, 0} ->
         output
 
-      {%IO.Stream{}, exit_code} ->
+      {%Datapio.Play.StepLogger{}, exit_code} ->
         raise StepFailedError, name: name, info: [exit_code: exit_code]
 
       {output, exit_code} ->
@@ -46,7 +51,7 @@ defmodule Datapio.Play.Utilities do
     end
   end
 
-  def run_step({module, function}, name, opts) do
+  defp do_run_step({module, function}, name, opts) do
     case apply(module, function, [opts]) do
       :ok ->
         :ok
