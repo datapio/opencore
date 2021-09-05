@@ -1,4 +1,8 @@
 defmodule Datapio.Play.StepLogger do
+  @moduledoc """
+  Print logs from steps.
+  """
+
   defstruct [:prefix]
 
   def new() do
