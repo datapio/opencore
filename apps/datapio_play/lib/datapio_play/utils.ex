@@ -38,7 +38,7 @@ defmodule Datapio.Play.Utilities do
       {output, 0} ->
         output
 
-      {%IO.stream{}, exit_code} ->
+      {%IO.Stream{}, exit_code} ->
         raise StepFailedError, name: name, info: [exit_code: exit_code]
 
       {output, exit_code} ->
