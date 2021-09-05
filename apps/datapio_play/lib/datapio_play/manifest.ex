@@ -23,7 +23,7 @@ defmodule Datapio.Play.Manifest do
         unquote(books)  # Second pass, run books
       rescue
         e in BookNotFoundError ->
-          IO.puts(IO.ANSI.format([:red, :birght, "!! ERROR: #{Exception.message(e)}"]))
+          IO.puts(IO.ANSI.format([:red, :bright, "!! ERROR: #{Exception.message(e)}"]))
 
         e ->
           IO.puts(IO.ANSI.format([:red, :bright, "!! ERROR: #{Exception.message(e)}"]))
