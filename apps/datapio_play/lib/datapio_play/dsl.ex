@@ -19,7 +19,8 @@ defmodule Datapio.Play.DSL do
   defmacro book(name, do: block) do
     quote do
       def run_book() do
-        IO.puts(IO.ANSI.format([:green, :bright, "===[ #{unquote(name)} ]==="]))
+        :ets.insert(:datapio_play_config, {:current_book, unquote(name)})
+        IO.puts(IO.ANSI.format([:green, :bright, "Book(#{unquote(name)}) ::"]))
 
         try do
           unquote(block)
@@ -38,7 +39,14 @@ defmodule Datapio.Play.DSL do
   """
   defmacro task(name, do: block) do
     quote do
-      IO.puts(IO.ANSI.format([:blue, :bright, ":: #{unquote(name)}"]))
+      book = case :ets.lookup(:datapio_play_config, :current_book) do
+        [] -> "no name"
+        [{:current_book, name}] -> name
+      end
+
+      :ets.insert(:datapio_play_config, {:current_task, unquote(name)})
+
+      IO.puts(IO.ANSI.format([:blue, :bright, "Book(#{book}) > Task(#{unquote(name)}) ::"]))
 
       try do
         unquote(block)
