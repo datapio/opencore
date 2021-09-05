@@ -77,7 +77,7 @@ defmodule Datapio.Play.DSL do
   """
   defmacro log(msg) do
     quote do
-      Datapio.Play.StepLogger.new() |> Datapio.Play.StepLogger.print(msg)
+      Datapio.Play.StepLogger.new() |> Datapio.Play.StepLogger.print(unquote(msg))
     end
   end
 end
