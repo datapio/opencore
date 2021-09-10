@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Resources.PipelineRun do
+defmodule PipelineRunServer.Resources.PipelineRun do
   @moduledoc """
   Utility functions related to PipelineRun resources
   """

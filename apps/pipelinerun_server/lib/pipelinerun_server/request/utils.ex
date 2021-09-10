@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Request.Utilities do
+defmodule PipelineRunServer.Request.Utilities do
   @moduledoc """
   Utility functions for the PipelineRunRequest controller.
   """

@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Supervisor do
+defmodule PipelineRunServer.Supervisor do
   @moduledoc false
 
   use Supervisor
@@ -9,8 +9,8 @@ defmodule DatapioPipelineRunServer.Supervisor do
 
   def init(_args) do
     children = [
-      DatapioPipelineRunServer.Server.Supervisor,
-      DatapioPipelineRunServer.Request.Supervisor
+      PipelineRunServer.Server.Supervisor,
+      PipelineRunServer.Request.Supervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

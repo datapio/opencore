@@ -1,16 +1,16 @@
-defmodule DatapioPipelineRunServer.Request.Controller do
+defmodule PipelineRunServer.Request.Controller do
   @moduledoc """
   Observe PipelineRunRequest resources.
   """
 
-  import DatapioPipelineRunServer.Request.Utilities
+  import PipelineRunServer.Request.Utilities
   require Logger
 
   use Datapio.Controller,
     api_version: "datapio.co/v1",
     kind: "PipelineRunRequest",
     schema: %{
-      "$ref" => Application.app_dir(:datapio_pipelinerun_server, "priv")
+      "$ref" => Application.app_dir(:pipelinerun_server, "priv")
         |> Path.join("pipelinerun-request.json")
     }
 

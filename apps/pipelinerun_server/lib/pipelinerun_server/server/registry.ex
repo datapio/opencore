@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Server.Registry do
+defmodule PipelineRunServer.Server.Registry do
   @moduledoc """
   Global Elixir process registry for the worker pool
   """

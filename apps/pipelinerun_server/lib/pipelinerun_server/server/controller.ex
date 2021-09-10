@@ -1,15 +1,15 @@
-defmodule DatapioPipelineRunServer.Server.Controller do
+defmodule PipelineRunServer.Server.Controller do
   @moduledoc """
   Observe PipelineRunServer resources.
   """
 
-  alias DatapioPipelineRunServer.Server.Pool
+  alias PipelineRunServer.Server.Pool
 
   use Datapio.Controller,
     api_version: "datapio.co/v1",
     kind: "PipelineRunServer",
     schema: %{
-      "$ref" => Application.app_dir(:datapio_pipelinerun_server, "priv")
+      "$ref" => Application.app_dir(:pipelinerun_server, "priv")
         |> Path.join("pipelinerun-server.json")
     }
 

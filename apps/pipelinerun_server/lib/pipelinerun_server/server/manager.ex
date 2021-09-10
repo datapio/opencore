@@ -1,4 +1,4 @@
-defmodule DatapioPipelineRunServer.Server.Manager do
+defmodule PipelineRunServer.Server.Manager do
   @moduledoc """
   Consume
   """
@@ -29,7 +29,7 @@ defmodule DatapioPipelineRunServer.Server.Manager do
 
   defp via_tuple(server_name) do
     name = "server-#{server_name}"
-    {:via, Horde.Registry, {DatapioPipelineRunServer.Server.Registry, name}}
+    {:via, Horde.Registry, {PipelineRunServer.Server.Registry, name}}
   end
 
   @impl true
@@ -86,7 +86,7 @@ defmodule DatapioPipelineRunServer.Server.Manager do
   defp schedule_workers(server_name, history, [], errors), do: errors
   defp schedule_workers(server_name, history, [worker_id | worker_ids], errors) do
     opts = [
-      module: DatapioPipelineRunServer.Worker,
+      module: PipelineRunServer.Worker,
       queue: server_name,
       data: [history: history]
     ]
@@ -106,7 +106,7 @@ defmodule DatapioPipelineRunServer.Server.Manager do
 
   defp shutdown_workers(server_name, [], errors), do: errors
   defp shutdown_workers(server_name, [worker_id | worker_ids], errors) do
-    resp = DatapioPipelineRunServer.Worker.shutdown(worker_id)
+    resp = PipelineRunServer.Worker.shutdown(worker_id)
     errors = case resp do
       :ok -> errors
       {:error, reason} -> [reason | errors]

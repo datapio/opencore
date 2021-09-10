@@ -1,20 +1,18 @@
-defmodule DatapioPipelineRunServer.Resources.Request do
+defmodule PipelineRunServer.Resources.Request do
   @moduledoc """
   Utility functions related to PipelineRunRequest resources
   """
 
-  alias Datapio.Dependencies, as: Deps
-  alias DatapioPipelineRunServer.Resources.PipelineRun
+  alias PipelineRunServer.Resources.PipelineRun
 
   def fetch_pipelinerun(request) do
-    client = Deps.get(:k8s_client)
-    {:ok, conn} = Datapio.K8sConn.lookup()
+    {:ok, conn} = Datapio.K8s.Conn.lookup()
 
     %{"metadata" => %{"name" => name, "namespace" => namespace}} = request
     selection = [namespace: namespace, name: name]
 
-    client.get("tekton.dev/v1alpha1", "PipelineRun", selection)
-      |> then(&(client.run(conn, &1)))
+    K8s.Client.get("tekton.dev/v1alpha1", "PipelineRun", selection)
+      |> then(&(K8s.Client.run(conn, &1)))
   end
 
   def get_status(request) do

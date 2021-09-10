@@ -1,12 +1,11 @@
-defmodule DatapioPipelineRunServer.Worker do
+defmodule PipelineRunServer.Worker do
   @moduledoc """
   Consume PipelineRunRequest from queues.
   """
 
-  alias DatapioPipelineRunServer.Resources.PipelineRun
-  alias DatapioPipelineRunServer.Resources.Request
-  alias DatapioPipelineRunServer.Resources.State
-  alias Datapio.Dependencies, as: Deps
+  alias PipelineRunServer.Resources.PipelineRun
+  alias PipelineRunServer.Resources.Request
+  alias PipelineRunServer.Resources.State
 
   use Datapio.MQ.Consumer
   require Logger
@@ -78,8 +77,7 @@ defmodule DatapioPipelineRunServer.Worker do
   end
 
   defp wait_for_pipeline(pipelinerun) do
-    client = Deps.get(:k8s_client)
-    {:ok, conn} = Datapio.K8sConn.lookup()
+    {:ok, conn} = Datapio.K8s.Conn.lookup()
 
     %{
       "apiVersion" => api_version,
@@ -91,7 +89,7 @@ defmodule DatapioPipelineRunServer.Worker do
     } = pipelinerun
 
     selector = [namespace: namespace, name: name]
-    operation = client.get(api_version, kind, selector)
+    operation = K8s.Client.get(api_version, kind, selector)
     wait_opts = [
       find: ["status", "completionTime"],
       eval: fn

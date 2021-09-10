@@ -1,4 +1,4 @@
-# Datapio PipelineRun Server
+# PipelineRun Server
 
 This project provides a [Kubernetes](https://kubernetes.io) Operator to manage
 `PipelineRunServer` and `PipelineRunRequest` resources.

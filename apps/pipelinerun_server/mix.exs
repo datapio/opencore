@@ -1,9 +1,9 @@
-defmodule DatapioPipelinerunServer.MixProject do
+defmodule PipelineRunServer.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :datapio_pipelinerun_server,
+      app: :pipelinerun_server,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -22,7 +22,7 @@ defmodule DatapioPipelinerunServer.MixProject do
   def application do
     [
       extra_applications: [:logger, :datapio_cluster, :datapio_mq],
-      mod: {DatapioPipelineRunServer.Application, []}
+      mod: {PipelineRunServer.Application, []}
     ]
   end
 
