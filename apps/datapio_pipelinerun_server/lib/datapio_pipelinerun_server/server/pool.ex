@@ -3,7 +3,7 @@ defmodule DatapioPipelineRunServer.Server.Pool do
   Balance worker execution across Elixir nodes
   """
 
-  alias DatapioPipelineRunServer.Server, as: Server
+  alias DatapioPipelineRunServer.Server
   use Horde.DynamicSupervisor
 
   def start_link(args \\ []) do
