@@ -1,4 +1,4 @@
-# Datapio Project Operator
+# Project Operator
 
 This project provides a [Kubernetes](https://kubernetes.io) Operator to manage
 `Project` resources.

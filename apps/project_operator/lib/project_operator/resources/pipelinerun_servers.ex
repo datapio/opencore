@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.PipelineRunServers do
+defmodule ProjectOperator.Resources.PipelineRunServers do
   @moduledoc false
 
   def from_project(project) do

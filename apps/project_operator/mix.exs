@@ -1,9 +1,9 @@
-defmodule DatapioProjectOperator.MixProject do
+defmodule ProjectOperator.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :datapio_project_operator,
+      app: :project_operator,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -17,16 +17,18 @@ defmodule DatapioProjectOperator.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :datapio_core, :datapio_pipelinerun_server],
-      mod: {DatapioProjectOperator.Application, []}
+      extra_applications: [:logger, :datapio_cluster, :pipelinerun_server],
+      mod: {ProjectOperator.Application, []}
     ]
   end
 
   defp deps do
     [
       {:highlander, "~> 0.2"},
-      {:datapio_core, in_umbrella: true},
-      {:datapio_pipelinerun_server, in_umbrella: true}
+      {:datapio_cluster, in_umbrella: true},
+      {:datapio_k8s, in_umbrella: true},
+      {:datapio_controller, in_umbrella: true},
+      {:pipelinerun_server, in_umbrella: true}
     ]
   end
 end

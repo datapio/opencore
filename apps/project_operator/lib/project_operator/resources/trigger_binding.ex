@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.TriggerBinding do
+defmodule ProjectOperator.Resources.TriggerBinding do
   @moduledoc false
 
   def from_project(project) do

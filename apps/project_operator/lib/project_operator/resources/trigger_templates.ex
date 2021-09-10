@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.TriggerTemplates do
+defmodule ProjectOperator.Resources.TriggerTemplates do
   @moduledoc false
 
   def from_project(project) do

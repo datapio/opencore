@@ -1,7 +1,7 @@
-defmodule DatapioProjectOperator.Resources do
+defmodule ProjectOperator.Resources do
   @moduledoc false
 
-  alias DatapioProjectOperator.Resources, as: Resources
+  alias ProjectOperator.Resources, as: Resources
 
   def from_project(project) do
     %{

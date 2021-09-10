@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.Ingress do
+defmodule ProjectOperator.Resources.Ingress do
   @moduledoc false
 
   def from_project(%{"spec" => %{"ingress" => %{"enabled" => true}}} = project) do

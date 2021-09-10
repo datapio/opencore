@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.Pipeline do
+defmodule ProjectOperator.Resources.Pipeline do
   @moduledoc false
 
   defp klifter_image do

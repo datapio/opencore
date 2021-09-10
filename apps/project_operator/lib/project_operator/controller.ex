@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Controller do
+defmodule ProjectOperator.Controller do
   @moduledoc """
   Handle the lifecycle of Project resources.
   """
@@ -96,7 +96,7 @@ defmodule DatapioProjectOperator.Controller do
   end
 
   defp desired_state(project) do
-    DatapioProjectOperator.Resources.from_project(project)
+    ProjectOperator.Resources.from_project(project)
   end
 
   defp observed_state(project) do
@@ -109,32 +109,32 @@ defmodule DatapioProjectOperator.Controller do
     pipelines = K8s.Client.list("tekton.dev/v1alpha1", "Pipeline", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     servers = K8s.Client.list("datapio.co/v1", "PipelineRunServer", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     templates = K8s.Client.list("triggers.tekton.dev/v1alpha1", "TriggerTemplate", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     bindings = K8s.Client.list("triggers.tekton.dev/v1alpha1", "TriggerBinding", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     event_listeners = K8s.Client.list("triggers.tekton.dev/v1alpha1", "EventListener", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     ingresses = K8s.Client.list("networking.k8s.io/v1", "Ingress", namespace: namespace)
       |> run_operation()
       |> then(get_items)
-      |> Enum.filter(&Datapio.Resource.is_owned(&1, project))
+      |> Enum.filter(&Datapio.K8s.Resource.owned?(&1, project))
 
     %{
       pipelines: pipelines,
@@ -149,7 +149,7 @@ defmodule DatapioProjectOperator.Controller do
   defp remove_unwanted(kind, desired, observed) do
     observed[kind]
       |> Enum.map_reduce([], fn (resource, operations) ->
-        is_desired = resource |> Datapio.Resource.list_contains(desired[kind])
+        is_desired = resource |> Datapio.K8s.Resource.contains?(desired[kind])
 
         if is_desired do
           operations
@@ -169,7 +169,7 @@ defmodule DatapioProjectOperator.Controller do
   defp apply_desired(kind, desired, observed) do
     desired[kind]
       |> Enum.map_reduce([], fn (resource, operations) ->
-        exists = resource |> Datapio.Resource.list_contains(observed[kind])
+        exists = resource |> Datapio.K8s.Resource.contains(observed[kind])
 
         if exists do
           operations ++ [K8s.Client.update(resource)]

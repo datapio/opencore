@@ -14,7 +14,7 @@ defmodule DatapioOpencore.MixProject do
             datapio_cluster: :permanent,
             datapio_mq: :permanent,
             pipelinerun_server: :permanent,
-            datapio_project_operator: :permanent
+            project_operator: :permanent
           ]
         ]
       ],
@@ -60,9 +60,9 @@ defmodule DatapioOpencore.MixProject do
             filename: "pipelinerun-server",
             title: "PipelineRun Server"
           ],
-          "apps/datapio_project_operator/README.md": [
-            filename: "datapio-project-operator",
-            title: "Datapio Project Operator"
+          "apps/project_operator/README.md": [
+            filename: "project-operator",
+            title: "Project Operator"
           ]
         ],
         groups_for_extras: [

@@ -1,4 +1,4 @@
-defmodule DatapioProjectOperator.Resources.EventListeners do
+defmodule ProjectOperator.Resources.EventListeners do
   @moduledoc false
 
   def from_project(project) do
