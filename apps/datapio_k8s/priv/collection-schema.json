@@ -1,0 +1,16 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["metadata"],
+    "properties": {
+      "metadata": {
+        "type": "object",
+        "required": ["uid"],
+        "properties": {
+          "uid": {"type": "string", "minLnegth": 1}
+        }
+      }
+    }
+  }
+}

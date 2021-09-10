@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata"],
+  "properties": {
+    "apiVersion": {"type": "string", "minLnegth": 1},
+    "kind": {"type": "string", "minLnegth": 1},
+    "metadata": {
+      "type": "object",
+      "required": ["name", "uid"],
+      "properties": {
+        "name": {"type": "string", "minLnegth": 1},
+        "uid": {"type": "string", "minLnegth": 1}
+      }
+    }
+  }
+}
