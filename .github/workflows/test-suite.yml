@@ -16,11 +16,6 @@ jobs:
           otp-version: '24.x'
           elixir-version: '1.12.x'
 
-      - name: setup@kubernetes
-        uses: engineerd/setup-kind@v0.5.0
-        with:
-          name: datapio-kind
-
       - name: deps@mix
         run: mix deps.get
 
@@ -32,5 +27,4 @@ jobs:
 
       - name: test@mix
         run: |
-          cd apps/datapio_core && mix test --cover && cd ../..
-          cd apps/datapio_mq && mix test --cover && cd ../..
+          mix test
