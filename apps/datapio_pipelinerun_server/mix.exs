@@ -21,17 +21,36 @@ defmodule DatapioPipelinerunServer.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :mnesia, :datapio_core, :datapio_mq],
+      extra_applications: [:logger, :datapio_cluster, :datapio_mq],
       mod: {DatapioPipelineRunServer.Application, []}
     ]
   end
 
   defp deps do
     [
-      {:datapio_core, in_umbrella: true},  # Datapio Core Library
-      {:datapio_mq, in_umbrella: true},    # Message Queue application
-      {:highlander, "~> 0.2"},             # Ensure single process across cluster
-      {:horde, "~> 0.8"}                   # Load Balance workload across cluster
+      {
+        # Cluster management application
+        :datapio_cluster,
+        in_umbrella: true
+      },
+      {
+        # Kubernetes Operator framework
+        :datapio_controller,
+        in_umbrella: true
+      },
+      {
+        # Message Queue application
+        :datapio_mq,
+        in_umbrella: true
+      },
+      {
+        # Ensure single process across cluster
+        :highlander, "~> 0.2"
+      },
+      {
+        # Load Balance workload across cluster
+        :horde, "~> 0.8"
+      }
     ]
   end
 end
