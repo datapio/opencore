@@ -113,6 +113,12 @@ defmodule Datapio.Controller do
         } |> Supervisor.child_spec(unquote(supervisor_opts))
       end
 
+      @doc "Start a controller linked to the current process with no options"
+      @spec start_link() :: GenServer.on_start()
+      def start_link() do
+        start_link([])
+      end
+
       @doc "Start a controller linked to the current process"
       @spec start_link(controller_options()) :: GenServer.on_start()
       def start_link(options) do
