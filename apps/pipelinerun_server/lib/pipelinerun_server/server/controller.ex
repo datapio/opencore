@@ -8,10 +8,7 @@ defmodule PipelineRunServer.Server.Controller do
   use Datapio.Controller,
     api_version: "datapio.co/v1",
     kind: "PipelineRunServer",
-    schema: %{
-      "$ref" => Application.app_dir(:pipelinerun_server, "priv")
-        |> Path.join("pipelinerun-server.json")
-    }
+    schema: %{}
 
   @impl true
   def add(%{} = server, options) do

@@ -86,6 +86,7 @@ defmodule PipelineRunServer.Server.Manager do
   defp schedule_workers(server_name, history, [], errors), do: errors
   defp schedule_workers(server_name, history, [worker_id | worker_ids], errors) do
     opts = [
+      id: worker_id,
       module: PipelineRunServer.Worker,
       queue: server_name,
       data: [history: history]
@@ -104,7 +105,7 @@ defmodule PipelineRunServer.Server.Manager do
     shutdown_workers(server_name, worker_ids, [])
   end
 
-  defp shutdown_workers(server_name, [], errors), do: errors
+  defp shutdown_workers(_server_name, [], errors), do: errors
   defp shutdown_workers(server_name, [worker_id | worker_ids], errors) do
     resp = PipelineRunServer.Worker.shutdown(worker_id)
     errors = case resp do

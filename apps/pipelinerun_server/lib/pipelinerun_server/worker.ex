@@ -99,7 +99,7 @@ defmodule PipelineRunServer.Worker do
       timeout: 60
     ]
 
-    case client.wait(conn, operation, wait_opts) do
+    case K8s.Client.wait_until(conn, operation, wait_opts) do
       {:ok, _} ->
         :ok
 
