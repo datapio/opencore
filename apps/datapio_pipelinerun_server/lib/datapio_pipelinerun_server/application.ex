@@ -5,12 +5,6 @@ defmodule DatapioPipelineRunServer.Application do
 
   @impl true
   def start(_type, _args) do
-    with :ok <- DatapioPipelineRunServer.Mnesia.create_tables(),
-         {:ok, pid} <- DatapioPipelineRunServer.Supervisor.start_link()
-    do
-      {:ok, pid}
-    else
-      err -> err
-    end
+    DatapioPipelineRunServer.Supervisor.start_link()
   end
 end
