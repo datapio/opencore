@@ -82,8 +82,24 @@ defmodule DatapioOpencore.MixProject do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.25", only: :dev, runtime: false},        # Documentation
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false}  # Static Analysis
+      {
+        # Documentation
+        :ex_doc, "~> 0.25",
+        only: :dev,
+        runtime: false
+      },
+      {
+        # Static Analysis
+        :credo, "~> 1.4",
+        only: [:dev, :test],
+        runtime: false
+      },
+      {
+        # Type Checking
+        :dialyxir, "~> 1.1",
+        only: [:dev],
+        runtime: false
+      }
     ]
   end
 
