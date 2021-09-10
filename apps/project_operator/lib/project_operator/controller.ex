@@ -169,7 +169,7 @@ defmodule ProjectOperator.Controller do
   defp apply_desired(kind, desired, observed) do
     desired[kind]
       |> Enum.map_reduce([], fn (resource, operations) ->
-        exists = resource |> Datapio.K8s.Resource.contains(observed[kind])
+        exists = resource |> Datapio.K8s.Resource.contains?(observed[kind])
 
         if exists do
           operations ++ [K8s.Client.update(resource)]
