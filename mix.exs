@@ -3,72 +3,27 @@ defmodule DatapioOpencore.MixProject do
 
   def project do
     [
-      apps_path: "apps",
-      version: "0.1.0",
-      start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
-      deps: deps(),
-
-      releases: [
-        datapio: [
-          applications: [
-            datapio_cluster: :permanent,
-            datapio_mq: :permanent,
-            pipelinerun_server: :permanent,
-            project_operator: :permanent
-          ]
-        ]
-      ],
-
-      # Docs
       name: "Datapio OpenCore",
+      version: "0.1.0",
       source_url: "https://github.com/datapio/opencore",
       homepage_url: "https://opencore.datapio.co",
-      docs: [
-        main: "datapio-opencore",
-        markdown_processor: {
-          ExDoc.Markdown.Earmark,
-          [code_class_prefix: "language-"]
-        },
-        before_closing_head_tag: &documentation_head/1,
-        before_closing_body_tag: &documentation_body/1,
-        extras: [
-          "README.md": [
-            filename: "datapio-opencore",
-            title: "Datapio OpenCore"
-          ],
-          "apps/datapio_play/README.md": [
-            filename: "datapio-play",
-            title: "Datapio Play"
-          ],
-          "apps/datapio_mq/README.md": [
-            filename: "datapio-mq",
-            title: "Datapio Message Queue"
-          ],
-          "apps/datapio_cluster/README.md": [
-            filename: "datapio-cluster",
-            title: "Datapio Cluster"
-          ],
-          "apps/datapio_k8s/README.md": [
-            filename: "datapio-k8s",
-            title: "Datapio K8s"
-          ],
-          "apps/datapio_controller/README.md": [
-            filename: "datapio-controller",
-            title: "Datapio Controller"
-          ],
-          "apps/pipelinerun_server/README.md": [
-            filename: "pipelinerun-server",
-            title: "PipelineRun Server"
-          ],
-          "apps/project_operator/README.md": [
-            filename: "project-operator",
-            title: "Project Operator"
-          ]
-        ],
-        groups_for_extras: [
-          "Introduction": Path.wildcard("**/README.md"),
-          "Guides": Path.wildcard("guides/*.md")
+
+      apps_path: "apps",
+      aliases: aliases(),
+      deps: deps(),
+      releases: releases(),
+      docs: docs()
+    ]
+  end
+
+  defp releases do
+    [
+      datapio: [
+        applications: [
+          datapio_cluster: :permanent,
+          datapio_mq: :permanent,
+          pipelinerun_server: :permanent,
+          project_operator: :permanent
         ]
       ]
     ]
@@ -100,6 +55,56 @@ defmodule DatapioOpencore.MixProject do
         only: [:dev],
         runtime: false
       }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "datapio-opencore",
+      markdown_processor: {
+        ExDoc.Markdown.Earmark,
+        [code_class_prefix: "language-"]
+      },
+      before_closing_head_tag: &documentation_head/1,
+      before_closing_body_tag: &documentation_body/1,
+      extras: [
+        "README.md": [
+          filename: "datapio-opencore",
+          title: "Datapio OpenCore"
+        ],
+        "apps/datapio_play/README.md": [
+          filename: "datapio-play",
+          title: "Datapio Play"
+        ],
+        "apps/datapio_mq/README.md": [
+          filename: "datapio-mq",
+          title: "Datapio Message Queue"
+        ],
+        "apps/datapio_cluster/README.md": [
+          filename: "datapio-cluster",
+          title: "Datapio Cluster"
+        ],
+        "apps/datapio_k8s/README.md": [
+          filename: "datapio-k8s",
+          title: "Datapio K8s"
+        ],
+        "apps/datapio_controller/README.md": [
+          filename: "datapio-controller",
+          title: "Datapio Controller"
+        ],
+        "apps/pipelinerun_server/README.md": [
+          filename: "pipelinerun-server",
+          title: "PipelineRun Server"
+        ],
+        "apps/project_operator/README.md": [
+          filename: "project-operator",
+          title: "Project Operator"
+        ]
+      ],
+      groups_for_extras: [
+        "Introduction": Path.wildcard("**/README.md"),
+        "Guides": Path.wildcard("guides/*.md")
+      ]
     ]
   end
 
