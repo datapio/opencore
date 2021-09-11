@@ -1,6 +1,7 @@
 defmodule ProjectOperator.Resources.PipelineRunServers do
   @moduledoc false
 
+  @spec from_project(Datapio.K8s.Resource.t()) :: [Datapio.K8s.Resource.t()]
   def from_project(project) do
     %{"metadata" => project_meta, "spec" => project_spec} = project
     %{"namespace" => namespace, "name" => name, "uid" => uid} = project_meta

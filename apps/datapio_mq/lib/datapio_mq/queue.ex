@@ -6,6 +6,9 @@ defmodule Datapio.MQ.Queue do
   use GenServer
   require Logger
 
+  @typedoc "Queue name"
+  @type queue_name :: atom() | String.t()
+
   defstruct [:name, :queue, :sinks]
 
   defp via_tuple(queue_name) do
@@ -13,12 +16,9 @@ defmodule Datapio.MQ.Queue do
     {:via, Horde.Registry, {Datapio.MQ.Registry, name}}
   end
 
-  def child_spec(opts) do
-    queue_name = case opts do
-      [] -> __MODULE__
-      [name] -> name
-    end
-
+  @doc "Return a specification to run the queue under a supervisor"
+  @spec child_spec(queue_name()) :: Supervisor.child_spec()
+  def child_spec(queue_name \\ __MODULE__) do
     %{
       id: "#{__MODULE__}_#{queue_name}",
       start: {__MODULE__, :start_link, [queue_name]},
@@ -26,6 +26,8 @@ defmodule Datapio.MQ.Queue do
     }
   end
 
+  @doc "Start a queue linked to the current process"
+  @spec start_link(queue_name()) :: GenServer.on_start()
   def start_link(queue_name) do
     proc_name = via_tuple(queue_name)
 
@@ -39,20 +41,28 @@ defmodule Datapio.MQ.Queue do
     end
   end
 
+  @doc "Consume a message from the queue and stream it to the current process"
+  @spec drain(queue_name()) :: :ok
   def drain(queue_name) do
     drain(queue_name, self())
   end
 
+  @doc "Consume a message from the queue and stream it to the specified process"
+  @spec drain(queue_name(), pid()) :: :ok
   def drain(queue_name, pid) do
     proc_name = via_tuple(queue_name)
     GenServer.call(proc_name, {:drain, pid})
   end
 
+  @doc "Publish a message to the queue"
+  @spec publish(queue_name(), any()) :: :ok
   def publish(queue_name, message) do
     proc_name = via_tuple(queue_name)
     GenServer.call(proc_name, {:publish, message})
   end
 
+  @doc "Shutdown the queue"
+  @spec shutdown(queue_name()) :: :ok
   def shutdown(queue_name) do
     proc_name = via_tuple(queue_name)
     GenServer.cast(proc_name, :shutdown)
