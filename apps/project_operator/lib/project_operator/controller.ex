@@ -1,7 +1,5 @@
 defmodule ProjectOperator.Controller do
-  @moduledoc """
-  Handle the lifecycle of Project resources.
-  """
+  @moduledoc false
 
   require Logger
 
@@ -95,10 +93,12 @@ defmodule ProjectOperator.Controller do
     end
   end
 
+  @spec desired_state(Datapio.K8s.Resource.t()) :: ProjectOperator.Resources.t()
   defp desired_state(project) do
     ProjectOperator.Resources.from_project(project)
   end
 
+  @spec observed_state(Datapio.K8s.Resource.t()) :: ProjectOperator.Resources.t()
   defp observed_state(project) do
     namespace = project["metadata"]["namespace"]
     get_items = fn
@@ -146,10 +146,11 @@ defmodule ProjectOperator.Controller do
     }
   end
 
+  @spec remove_unwanted(atom(), ProjectOperator.Resources.t(), ProjectOperator.Resources.t()) :: [term()]
   defp remove_unwanted(kind, desired, observed) do
     observed[kind]
-      |> Enum.map_reduce([], fn (resource, operations) ->
-        is_desired = resource |> Datapio.K8s.Resource.contains?(desired[kind])
+      |> Enum.reduce([], fn resource, operations ->
+        is_desired = desired[kind] |> Datapio.K8s.Resource.contains?(resource)
 
         if is_desired do
           operations
@@ -158,7 +159,7 @@ defmodule ProjectOperator.Controller do
         end
       end)
       |> run_operations()
-      |> Enum.map_reduce([], fn (result, errors) ->
+      |> Enum.reduce([], fn (result, errors) ->
         case result do
           {:ok, _} -> errors
           {:error, err} -> errors ++ [err]
@@ -166,10 +167,11 @@ defmodule ProjectOperator.Controller do
       end)
   end
 
+  @spec apply_desired(atom(), ProjectOperator.Resources.t(), ProjectOperator.Resources.t()) :: [term()]
   defp apply_desired(kind, desired, observed) do
     desired[kind]
-      |> Enum.map_reduce([], fn (resource, operations) ->
-        exists = resource |> Datapio.K8s.Resource.contains?(observed[kind])
+      |> Enum.reduce([], fn (resource, operations) ->
+        exists = observed[kind] |> Datapio.K8s.Resource.contains?(resource)
 
         if exists do
           operations ++ [K8s.Client.update(resource)]
@@ -178,7 +180,7 @@ defmodule ProjectOperator.Controller do
         end
       end)
       |> run_operations()
-      |> Enum.map_reduce([], fn (result, errors) ->
+      |> Enum.reduce([], fn (result, errors) ->
         case result do
           {:ok, _} -> errors
           {:error, err} -> errors ++ [err]
