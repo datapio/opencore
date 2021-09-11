@@ -104,7 +104,7 @@ defmodule Datapio.Controller do
 
       @type controller_options :: Datapio.Controller.controller_options()
 
-      @doc "Return a specification to return the controller under a supervisor"
+      @doc "Return a specification to run the controller under a supervisor"
       @spec child_spec(controller_options()) :: Supervisor.child_spec()
       def child_spec(args) do
         %{
