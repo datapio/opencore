@@ -60,7 +60,8 @@ defmodule PipelineRunServer.Server.Manager do
 
       new_worker_count > old_worker_count ->
         old_worker_ids = Enum.to_list(new_worker_count..old_worker_count)
-        shutdown_workers(state.name, old_worker_ids)
+        :ok = shutdown_workers(state.name, old_worker_ids)
+        []
 
       new_worker_count == old_worker_count ->
         []
@@ -94,25 +95,16 @@ defmodule PipelineRunServer.Server.Manager do
 
     errors = case Datapio.MQ.start_consumer(opts) do
       {:ok, _pid} -> errors
-      :ignored -> errors
+      :ignore -> errors
       {:error, reason} -> [reason | errors]
     end
 
     schedule_workers(server_name, history, worker_ids, errors)
   end
 
-  defp shutdown_workers(server_name, worker_ids) do
-    shutdown_workers(server_name, worker_ids, [])
-  end
-
-  defp shutdown_workers(_server_name, [], errors), do: errors
-  defp shutdown_workers(server_name, [worker_id | worker_ids], errors) do
-    resp = PipelineRunServer.Worker.shutdown(worker_id)
-    errors = case resp do
-      :ok -> errors
-      {:error, reason} -> [reason | errors]
-    end
-
-    shutdown_workers(server_name, worker_ids, errors)
+  defp shutdown_workers(_server_name, []), do: :ok
+  defp shutdown_workers(server_name, [worker_id | worker_ids]) do
+    :ok = PipelineRunServer.Worker.shutdown(worker_id)
+    shutdown_workers(server_name, worker_ids)
   end
 end
