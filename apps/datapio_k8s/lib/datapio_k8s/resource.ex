@@ -4,10 +4,11 @@ defmodule Datapio.K8s.Resource do
   """
 
   @typedoc "Represent a Kubernetes resource"
-  @type resource :: Map.t()
+  @type resource :: map()
+  @type t :: resource()
 
   @typedoc "Represent a JSON Schema"
-  @type schema :: Map.t()
+  @type schema :: map()
 
   @doc "Validate a resource (or a collection of resource) against a schema"
   @spec validate(resource() | [resource()], schema()) :: :ok | {:error, term()}
