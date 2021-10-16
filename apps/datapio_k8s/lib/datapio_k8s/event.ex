@@ -50,46 +50,46 @@ defmodule Datapio.K8s.Event do
   @doc "Specify what action was taken/failed"
   @spec action(partial(), String.t()) :: partial()
   def action(event, name) do
-    %{event | "action" => name}
+    event |> Map.put("action", name)
   end
 
   @doc "Specify the name of the controller that emitted this Event"
   @spec reporting_controller(partial(), String.t()) :: partial()
   def reporting_controller(event, name) do
-    %{event | "reportingController" => name}
+    event |> Map.put("reportingController", name)
   end
 
   @doc "Specify the ID of the controller instance"
   @spec reporting_instance(partial(), String.t()) :: partial()
   def reporting_instance(event, name) do
-    %{event | "reportingInstance" => name}
+    event |> Map.put("reportingInstance", name)
   end
 
   @doc "Specify the object this event is about"
   @spec regarding(partial(), Resource.t()) :: partial()
   def regarding(event, resource) do
-    %{event | "regarding" => Resource.get_ref(resource)}
+    event |> Map.put("regarding", Resource.get_ref(resource))
   end
 
   @doc "Specify a secondary object this event is related to"
   @spec related(partial(), Resource.t()) :: partial()
   def related(event, resource) do
-    %{event | "related" => Resource.get_ref(resource)}
+    event |> Map.put("related", Resource.get_ref(resource))
   end
 
   @doc "Specify the type of the event"
   @spec type(partial(), :normal | :warning) :: partial()
   def type(event, :normal) do
-    %{event | "type" => "Normal"}
+    event |> Map.put("type", "Normal")
   end
   def type(event, :warning) do
-    %{event | "type" => "Warning"}
+    event |> Map.put("type", "Warning")
   end
 
   @doc "Specify the reason of the event"
   @spec reason(partial(), String.t()) :: partial()
   def reason(event, val) do
-    %{event | "reason" => val}
+    event |> Map.put("reason", val)
   end
 
   @doc "Specify the time at which the event was first observed"
@@ -98,13 +98,13 @@ defmodule Datapio.K8s.Event do
     event |> time(Calendar.DateTime.now!("UTC"))
   end
   def time(event, dt) do
-    %{event | "eventTime" => dt |> Calendar.DateTime.Format.rfc3339(6)}
+    event |> Map.put("eventTime", dt |> Calendar.DateTime.Format.rfc3339(6))
   end
 
   @doc "Specify the message describing this event"
   @spec message(partial(), String.t()) :: partial()
   def message(event, val) do
-    %{event | "note" => val}
+    event |> Map.put("note", val)
   end
 
   @doc "Publish the event to Kubernetes"
