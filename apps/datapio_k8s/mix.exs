@@ -35,6 +35,10 @@ defmodule Datapio.K8s.MixProject do
         # JSON Encoder/Decoder
         :jason, "~> 1.2"
       },
+      {
+        # extended DateTime library
+        :calendar, "~> 1.0.0"
+      },
       # Dev Dependencies
       {
         # Mocking framework
