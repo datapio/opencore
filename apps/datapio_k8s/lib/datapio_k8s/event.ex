@@ -93,7 +93,7 @@ defmodule Datapio.K8s.Event do
   end
 
   @doc "Specify the time at which the event was first observed"
-  @spec time(event, :now | DateTime.t()) :: partial()
+  @spec time(partial(), :now | DateTime.t()) :: partial()
   def time(event, :now) do
     event |> time(Calendar.DateTime.now!("UTC"))
   end
