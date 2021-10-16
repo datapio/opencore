@@ -8,6 +8,7 @@ defmodule Datapio.Test.K8s.Resource do
     "kind" => "Example",
     "metadata" => %{
       "name" => "owner",
+      "namespace" => "default",
       "uid" => "UUID"
     }
   }
@@ -91,6 +92,20 @@ defmodule Datapio.Test.K8s.Resource do
 
     test "does not contain the resource" do
       assert false == Datapio.K8s.Resource.contains?([], @owner)
+    end
+  end
+
+  describe "get_ref/1" do
+    test "returns a reference" do
+      expected = %{
+        "apiVersion" => "example.com/v1",
+        "kind" => "Example",
+        "namespace" => "default",
+        "name" => "owner",
+        "uid" => "UUID"
+      }
+
+      assert Datapio.K8s.Resource.get_ref(@owner) == expected
     end
   end
 end
