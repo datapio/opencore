@@ -7,6 +7,9 @@ defmodule Datapio.K8s.Resource do
   @type resource :: map()
   @type t :: resource()
 
+  @typedoc "Represent a reference to a Kubernetes resource"
+  @type ref :: map()
+
   @typedoc "Represent a JSON Schema"
   @type schema :: map()
 
@@ -86,6 +89,18 @@ defmodule Datapio.K8s.Resource do
       _ ->
         false
     end
+  end
+
+  @doc "Get a reference to a resource"
+  @spec get_ref(resource()) :: ref()
+  def get_ref(resource) do
+    %{
+      "apiVersion" => resource["apiVersion"],
+      "kind" => resource["kind"],
+      "name" => resource["metadata"]["name"],
+      "namespace" => resource["metadata"]["namespace"],
+      "uid" => resource["metadata"]["uid"]
+    }
   end
 
   defp get_schema(path) do
