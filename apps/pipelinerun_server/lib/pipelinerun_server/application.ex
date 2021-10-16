@@ -5,6 +5,12 @@ defmodule PipelineRunServer.Application do
 
   @impl true
   def start(_type, _args) do
-    PipelineRunServer.Supervisor.start_link()
+    children = [
+      PipelineRunServer.Controllers.Supervisor,
+      {Highlander, PipelineRunServer.Archiver}
+    ]
+
+    opts = [strategy: :one_for_one, name: PipelineRunServer.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 end

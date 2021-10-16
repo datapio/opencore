@@ -34,6 +34,11 @@ defmodule PipelineRunServer.MixProject do
         in_umbrella: true
       },
       {
+        # Kubernetes utility functions
+        :datapio_k8s,
+        in_umbrella: true
+      },
+      {
         # Kubernetes Operator framework
         :datapio_controller,
         in_umbrella: true
@@ -46,6 +51,10 @@ defmodule PipelineRunServer.MixProject do
       {
         # Ensure single process across cluster
         :highlander, "~> 0.2"
+      },
+      {
+        # Result monad
+        :brex_result, "~> 0.4"
       },
       {
         # Load Balance workload across cluster

@@ -1,4 +1,4 @@
-defmodule PipelineRunServer.Request.Supervisor do
+defmodule PipelineRunServer.Controllers.Supervisor do
   @moduledoc false
 
   use Supervisor
@@ -9,7 +9,8 @@ defmodule PipelineRunServer.Request.Supervisor do
 
   def init(_args) do
     children = [
-      {Highlander, PipelineRunServer.Request.Controller}
+      {Highlander, PipelineRunServer.Controllers.Server},
+      {Highlander, PipelineRunServer.Controllers.Request}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
