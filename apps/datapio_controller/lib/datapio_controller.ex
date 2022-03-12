@@ -280,7 +280,7 @@ defmodule Datapio.Controller do
     operation = K8s.Client.list(state.api_version, state.kind, namespace: state.namespace)
     {:ok, %{"items" => items}} = K8s.Client.run(state.conn, operation)
 
-    items |> Enum.each(fn resource ->
+    cache = items |> Enum.reduce(state.cache, fn resource, cache ->
       %{"metadata" => %{"uid" => uid}} = resource
 
       case apply(state.module, :reconcile, [resource, state.options]) do
@@ -296,11 +296,13 @@ defmodule Datapio.Controller do
             reason: reason
           ])
       end
+
+      cache |> Map.put(uid, resource)
     end)
 
     self() |> Process.send_after(:reconcile, state.reconcile_delay)
 
-    {:noreply, state}
+    {:noreply, %State{state | cache: cache}}
   end
 
   @impl true
@@ -329,26 +331,45 @@ defmodule Datapio.Controller do
   @impl true
   def handle_info({:modified, resource}, %State{} = state) do
     %{"metadata" => %{"uid" => uid, "resourceVersion" => new_ver}} = resource
-    %{"metadata" => %{"resourceVersion" => old_ver}} = state.cache[uid]
+    old_ver = state.cache[uid]["metadata"]["resourceVersion"]
 
-    cache = if old_ver != new_ver do
-      case apply(state.module, :modify, [resource, state.options]) do
-        :ok -> :ok
-        {:error, reason} ->
-          Logger.error([
-            event: "modified",
-            scope: "controller",
-            module: state.module,
-            api_version: state.api_version,
-            kind: state.kind,
-            uid: uid,
-            reason: reason
-          ])
-      end
+    cache = cond do
+      old_ver == nil ->
+        case apply(state.module, :add, [resource, state.options]) do
+          :ok -> :ok
+          {:error, reason} ->
+            Logger.error([
+              event: "added",
+              scope: "controller",
+              module: state.module,
+              api_version: state.api_version,
+              kind: state.kind,
+              uid: uid,
+              reason: reason
+            ])
+        end
 
-      state.cache |> Map.put(uid, resource)
-    else
-      state.cache
+        state.cache |> Map.put(uid, resource)
+
+      old_ver != new_ver ->
+        case apply(state.module, :modify, [resource, state.options]) do
+          :ok -> :ok
+          {:error, reason} ->
+            Logger.error([
+              event: "modified",
+              scope: "controller",
+              module: state.module,
+              api_version: state.api_version,
+              kind: state.kind,
+              uid: uid,
+              reason: reason
+            ])
+        end
+
+        state.cache |> Map.put(uid, resource)
+
+      true ->
+        state.cache
     end
 
     {:noreply, %State{state | cache: cache}}
