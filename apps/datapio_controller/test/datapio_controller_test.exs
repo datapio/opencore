@@ -242,25 +242,14 @@ defmodule Datapio.Test.Controller do
 
     test "reconcile" do
       with_mock(K8s.Client, [:passthrough],
-        run: fn _, _ -> {:ok, %{"items" => [@resource_success]}} end
+        run: fn _, _ -> {:ok, %{"items" => [@resource_success, @resource_failure]}} end
       ) do
-        assert {:noreply, @state_watching} == Datapio.Controller.handle_info(
+        assert {:noreply, @state_cache} == Datapio.Controller.handle_info(
           :reconcile,
           @state_watching
         )
 
         assert_receive {:reconciled, @resource_success}
-        assert_receive :reconcile
-      end
-
-      with_mock(K8s.Client, [:passthrough],
-        run: fn _, _ -> {:ok, %{"items" => [@resource_failure]}} end
-      ) do
-        assert {:noreply, @state_watching} == Datapio.Controller.handle_info(
-          :reconcile,
-          @state_watching
-        )
-
         assert_receive {:reconciled, @resource_failure}
         assert_receive :reconcile
       end
