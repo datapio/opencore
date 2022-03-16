@@ -85,7 +85,6 @@ defmodule Datapio.Controller do
       :watcher,
       :reconcile_delay,
       :cache,
-      :chunks,
       :options
     ]
   end
@@ -202,7 +201,6 @@ defmodule Datapio.Controller do
       watcher: nil,
       reconcile_delay: opts[:reconcile_delay],
       cache: %{},
-      chunks: %{},
       options: opts[:options]
     }}
   end
@@ -248,50 +246,25 @@ defmodule Datapio.Controller do
   end
 
   @impl true
-  def handle_info(%HTTPoison.AsyncChunk{id: id, chunk: chunk}, %State{} = state) do
-    prev_chunk = state.chunks |> Map.get(id, <<>>)
-    new_chunk = prev_chunk <> chunk
-    chunks = state.chunks |> Map.put(id, new_chunk)
-    {:noreply, %State{state | chunks: chunks}}
-  end
+  def handle_info(%HTTPoison.AsyncChunk{chunk: chunk}, %State{} = state) do
+    event = Jason.decode!(chunk)
 
-  @impl true
-  def handle_info(%HTTPoison.AsyncEnd{id: id}, %State{} = state) do
-    case state.chunks[id] do
-      nil ->
-        Logger.error([
-          event: "watch",
-          scope: "controller",
-          module: state.module,
-          api_version: state.api_version,
-          kind: state.kind,
-          reason: "unknown chunk #{id}"
-        ])
-        {:stop, :normal, state}
+    case event["type"] do
+      "ADDED" ->
+        self() |> send({:added, event["object"]})
 
-      chunk ->
-        event = Jason.decode!(chunk)
+      "MODIFIED" ->
+        self() |> send({:modified, event["object"]})
 
-        case event["type"] do
-          "ADDED" ->
-            self() |> send({:added, event["object"]})
-
-          "MODIFIED" ->
-            self() |> send({:modified, event["object"]})
-
-          "DELETED" ->
-            self() |> send({:deleted, event["object"]})
-        end
-
-        self() |> send(:watch)
-
-        chunks = state.chunks |> Map.delete(id)
-        {:noreply, %State{state | watcher: nil, chunks: chunks}}
+      "DELETED" ->
+        self() |> send({:deleted, event["object"]})
     end
+
+    {:noreply, state}
   end
 
   @impl true
-  def handle_info(%HTTPoison.Error{reason: {:closed, :timeout}}, %State{} = state) do
+  def handle_info(%HTTPoison.Error{id: id, reason: {:closed, :timeout}}, %State{} = state) do
     self() |> send(:watch)
     {:noreply, %State{state | watcher: nil}}
   end
