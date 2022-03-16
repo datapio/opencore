@@ -72,7 +72,6 @@ defmodule Datapio.Test.Controller do
     watcher: nil,
     reconcile_delay: 10,
     cache: %{},
-    chunks: %{},
     options: [foo: :bar]
   }
 
@@ -85,7 +84,6 @@ defmodule Datapio.Test.Controller do
     watcher: :watcher,
     reconcile_delay: 10,
     cache: %{},
-    chunks: %{},
     options: [foo: :bar]
   }
 
@@ -101,14 +99,8 @@ defmodule Datapio.Test.Controller do
       "SUCCESS" => @resource_success,
       "FAILURE" => @resource_failure
     },
-    chunks: %{},
     options: [foo: :bar]
   }
-
-  defp state_with_chunk(state, chunk_id, chunk) do
-    chunks = state.chunks |> Map.put(chunk_id, chunk)
-    %Datapio.Controller.State{state | chunks: chunks}
-  end
 
   test "start_link/1" do
     with_mock(GenServer, [:passthrough],
@@ -208,70 +200,26 @@ defmodule Datapio.Test.Controller do
     end
 
     test "http async chunk" do
-      chunk_id = "1"
-      chunk = "{\"type\": \"ADDED\", \"object\": \"rsrc\"}"
-      expected_state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, expected_state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncChunk{id: chunk_id, chunk: chunk},
+      assert {:noreply, @state_watching} == Datapio.Controller.handle_info(
+        %HTTPoison.AsyncChunk{chunk: "{\"type\": \"ADDED\", \"object\": \"rsrc\"}"},
         @state_watching
-      )
-
-      chunk_id = "2"
-      chunk = "{\"type\": \"MODIFIED\", \"object\": \"rsrc\"}"
-      expected_state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, expected_state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncChunk{id: chunk_id, chunk: chunk},
-        @state_watching
-      )
-
-      chunk_id = "3"
-      chunk = "{\"type\": \"DELETED\", \"object\": \"rsrc\"}"
-      expected_state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, expected_state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncChunk{id: chunk_id, chunk: chunk},
-        @state_watching
-      )
-    end
-
-    test "http async end" do
-      chunk_id = "1"
-      chunk = "{\"type\": \"ADDED\", \"object\": \"rsrc\"}"
-      state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, @state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncEnd{id: chunk_id},
-        state
       )
 
       assert_receive {:added, "rsrc"}
-      assert_receive :watch
 
-      chunk_id = "2"
-      chunk = "{\"type\": \"MODIFIED\", \"object\": \"rsrc\"}"
-      state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, @state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncEnd{id: chunk_id},
-        state
+      assert {:noreply, @state_watching} == Datapio.Controller.handle_info(
+        %HTTPoison.AsyncChunk{chunk: "{\"type\": \"MODIFIED\", \"object\": \"rsrc\"}"},
+        @state_watching
       )
 
       assert_receive {:modified, "rsrc"}
-      assert_receive :watch
 
-      chunk_id = "3"
-      chunk = "{\"type\": \"DELETED\", \"object\": \"rsrc\"}"
-      state = state_with_chunk(@state_watching, chunk_id, chunk)
-
-      assert {:noreply, @state} == Datapio.Controller.handle_info(
-        %HTTPoison.AsyncEnd{id: chunk_id},
-        state
+      assert {:noreply, @state_watching} == Datapio.Controller.handle_info(
+        %HTTPoison.AsyncChunk{chunk: "{\"type\": \"DELETED\", \"object\": \"rsrc\"}"},
+        @state_watching
       )
 
       assert_receive {:deleted, "rsrc"}
-      assert_receive :watch
     end
 
     test "http timeout" do
