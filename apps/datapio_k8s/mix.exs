@@ -25,7 +25,7 @@ defmodule Datapio.K8s.MixProject do
     [
       {
         # Kubernetes Client
-        :k8s, "~> 1.1"
+        :k8s, "~> 2.0"
       },
       {
         # JSON Schema validation
